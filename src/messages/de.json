@@ -1,0 +1,13 @@
+{
+  "navbar": {
+    "events": "Events",
+    "business": "Unternehmen",
+    "community": "Community"
+  },
+
+  "hero": {
+    "badge": "Lateinamerikaner in Europa verbinden",
+    "title": "Finde deine lateinamerikanische Community",
+    "description": "Entdecke Events, Unternehmen und Möglichkeiten in deiner Nähe."
+  }
+}

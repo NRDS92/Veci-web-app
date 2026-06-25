@@ -1,0 +1,13 @@
+{
+  "navbar": {
+    "events": "Events",
+    "business": "Businesses",
+    "community": "Community"
+  },
+
+  "hero": {
+    "badge": "Connecting Latinos across Europe",
+    "title": "Find your Latin community wherever you are",
+    "description": "Discover events, businesses and opportunities near you."
+  }
+}
