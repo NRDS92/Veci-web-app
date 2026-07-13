@@ -18,7 +18,8 @@ export default function ResetPasswordForm() {
 
     const token = params.token as string;
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setError("");
         setSuccess("");
 
@@ -42,19 +43,23 @@ export default function ResetPasswordForm() {
             return;
         }
 
+        console.log("params", params);
+        console.log("token", token);
         try {
             setLoading(true);
 
             await authService.resetPassword({
-            token,
-            password,
+                token,
+                password,
             });
 
             setSuccess("Password updated successfully.");
 
         } catch (error: unknown) {
-
+            console.log(error)
             if (axios.isAxiosError(error)) {
+                console.log("STATUS:", error.response?.status);
+                console.log("DATA:", error.response?.data);
                 setError(
                     error.response?.data?.message ??
                     "Something went wrong."

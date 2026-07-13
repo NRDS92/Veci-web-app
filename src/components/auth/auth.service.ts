@@ -7,19 +7,21 @@ import {
 } from "./types";
 
 export const authService = {
-  login(data: LoginRequest) {
-    return api.post("/auth/login", data);
-  },
+    login(data: LoginRequest) {
+        return api.post("/auth/login", data);
+    },
 
-  register(data: RegisterRequest) {
-    return api.post("/auth/register", data);
-  },
+    register(data: RegisterRequest) {
+        return api.post("/auth/register", data);
+    },
 
-  forgotPassword(data: ForgotPasswordRequest) {
-    return api.post("/auth/forgot-password", data);
-  },
+    forgotPassword(data: ForgotPasswordRequest) {
+        return api.post("/auth/forgot-password", data);
+    },
 
-  resetPassword(data: ResetPasswordRequest) {
-    return api.post("/auth/reset-password", data);
-  },
+    resetPassword(data: ResetPasswordRequest) {
+        console.log(data)
+        return api.post("/auth/reset-password", data);
+
+    },
 };
