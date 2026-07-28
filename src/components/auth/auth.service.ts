@@ -1,4 +1,4 @@
-import { api } from "@/lib/api";
+import api  from "@/lib/api";
 import {
   LoginRequest,
   RegisterRequest,
@@ -20,8 +20,9 @@ export const authService = {
     },
 
     resetPassword(data: ResetPasswordRequest) {
-        console.log(data)
-        return api.post("/auth/reset-password", data);
+        console.log("Base URL:", api.defaults.baseURL);
+        console.log("Request:", data);
 
-    },
+        return api.post("/auth/reset-password", data);
+    }
 };
