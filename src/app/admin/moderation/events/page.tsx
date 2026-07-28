@@ -102,6 +102,7 @@ export default function EventsPage() {
                         ? updated
                         : event
                 )
+                
             );
 
             setSelectedEvent(updated);
