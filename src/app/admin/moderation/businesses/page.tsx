@@ -7,11 +7,21 @@ import { AdminBusiness } from "@/features/admin/business/types/business";
 
 import {
     getBusinesses,
+    approveBusiness,
+    rejectBusiness,
 } from "@/features/admin/business/services/business.admin.service";
+
+import {
+    ModerationRejectionReason,
+} from "@/features/moderation/types/moderation";
 
 import Toolbar from "@/components/admin/ui/Toolbar/Toolbar";
 import SearchInput from "@/components/admin/ui/SearchInput/SearchInput";
 import EmptyState from "@/components/admin/ui/EmptyState/EmptyState";
+import RejectDialog from "@/components/admin/ui/RejectDialog/RejectDialog";
+
+import BusinessTable from "@/components/admin/BusinessTable/BusinessTable";
+import BusinessDetailsDrawer from "../../../../components/admin/BusinessDetailsDrawer/BusinessDetailsDrawer";
 
 export default function BusinessesPage() {
 
@@ -21,13 +31,23 @@ export default function BusinessesPage() {
     const [loading, setLoading] =
         useState(true);
 
+    const [actionLoading, setActionLoading] =
+        useState(false);
+
     const [search, setSearch] =
         useState("");
 
+    const [selectedBusiness, setSelectedBusiness] =
+        useState<AdminBusiness | null>(null);
+
+    const [pendingRejectBusiness, setPendingRejectBusiness] =
+        useState<AdminBusiness | null>(null);
+
+    const [rejectOpen, setRejectOpen] =
+        useState(false);
+
     useEffect(() => {
-
         loadBusinesses();
-
     }, []);
 
     const loadBusinesses = async () => {
@@ -55,6 +75,113 @@ export default function BusinessesPage() {
 
     };
 
+    const handleApprove = async () => {
+
+        if (!selectedBusiness) return;
+
+        try {
+
+            setActionLoading(true);
+
+            const updated =
+                await approveBusiness(
+                    selectedBusiness._id
+                );
+
+            setBusinesses((previous) =>
+                previous.map((business) =>
+                    business._id === updated._id
+                        ? updated
+                        : business
+                )
+            );
+
+            setSelectedBusiness(updated);
+
+            toast.success(
+                "Business approved successfully."
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            toast.error(
+                "Unable to approve business."
+            );
+
+        } finally {
+
+            setActionLoading(false);
+
+        }
+
+    };
+
+    const handleReject = () => {
+
+        if (!selectedBusiness) return;
+
+        setPendingRejectBusiness(
+            selectedBusiness
+        );
+
+        setRejectOpen(true);
+
+    };
+
+    const confirmReject = async (
+        reason: ModerationRejectionReason,
+        comment?: string
+    ) => {
+
+        if (!pendingRejectBusiness) return;
+
+        try {
+
+            setActionLoading(true);
+
+            const updated =
+                await rejectBusiness(
+                    pendingRejectBusiness._id,
+                    reason,
+                    comment
+                );
+
+            setBusinesses((previous) =>
+                previous.map((business) =>
+                    business._id === updated._id
+                        ? updated
+                        : business
+                )
+            );
+
+            setSelectedBusiness(updated);
+
+            setRejectOpen(false);
+
+            setPendingRejectBusiness(null);
+
+            toast.success(
+                "Business rejected successfully."
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            toast.error(
+                "Unable to reject business."
+            );
+
+        } finally {
+
+            setActionLoading(false);
+
+        }
+
+    };
+
     const filteredBusinesses =
         businesses.filter((business) =>
             business.name
@@ -65,13 +192,11 @@ export default function BusinessesPage() {
     if (loading) {
 
         return (
-
-            <div className="flex justify-center py-20">
-
-                Loading businesses...
-
+            <div className="flex items-center justify-center py-20">
+                <p className="text-gray-500">
+                    Loading businesses...
+                </p>
             </div>
-
         );
 
     }
@@ -99,17 +224,33 @@ export default function BusinessesPage() {
 
             ) : (
 
-                <pre>
-
-                    {JSON.stringify(
-                        filteredBusinesses,
-                        null,
-                        2
-                    )}
-
-                </pre>
+                <BusinessTable
+                    businesses={filteredBusinesses}
+                    onView={setSelectedBusiness}
+                />
 
             )}
+
+            <BusinessDetailsDrawer
+                business={selectedBusiness}
+                open={!!selectedBusiness}
+                onClose={() =>
+                    setSelectedBusiness(null)
+                }
+                onApprove={handleApprove}
+                onReject={handleReject}
+                loading={actionLoading}
+            />
+
+            <RejectDialog
+                open={rejectOpen}
+                loading={actionLoading}
+                onClose={() => {
+                    setRejectOpen(false);
+                    setPendingRejectBusiness(null);
+                }}
+                onConfirm={confirmReject}
+            />
 
         </div>
 
