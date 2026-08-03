@@ -28,6 +28,7 @@ export default function EventDetailsDrawer({
 
     const image = event.images?.[0];
     const isRemote = image?.startsWith("http");
+    
 
     return (
         <>

@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
 import { AdminEvent } from "@/features/admin/types/event";
+import {
+    ModerationRejectionReason,
+} from "@/features/moderation/types/moderation";
+
 import {
     getEvents,
     approveEvent,
@@ -12,18 +18,25 @@ import EventTable from "@/components/admin/EventTable/EventTable";
 import SearchInput from "@/components/admin/ui/SearchInput/SearchInput";
 import Toolbar from "@/components/admin/ui/Toolbar/Toolbar";
 import EmptyState from "@/components/admin/ui/EmptyState/EmptyState";
-import EventDetailsDrawer from "../../../../components/admin/Events/EventDetailsDrawer/EventDetailsDrawer";
+import EventDetailsDrawer from "@/components/admin/Events/EventDetailsDrawer/EventDetailsDrawer";
+import RejectDialog from "@/components/admin/ui/RejectDialog/RejectDialog";
 
 export default function EventsPage() {
     const [events, setEvents] = useState<AdminEvent[]>([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
-    const [status, setStatus] = useState("ALL");
+
     const [selectedEvent, setSelectedEvent] =
-    useState<AdminEvent | null>(null);
+        useState<AdminEvent | null>(null);
+
+    const [pendingRejectEvent, setPendingRejectEvent] =
+        useState<AdminEvent | null>(null);
+
+    const [rejectOpen, setRejectOpen] =
+        useState(false);
 
     const [actionLoading, setActionLoading] =
-    useState(false);
+        useState(false);
 
     useEffect(() => {
         async function loadEvents() {
@@ -32,6 +45,7 @@ export default function EventsPage() {
                 setEvents(data);
             } catch (error) {
                 console.error(error);
+                toast.error("Unable to load events.");
             } finally {
                 setLoading(false);
             }
@@ -49,12 +63,10 @@ export default function EventsPage() {
             setActionLoading(true);
 
             const updated =
-                await approveEvent(
-                    selectedEvent._id
-                );
+                await approveEvent(selectedEvent._id);
 
-            setEvents(events =>
-                events.map(event =>
+            setEvents((previous) =>
+                previous.map((event) =>
                     event._id === updated._id
                         ? updated
                         : event
@@ -63,9 +75,17 @@ export default function EventsPage() {
 
             setSelectedEvent(updated);
 
+            toast.success(
+                "Event approved successfully."
+            );
+
         } catch (error) {
 
             console.error(error);
+
+            toast.error(
+                "Unable to approve the event."
+            );
 
         } finally {
 
@@ -75,41 +95,58 @@ export default function EventsPage() {
 
     };
 
-    const handleReject = async () => {
+    const handleReject = () => {
 
         if (!selectedEvent) return;
 
-        const reason =
-            window.prompt(
-                "Reason for rejection"
-            );
+        setPendingRejectEvent(selectedEvent);
 
-        if (!reason) return;
+        setRejectOpen(true);
+
+    };
+
+    const confirmReject = async (
+        reason: ModerationRejectionReason,
+        comment?: string
+    ) => {
+
+        if (!pendingRejectEvent) return;
 
         try {
 
             setActionLoading(true);
 
-            const updated =
-                await rejectEvent(
-                    selectedEvent._id,
-                    reason
-                );
+            const updated = await rejectEvent(
+                pendingRejectEvent._id,
+                reason,
+                comment
+            );
 
-            setEvents(events =>
-                events.map(event =>
+            setEvents((previous) =>
+                previous.map((event) =>
                     event._id === updated._id
                         ? updated
                         : event
                 )
-                
             );
 
             setSelectedEvent(updated);
 
+            setRejectOpen(false);
+
+            setPendingRejectEvent(null);
+
+            toast.success(
+                "Event rejected successfully."
+            );
+
         } catch (error) {
 
             console.error(error);
+
+            toast.error(
+                "Unable to reject the event."
+            );
 
         } finally {
 
@@ -120,20 +157,23 @@ export default function EventsPage() {
     };
 
     const filteredEvents = events.filter((event) =>
-        event.title.toLowerCase().includes(search.toLowerCase())
+        event.title
+            .toLowerCase()
+            .includes(search.toLowerCase())
     );
 
     if (loading) {
         return (
             <div className="flex items-center justify-center py-20">
-            <p className="text-gray-500">Loading events...</p>
+                <p className="text-gray-500">
+                    Loading events...
+                </p>
             </div>
         );
     }
 
     return (
         <div className="space-y-6">
-            
 
             <Toolbar
                 title="Event Moderation"
@@ -160,6 +200,7 @@ export default function EventsPage() {
                     onView={setSelectedEvent}
                 />
             )}
+
             <EventDetailsDrawer
                 event={selectedEvent}
                 open={!!selectedEvent}
@@ -167,6 +208,16 @@ export default function EventsPage() {
                 onApprove={handleApprove}
                 onReject={handleReject}
                 loading={actionLoading}
+            />
+
+            <RejectDialog
+                open={rejectOpen}
+                loading={actionLoading}
+                onClose={() => {
+                    setRejectOpen(false);
+                    setPendingRejectEvent(null);
+                }}
+                onConfirm={confirmReject}
             />
 
         </div>
