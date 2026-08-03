@@ -1,6 +1,6 @@
 import { Eye, Check, X } from "lucide-react";
 
-import { AdminEvent } from "@/features/admin/types/event";
+import { AdminEvent } from "../../../features/admin/events/types/event";
 import StatusBadge from "../StatusBadge/StatusBadge";
 
 interface Props {

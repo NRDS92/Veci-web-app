@@ -1,4 +1,4 @@
-import { AdminEvent } from "@/features/admin/types/event";
+import { AdminEvent } from "../../../features/admin/events/types/event";
 import EventRow from "../EventRow/EventRow";
 
 interface Props {
