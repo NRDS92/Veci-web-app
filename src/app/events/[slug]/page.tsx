@@ -5,6 +5,7 @@ import EventJsonLd from "../../../components/seo/EventJsonLd";
 
 
 interface Publication {
+
     _id: string;
 
     entityType: string;
@@ -19,11 +20,15 @@ interface Publication {
 
     seoDescription?: string;
 
+    canonicalUrl?: string;
+
     publishedAt?: string;
+
 }
 
 
 interface Event {
+
     _id: string;
 
     title: string;
@@ -47,28 +52,34 @@ interface Event {
     dateEnd?: string;
 
     location?: {
+
         type: "Point";
 
         coordinates: [
             number,
             number
         ];
+
     };
 
     createdBy?: {
+
         _id: string;
 
         name: string;
 
         profileImage?: string | null;
+
     };
 
     contact?: {
+
         website?: string;
 
         instagram?: string;
 
         whatsapp?: string;
+
     };
 
     goodToKnow: string[];
@@ -76,54 +87,55 @@ interface Event {
     status: string;
 
     moderation: {
+
         status: string;
+
     };
+
 }
 
 
 interface PublicContentResponse {
+
     success: boolean;
 
     data: {
+
         publication: Publication;
 
         entity: Event;
+
     };
+
 }
 
 
 interface PageProps {
+
     params: Promise<{
         slug: string;
     }>;
+
 }
 
 
-/**
- * Public VECI API.
- *
- * Expected value:
- *
- * https://veci-api-pm1e.onrender.com/api/v1
- */
+/* =========================================================
+   CONFIGURATION
+========================================================= */
+
 const API_URL =
     process.env.NEXT_PUBLIC_API_URL ||
     "https://veci-api-pm1e.onrender.com/api/v1";
 
 
-/**
- * Public VECI website URL.
- *
- * This is the canonical domain used for
- * SEO, Open Graph and structured data.
- */
 const PUBLIC_SITE_URL =
     "https://veci-latin.com";
 
 
-/**
- * Build the canonical URL for an event.
- */
+/* =========================================================
+   CANONICAL URL
+========================================================= */
+
 const buildEventUrl = (
     slug: string
 ): string => {
@@ -133,18 +145,10 @@ const buildEventUrl = (
 };
 
 
-/**
- * Fetch a published event through
- * the Public Content Platform.
- *
- * The slug is the public identity.
- *
- * slug
- *   ↓
- * Publication
- *   ↓
- * Event
- */
+/* =========================================================
+   FETCH PUBLIC EVENT
+========================================================= */
+
 async function getEvent(
     slug: string
 ): Promise<
@@ -162,10 +166,11 @@ async function getEvent(
         );
 
 
-    /**
-     * A 404 means the public content
-     * does not exist or is not published.
+    /*
+     * A 404 means the event is not publicly
+     * available.
      */
+
     if (
         response.status === 404
     ) {
@@ -175,11 +180,11 @@ async function getEvent(
     }
 
 
-    /**
+    /*
      * Any other unsuccessful response
-     * should be treated as an actual
-     * API error.
+     * is an actual API error.
      */
+
     if (
         !response.ok
     ) {
@@ -193,8 +198,13 @@ async function getEvent(
 
     const data:
         PublicContentResponse =
-        await response.json();
+            await response.json();
 
+
+    /*
+     * Make sure both publication and
+     * entity exist.
+     */
 
     if (
         !data.success ||
@@ -212,10 +222,10 @@ async function getEvent(
 }
 
 
-/**
- * Generate SEO metadata dynamically
- * from the published VECI content.
- */
+/* =========================================================
+   SEO METADATA
+========================================================= */
+
 export async function generateMetadata(
     {
         params,
@@ -231,11 +241,10 @@ export async function generateMetadata(
         await getEvent(slug);
 
 
-    /**
-     * If the event does not exist,
-     * Next.js will render the page metadata
-     * for the not-found state.
+    /*
+     * Event does not exist.
      */
+
     if (!data) {
 
         return {
@@ -244,9 +253,11 @@ export async function generateMetadata(
                 "Event not found | VECI",
 
             robots: {
+
                 index: false,
 
                 follow: false,
+
             },
 
         };
@@ -260,10 +271,18 @@ export async function generateMetadata(
     } = data;
 
 
+    /*
+     * SEO title.
+     */
+
     const title =
         publication.seoTitle ||
         `${entity.title} | VECI`;
 
+
+    /*
+     * SEO description.
+     */
 
     const description =
         publication.seoDescription ||
@@ -271,11 +290,24 @@ export async function generateMetadata(
         `Discover ${entity.title} on VECI.`;
 
 
+    /*
+     * Social image.
+     */
+
     const image =
         entity.images?.[0];
 
 
+    /*
+     * Use the publication canonical
+     * when explicitly configured.
+     *
+     * Otherwise build the canonical
+     * from the public slug.
+     */
+
     const canonicalUrl =
+        publication.canonicalUrl ||
         buildEventUrl(
             publication.slug
         );
@@ -288,13 +320,10 @@ export async function generateMetadata(
         description,
 
 
-        /**
-         * Canonical URL.
-         *
-         * This tells search engines
-         * which URL represents the
-         * canonical version of this event.
-         */
+        /* =================================================
+           CANONICAL
+        ================================================= */
+
         alternates: {
 
             canonical:
@@ -303,10 +332,10 @@ export async function generateMetadata(
         },
 
 
-        /**
-         * Public pages should be
-         * indexable by search engines.
-         */
+        /* =================================================
+           ROBOTS
+        ================================================= */
+
         robots: {
 
             index: true,
@@ -316,9 +345,10 @@ export async function generateMetadata(
         },
 
 
-        /**
-         * Open Graph metadata.
-         */
+        /* =================================================
+           OPEN GRAPH
+        ================================================= */
+
         openGraph: {
 
             title,
@@ -350,9 +380,10 @@ export async function generateMetadata(
         },
 
 
-        /**
-         * Twitter / social previews.
-         */
+        /* =================================================
+           TWITTER
+        ================================================= */
+
         twitter: {
 
             card:
@@ -376,13 +407,10 @@ export async function generateMetadata(
 }
 
 
-/**
- * Public Event Page.
- *
- * Example:
- *
- * /events/prueba-4
- */
+/* =========================================================
+   EVENT PAGE
+========================================================= */
+
 export default async function EventPage(
     {
         params,
@@ -398,9 +426,11 @@ export default async function EventPage(
         await getEvent(slug);
 
 
-    /**
-     * Content is not publicly available.
+    /*
+     * If the event is not public,
+     * let Next.js render the 404 page.
      */
+
     if (!data) {
 
         notFound();
@@ -414,15 +444,15 @@ export default async function EventPage(
     } = data;
 
 
-    /**
-     * Use exactly the same canonical URL
-     * for:
+    /*
+     * IMPORTANT:
      *
-     * - canonical metadata
-     * - Open Graph
-     * - JSON-LD
+     * Use exactly the same canonical URL
+     * used by metadata and Open Graph.
      */
+
     const canonicalUrl =
+        publication.canonicalUrl ||
         buildEventUrl(
             publication.slug
         );
@@ -430,23 +460,26 @@ export default async function EventPage(
 
     return (
 
-        <main className="min-h-screen">
+        <main
+            className="
+                min-h-screen
+            "
+        >
 
 
-            {/*
-
-                Structured data
-
-                Tells search engines that
-                this page represents an Event.
-
-            */}
+            {/* =================================================
+                STRUCTURED DATA
+            ================================================= */}
 
             <EventJsonLd
                 event={entity}
                 url={canonicalUrl}
             />
 
+
+            {/* =================================================
+                EVENT ARTICLE
+            ================================================= */}
 
             <article
                 className="
@@ -458,11 +491,9 @@ export default async function EventPage(
             >
 
 
-                {/*
-
+                {/* =================================================
                     HERO IMAGE
-
-                */}
+                ================================================= */}
 
                 {entity.images?.[0] && (
 
@@ -485,11 +516,9 @@ export default async function EventPage(
                 )}
 
 
-                {/*
-
+                {/* =================================================
                     EVENT HEADER
-
-                */}
+                ================================================= */}
 
                 <header>
 
@@ -505,7 +534,9 @@ export default async function EventPage(
                         "
                     >
 
-                        {entity.category}
+                        {
+                            entity.category
+                        }
 
                     </p>
 
@@ -519,30 +550,36 @@ export default async function EventPage(
                         "
                     >
 
-                        {entity.title}
+                        {
+                            entity.title
+                        }
 
                     </h1>
 
 
-                    <p
-                        className="
-                            mt-4
-                            text-gray-500
-                        "
-                    >
+                    {entity.cityId && (
 
-                        {entity.cityId}
+                        <p
+                            className="
+                                mt-4
+                                text-gray-500
+                            "
+                        >
 
-                    </p>
+                            {
+                                entity.cityId
+                            }
+
+                        </p>
+
+                    )}
 
                 </header>
 
 
-                {/*
-
+                {/* =================================================
                     EVENT INFORMATION
-
-                */}
+                ================================================= */}
 
                 <section
                     className="
@@ -554,7 +591,9 @@ export default async function EventPage(
                 >
 
 
-                    {/* DATE */}
+                    {/* =============================================
+                        DATE
+                    ============================================= */}
 
                     <div>
 
@@ -577,25 +616,61 @@ export default async function EventPage(
                             "
                         >
 
-                            {new Date(
-                                entity.dateStart
-                            ).toLocaleString(
-                                "en-US",
-                                {
-                                    dateStyle:
-                                        "long",
+                            {
+                                new Date(
+                                    entity.dateStart
+                                ).toLocaleString(
+                                    "en-US",
+                                    {
+                                        dateStyle:
+                                            "long",
 
-                                    timeStyle:
-                                        "short",
-                                }
-                            )}
+                                        timeStyle:
+                                            "short",
+                                    }
+                                )
+                            }
 
                         </p>
+
+
+                        {entity.dateEnd && (
+
+                            <p
+                                className="
+                                    mt-1
+                                    text-sm
+                                    text-gray-500
+                                "
+                            >
+
+                                Until{" "}
+
+                                {
+                                    new Date(
+                                        entity.dateEnd
+                                    ).toLocaleString(
+                                        "en-US",
+                                        {
+                                            dateStyle:
+                                                "long",
+
+                                            timeStyle:
+                                                "short",
+                                        }
+                                    )
+                                }
+
+                            </p>
+
+                        )}
 
                     </div>
 
 
-                    {/* LOCATION */}
+                    {/* =============================================
+                        LOCATION
+                    ============================================= */}
 
                     <div>
 
@@ -611,40 +686,50 @@ export default async function EventPage(
                         </h2>
 
 
-                        <p
-                            className="
-                                mt-2
-                                text-gray-600
-                            "
-                        >
+                        {entity.address && (
 
-                            {entity.address}
+                            <p
+                                className="
+                                    mt-2
+                                    text-gray-600
+                                "
+                            >
 
-                        </p>
+                                {
+                                    entity.address
+                                }
+
+                            </p>
+
+                        )}
 
 
-                        <p
-                            className="
-                                mt-1
-                                text-sm
-                                text-gray-500
-                            "
-                        >
+                        {entity.cityId && (
 
-                            {entity.cityId}
+                            <p
+                                className="
+                                    mt-1
+                                    text-sm
+                                    text-gray-500
+                                "
+                            >
 
-                        </p>
+                                {
+                                    entity.cityId
+                                }
+
+                            </p>
+
+                        )}
 
                     </div>
 
                 </section>
 
 
-                {/*
-
+                {/* =================================================
                     DESCRIPTION
-
-                */}
+                ================================================= */}
 
                 {entity.description && (
 
@@ -674,7 +759,9 @@ export default async function EventPage(
                             "
                         >
 
-                            {entity.description}
+                            {
+                                entity.description
+                            }
 
                         </p>
 
@@ -683,11 +770,9 @@ export default async function EventPage(
                 )}
 
 
-                {/*
-
+                {/* =================================================
                     GOOD TO KNOW
-
-                */}
+                ================================================= */}
 
                 {entity.goodToKnow?.length > 0 && (
 
@@ -719,22 +804,28 @@ export default async function EventPage(
                             "
                         >
 
-                            {entity.goodToKnow.map(
-                                (
-                                    item,
-                                    index
-                                ) => (
+                            {
+                                entity.goodToKnow.map(
+                                    (
+                                        item,
+                                        index
+                                    ) => (
 
-                                    <li
-                                        key={
-                                            `${item}-${index}`
-                                        }
-                                    >
-                                        {item}
-                                    </li>
+                                        <li
+                                            key={
+                                                `${item}-${index}`
+                                            }
+                                        >
 
+                                            {
+                                                item
+                                            }
+
+                                        </li>
+
+                                    )
                                 )
-                            )}
+                            }
 
                         </ul>
 
@@ -743,11 +834,9 @@ export default async function EventPage(
                 )}
 
 
-                {/*
-
+                {/* =================================================
                     CONTACT
-
-                */}
+                ================================================= */}
 
                 {entity.contact && (
 
@@ -785,6 +874,10 @@ export default async function EventPage(
                             >
 
 
+                                {/* =================================
+                                    WEBSITE
+                                ================================= */}
+
                                 {entity.contact.website && (
 
                                     <a
@@ -806,6 +899,10 @@ export default async function EventPage(
                                 )}
 
 
+                                {/* =================================
+                                    INSTAGRAM
+                                ================================= */}
+
                                 {entity.contact.instagram && (
 
                                     <a
@@ -826,6 +923,10 @@ export default async function EventPage(
 
                                 )}
 
+
+                                {/* =================================
+                                    WHATSAPP
+                                ================================= */}
 
                                 {entity.contact.whatsapp && (
 
@@ -854,7 +955,6 @@ export default async function EventPage(
                     )
 
                 )}
-
 
             </article>
 

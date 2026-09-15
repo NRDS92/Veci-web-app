@@ -84,6 +84,27 @@ interface PublicBusinessResponse {
     };
 }
 
+export interface PublicBusinessContent {
+    publication: {
+        _id: string;
+        entityType: string;
+        entityId: string;
+        status: string;
+        slug: string;
+        seoTitle?: string;
+        seoDescription?: string;
+        canonicalUrl?: string;
+        publishedAt?: string;
+        unpublishedAt?: string;
+    };
+    entity: PublicBusiness;
+}
+
+interface PublicBusinessContentResponse {
+    success: boolean;
+    data: PublicBusinessContent;
+}
+
 const API_URL =
     "https://veci-api-pm1e.onrender.com/api/v1";
 
@@ -355,4 +376,68 @@ export async function getPublicBusinessBySlug(
     }
 
     return data.data.entity;
+}
+
+export async function getPublicBusinessContentBySlug(
+    slug: string
+): Promise<PublicBusinessContent | null> {
+
+    const url =
+        `${API_URL}/public/content/${encodeURIComponent(slug)}`;
+
+    console.log(
+        "🔥 PUBLIC BUSINESS SEO API:",
+        url
+    );
+
+    const response =
+        await fetch(
+            url,
+            {
+                next: {
+                    revalidate: 60,
+                },
+            }
+        );
+
+    if (
+        response.status === 404
+    ) {
+        return null;
+    }
+
+    if (!response.ok) {
+
+        const errorBody =
+            await response.text();
+
+        console.error(
+            "❌ PUBLIC BUSINESS SEO API ERROR",
+            {
+                url,
+                status:
+                    response.status,
+                statusText:
+                    response.statusText,
+                body:
+                    errorBody,
+            }
+        );
+
+        throw new Error(
+            `Failed to fetch public business content: ${response.status}`
+        );
+    }
+
+    const data:
+        PublicBusinessContentResponse =
+            await response.json();
+
+    if (!data.success) {
+        throw new Error(
+            "Public business content request failed."
+        );
+    }
+
+    return data.data;
 }

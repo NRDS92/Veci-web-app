@@ -1,38 +1,195 @@
+import type { Metadata } from "next";
+
 import {
-    getPublicBusinessBySlug,
+    getPublicBusinessContentBySlug,
 } from "@/lib/api/public-content";
 
 
 interface BusinessPageProps {
 
     params: Promise<{
-        locale: string;
         slug: string;
     }>;
 
 }
 
 
-export default async function BusinessPage({
-    params,
-}: BusinessPageProps) {
+/* =========================================================
+   SEO METADATA
+========================================================= */
+
+export async function generateMetadata(
+    {
+        params,
+    }: BusinessPageProps
+): Promise<Metadata> {
 
     const {
         slug,
     } = await params;
 
 
-    const business =
-        await getPublicBusinessBySlug(
+    const content =
+        await getPublicBusinessContentBySlug(
             slug
         );
 
 
-    if (!business) {
+    if (!content) {
+
+        return {
+
+            title:
+                "Business not found | VECI",
+
+            robots: {
+                index: false,
+                follow: false,
+            },
+
+        };
+
+    }
+
+
+    const {
+        publication,
+        entity,
+    } = content;
+
+
+    const title =
+        publication.seoTitle ||
+        `${entity.name} | VECI`;
+
+
+    const description =
+        publication.seoDescription ||
+        entity.description ||
+        `Discover ${entity.name} on VECI.`;
+
+
+    const canonical =
+        publication.canonicalUrl ||
+        `https://veci-latin.com/business/${entity.slug}`;
+
+
+    const image =
+        entity.coverImage ||
+        entity.image;
+
+
+    return {
+
+        title,
+
+        description,
+
+
+        alternates: {
+
+            canonical,
+
+        },
+
+
+        robots: {
+
+            index: true,
+
+            follow: true,
+
+        },
+
+
+        openGraph: {
+
+            title,
+
+            description,
+
+            url:
+                canonical,
+
+            type:
+                "website",
+
+            siteName:
+                "VECI",
+
+            ...(image
+                ? {
+                    images: [
+                        {
+                            url:
+                                image,
+
+                            alt:
+                                entity.name,
+                        },
+                    ],
+                }
+                : {}
+            ),
+
+        },
+
+
+        twitter: {
+
+            card:
+                image
+                    ? "summary_large_image"
+                    : "summary",
+
+            title,
+
+            description,
+
+            ...(image
+                ? {
+                    images: [
+                        image,
+                    ],
+                }
+                : {}
+            ),
+
+        },
+
+    };
+
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+export default async function BusinessPage(
+    {
+        params,
+    }: BusinessPageProps
+) {
+
+    const {
+        slug,
+    } = await params;
+
+
+    const content =
+        await getPublicBusinessContentBySlug(
+            slug
+        );
+
+
+    if (!content) {
 
         return (
 
-            <main className="min-h-screen">
+            <main
+                className="min-h-screen"
+            >
 
                 <section
                     className="
@@ -52,6 +209,16 @@ export default async function BusinessPage({
                         Business not found
                     </h1>
 
+
+                    <p
+                        className="
+                            mt-4
+                            text-gray-600
+                        "
+                    >
+                        This business could not be found.
+                    </p>
+
                 </section>
 
             </main>
@@ -61,9 +228,178 @@ export default async function BusinessPage({
     }
 
 
+    const {
+        publication,
+        entity,
+    } = content;
+
+
+    /* =====================================================
+       JSON-LD
+    ===================================================== */
+
+
+    const sameAs: string[] = [];
+
+
+    if (entity.website) {
+
+        sameAs.push(
+            entity.website
+        );
+
+    }
+
+
+    if (entity.instagram) {
+
+        sameAs.push(
+            entity.instagram
+        );
+
+    }
+
+
+    const jsonLd = {
+
+        "@context":
+            "https://schema.org",
+
+        "@type":
+            "LocalBusiness",
+
+
+        name:
+            entity.name,
+
+
+        ...(entity.description
+            ? {
+                description:
+                    entity.description,
+            }
+            : {}
+        ),
+
+
+        url:
+            publication.canonicalUrl ||
+            `https://veci-latin.com/business/${entity.slug}`,
+
+
+        ...(entity.image
+            ? {
+                image:
+                    entity.image,
+            }
+            : {}
+        ),
+
+
+        ...(entity.address ||
+            entity.cityId ||
+            entity.country
+            ? {
+
+                address: {
+
+                    "@type":
+                        "PostalAddress",
+
+
+                    ...(entity.address
+                        ? {
+                            streetAddress:
+                                entity.address,
+                        }
+                        : {}
+                    ),
+
+
+                    ...(entity.cityId
+                        ? {
+                            addressLocality:
+                                entity.cityId,
+                        }
+                        : {}
+                    ),
+
+
+                    ...(entity.country
+                        ? {
+                            addressCountry:
+                                entity.country,
+                        }
+                        : {}
+                    ),
+
+                },
+
+            }
+            : {}
+        ),
+
+
+        ...(sameAs.length > 0
+            ? {
+                sameAs,
+            }
+            : {}
+        ),
+
+
+        ...(entity.rating.count > 0
+            ? {
+
+                aggregateRating: {
+
+                    "@type":
+                        "AggregateRating",
+
+                    ratingValue:
+                        entity.rating.average,
+
+                    reviewCount:
+                        entity.rating.count,
+
+                },
+
+            }
+            : {}
+        ),
+
+    };
+
+
+    /* =====================================================
+       RENDER
+    ===================================================== */
+
     return (
 
-        <main className="min-h-screen">
+        <main
+            className="min-h-screen"
+        >
+
+
+            {/* =============================================
+                JSON-LD
+            ============================================= */}
+
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html:
+                        JSON.stringify(
+                            jsonLd
+                        ),
+                }}
+            />
+
+
+            {/* =============================================
+                CONTENT
+            ============================================= */}
 
             <section
                 className="
@@ -74,7 +410,12 @@ export default async function BusinessPage({
                 "
             >
 
-                {business.coverImage && (
+
+                {/* =========================================
+                    COVER IMAGE
+                ========================================= */}
+
+                {entity.coverImage && (
 
                     <div
                         className="
@@ -86,10 +427,10 @@ export default async function BusinessPage({
 
                         <img
                             src={
-                                business.coverImage
+                                entity.coverImage
                             }
                             alt={
-                                business.name
+                                entity.name
                             }
                             className="
                                 aspect-[3/1]
@@ -103,6 +444,10 @@ export default async function BusinessPage({
                 )}
 
 
+                {/* =========================================
+                    MAIN CARD
+                ========================================= */}
+
                 <div
                     className="
                         overflow-hidden
@@ -113,7 +458,12 @@ export default async function BusinessPage({
                     "
                 >
 
-                    {business.image && (
+
+                    {/* =====================================
+                        PROFILE IMAGE
+                    ===================================== */}
+
+                    {entity.image && (
 
                         <div
                             className="
@@ -123,10 +473,10 @@ export default async function BusinessPage({
 
                             <img
                                 src={
-                                    business.image
+                                    entity.image
                                 }
                                 alt={
-                                    business.name
+                                    entity.name
                                 }
                                 className="
                                     aspect-video
@@ -140,7 +490,14 @@ export default async function BusinessPage({
                     )}
 
 
-                    <div className="p-8">
+                    <div
+                        className="p-8"
+                    >
+
+
+                        {/* =================================
+                            CATEGORY
+                        ================================= */}
 
                         <p
                             className="
@@ -152,10 +509,14 @@ export default async function BusinessPage({
                             "
                         >
                             {
-                                business.category
+                                entity.category
                             }
                         </p>
 
+
+                        {/* =================================
+                            NAME
+                        ================================= */}
 
                         <h1
                             className="
@@ -166,12 +527,16 @@ export default async function BusinessPage({
                             "
                         >
                             {
-                                business.name
+                                entity.name
                             }
                         </h1>
 
 
-                        {business.subCategory && (
+                        {/* =================================
+                            SUBCATEGORY
+                        ================================= */}
+
+                        {entity.subCategory && (
 
                             <p
                                 className="
@@ -181,14 +546,18 @@ export default async function BusinessPage({
                                 "
                             >
                                 {
-                                    business.subCategory
+                                    entity.subCategory
                                 }
                             </p>
 
                         )}
 
 
-                        {business.description && (
+                        {/* =================================
+                            DESCRIPTION
+                        ================================= */}
+
+                        {entity.description && (
 
                             <p
                                 className="
@@ -199,12 +568,16 @@ export default async function BusinessPage({
                                 "
                             >
                                 {
-                                    business.description
+                                    entity.description
                                 }
                             </p>
 
                         )}
 
+
+                        {/* =================================
+                            LOCATION
+                        ================================= */}
 
                         <div
                             className="
@@ -215,49 +588,69 @@ export default async function BusinessPage({
                             "
                         >
 
-                            <p>
-                                <strong>
-                                    Location:
-                                </strong>{" "}
-                                {
-                                    business.address
-                                }
-                            </p>
-
-
-                            <p>
-                                <strong>
-                                    City:
-                                </strong>{" "}
-                                {
-                                    business.cityId
-                                }
-                            </p>
-
-
-                            {business.country && (
+                            {entity.address && (
 
                                 <p>
+
                                     <strong>
-                                        Country:
+                                        Location:
                                     </strong>{" "}
+
                                     {
-                                        business.country
+                                        entity.address
                                     }
+
                                 </p>
 
                             )}
 
 
-                            {business.priceRange && (
+                            {entity.cityId && (
 
                                 <p>
+
+                                    <strong>
+                                        City:
+                                    </strong>{" "}
+
+                                    {
+                                        entity.cityId
+                                    }
+
+                                </p>
+
+                            )}
+
+
+                            {entity.country && (
+
+                                <p>
+
+                                    <strong>
+                                        Country:
+                                    </strong>{" "}
+
+                                    {
+                                        entity.country
+                                    }
+
+                                </p>
+
+                            )}
+
+
+                            {entity.priceRange && (
+
+                                <p>
+
                                     <strong>
                                         Price:
                                     </strong>{" "}
+
                                     {
-                                        business.priceRange
+                                        entity.priceRange
                                     }
+
                                 </p>
 
                             )}
@@ -265,9 +658,13 @@ export default async function BusinessPage({
                         </div>
 
 
-                        {(business.website ||
-                            business.instagram ||
-                            business.whatsapp) && (
+                        {/* =================================
+                            EXTERNAL LINKS
+                        ================================= */}
+
+                        {(entity.website ||
+                            entity.instagram ||
+                            entity.whatsapp) && (
 
                             <div
                                 className="
@@ -278,11 +675,16 @@ export default async function BusinessPage({
                                 "
                             >
 
-                                {business.website && (
+
+                                {/* =========================
+                                    WEBSITE
+                                ========================= */}
+
+                                {entity.website && (
 
                                     <a
                                         href={
-                                            business.website
+                                            entity.website
                                         }
                                         target="_blank"
                                         rel="noopener noreferrer"
@@ -302,11 +704,15 @@ export default async function BusinessPage({
                                 )}
 
 
-                                {business.instagram && (
+                                {/* =========================
+                                    INSTAGRAM
+                                ========================= */}
+
+                                {entity.instagram && (
 
                                     <a
                                         href={
-                                            business.instagram
+                                            entity.instagram
                                         }
                                         target="_blank"
                                         rel="noopener noreferrer"
@@ -326,11 +732,15 @@ export default async function BusinessPage({
                                 )}
 
 
-                                {business.whatsapp && (
+                                {/* =========================
+                                    WHATSAPP
+                                ========================= */}
+
+                                {entity.whatsapp && (
 
                                     <a
                                         href={
-                                            business.whatsapp
+                                            entity.whatsapp
                                         }
                                         target="_blank"
                                         rel="noopener noreferrer"
