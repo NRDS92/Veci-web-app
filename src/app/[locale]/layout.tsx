@@ -2,26 +2,30 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import Navbar from "@/components/navbar/Navbar";
+
 const locales = ["es", "en", "de"];
 
 export default async function LocaleLayout({
-    children,
-    params,
+  children,
+  params,
 }: {
-    children: React.ReactNode;
-    params: Promise<{ locale: string }>;
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
-    const { locale } = await params;
+  const { locale } = await params;
 
-    if (!locales.includes(locale)) {
-        notFound();
-    }
+  if (!locales.includes(locale)) {
+    notFound();
+  }
 
-    const messages = await getMessages();
+  const messages = await getMessages();
 
-    return (
-        <NextIntlClientProvider messages={messages}>
-        {children}
-        </NextIntlClientProvider>
-    );
+  return (
+    <NextIntlClientProvider messages={messages}>
+      <Navbar />
+
+      {children}
+    </NextIntlClientProvider>
+  );
 }
