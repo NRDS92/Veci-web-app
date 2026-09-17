@@ -4,6 +4,12 @@ import {
     getPublicBusinessContentBySlug,
 } from "@/lib/api/public-content";
 
+import {
+    Ubicacion,
+    Mundo,
+    Dolar,
+} from "@mteherandev/colombia-icons-react";
+
 
 interface BusinessPageProps {
 
@@ -119,16 +125,23 @@ export async function generateMetadata(
 
             ...(image
                 ? {
+
                     images: [
+
                         {
+
                             url:
                                 image,
 
                             alt:
                                 entity.name,
+
                         },
+
                     ],
+
                 }
+
                 : {}
             ),
 
@@ -148,10 +161,15 @@ export async function generateMetadata(
 
             ...(image
                 ? {
+
                     images: [
+
                         image,
+
                     ],
+
                 }
+
                 : {}
             ),
 
@@ -186,20 +204,18 @@ export default async function BusinessPage(
     if (!content) {
 
         return (
-
             <main
                 className="min-h-screen"
             >
-
                 <section
                     className="
                         mx-auto
-                        max-w-4xl
+                        max-w-5xl
                         px-6
-                        py-20
+                        pt-36
+                        pb-16
                     "
                 >
-
                     <h1
                         className="
                             text-3xl
@@ -275,9 +291,12 @@ export default async function BusinessPage(
 
         ...(entity.description
             ? {
+
                 description:
                     entity.description,
+
             }
+
             : {}
         ),
 
@@ -289,9 +308,12 @@ export default async function BusinessPage(
 
         ...(entity.image
             ? {
+
                 image:
                     entity.image,
+
             }
+
             : {}
         ),
 
@@ -309,41 +331,54 @@ export default async function BusinessPage(
 
                     ...(entity.address
                         ? {
+
                             streetAddress:
                                 entity.address,
+
                         }
+
                         : {}
                     ),
 
 
                     ...(entity.cityId
                         ? {
+
                             addressLocality:
                                 entity.cityId,
+
                         }
+
                         : {}
                     ),
 
 
                     ...(entity.country
                         ? {
+
                             addressCountry:
                                 entity.country,
+
                         }
+
                         : {}
                     ),
 
                 },
 
             }
+
             : {}
         ),
 
 
         ...(sameAs.length > 0
             ? {
+
                 sameAs,
+
             }
+
             : {}
         ),
 
@@ -365,6 +400,7 @@ export default async function BusinessPage(
                 },
 
             }
+
             : {}
         ),
 
@@ -406,7 +442,8 @@ export default async function BusinessPage(
                     mx-auto
                     max-w-5xl
                     px-6
-                    py-16
+                    pt-36
+                    pb-16
                 "
             >
 
@@ -576,82 +613,239 @@ export default async function BusinessPage(
 
 
                         {/* =================================
-                            LOCATION
+                            BUSINESS INFO
                         ================================= */}
 
                         <div
                             className="
                                 mt-8
-                                space-y-3
-                                text-sm
-                                text-gray-600
+                                grid
+                                grid-cols-1
+                                gap-4
+                                sm:grid-cols-2
                             "
                         >
 
+                            {/* LOCATION */}
+
                             {entity.address && (
 
-                                <p>
+                                <div
+                                    className="
+                                        flex
+                                        items-start
+                                        gap-3
+                                        rounded-2xl
+                                        border
+                                        border-gray-200
+                                        bg-gray-50
+                                        p-4
+                                    "
+                                >
 
-                                    <strong>
-                                        Location:
-                                    </strong>{" "}
+                                    <Ubicacion
+                                        size={24}
+                                        color="currentColor"
+                                    />
 
-                                    {
-                                        entity.address
-                                    }
+                                    <div>
 
-                                </p>
+                                        <p
+                                            className="
+                                                text-xs
+                                                font-medium
+                                                uppercase
+                                                tracking-wide
+                                                text-gray-400
+                                            "
+                                        >
+                                            Location
+                                        </p>
+
+                                        <p
+                                            className="
+                                                mt-1
+                                                text-sm
+                                                font-medium
+                                                text-gray-800
+                                            "
+                                        >
+                                            {
+                                                entity.address
+                                            }
+                                        </p>
+
+                                    </div>
+
+                                </div>
 
                             )}
 
+
+                            {/* CITY */}
 
                             {entity.cityId && (
 
-                                <p>
+                                <div
+                                    className="
+                                        flex
+                                        items-start
+                                        gap-3
+                                        rounded-2xl
+                                        border
+                                        border-gray-200
+                                        bg-gray-50
+                                        p-4
+                                    "
+                                >
 
-                                    <strong>
-                                        City:
-                                    </strong>{" "}
+                                    <Mundo
+                                        size={24}
+                                        color="currentColor"
+                                    />
 
-                                    {
-                                        entity.cityId
-                                    }
+                                    <div>
 
-                                </p>
+                                        <p
+                                            className="
+                                                text-xs
+                                                font-medium
+                                                uppercase
+                                                tracking-wide
+                                                text-gray-400
+                                            "
+                                        >
+                                            City
+                                        </p>
+
+                                        <p
+                                            className="
+                                                mt-1
+                                                text-sm
+                                                font-medium
+                                                text-gray-800
+                                            "
+                                        >
+                                            {
+                                                entity.cityId
+                                            }
+                                        </p>
+
+                                    </div>
+
+                                </div>
 
                             )}
 
+
+                            {/* COUNTRY */}
 
                             {entity.country && (
 
-                                <p>
+                                <div
+                                    className="
+                                        flex
+                                        items-start
+                                        gap-3
+                                        rounded-2xl
+                                        border
+                                        border-gray-200
+                                        bg-gray-50
+                                        p-4
+                                    "
+                                >
 
-                                    <strong>
-                                        Country:
-                                    </strong>{" "}
+                                    <Mundo
+                                        size={24}
+                                        color="currentColor"
+                                    />
 
-                                    {
-                                        entity.country
-                                    }
+                                    <div>
 
-                                </p>
+                                        <p
+                                            className="
+                                                text-xs
+                                                font-medium
+                                                uppercase
+                                                tracking-wide
+                                                text-gray-400
+                                            "
+                                        >
+                                            Country
+                                        </p>
+
+                                        <p
+                                            className="
+                                                mt-1
+                                                text-sm
+                                                font-medium
+                                                text-gray-800
+                                            "
+                                        >
+                                            {
+                                                entity.country
+                                            }
+                                        </p>
+
+                                    </div>
+
+                                </div>
 
                             )}
 
 
+                            {/* PRICE */}
+
                             {entity.priceRange && (
 
-                                <p>
+                                <div
+                                    className="
+                                        flex
+                                        items-start
+                                        gap-3
+                                        rounded-2xl
+                                        border
+                                        border-gray-200
+                                        bg-gray-50
+                                        p-4
+                                    "
+                                >
 
-                                    <strong>
-                                        Price:
-                                    </strong>{" "}
+                                    <Dolar
+                                        size={24}
+                                        color="currentColor"
+                                    />
 
-                                    {
-                                        entity.priceRange
-                                    }
+                                    <div>
 
-                                </p>
+                                        <p
+                                            className="
+                                                text-xs
+                                                font-medium
+                                                uppercase
+                                                tracking-wide
+                                                text-gray-400
+                                            "
+                                        >
+                                            Price
+                                        </p>
+
+                                        <p
+                                            className="
+                                                mt-1
+                                                text-sm
+                                                font-medium
+                                                text-gray-800
+                                            "
+                                        >
+                                            {
+                                                entity.priceRange
+                                            }
+                                        </p>
+
+                                    </div>
+
+                                </div>
 
                             )}
 

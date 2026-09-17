@@ -35,91 +35,196 @@ export default function EventJsonLd({
 }: EventJsonLdProps) {
 
     const jsonLd = {
-        "@context": "https://schema.org",
 
-        "@type": "Event",
+        "@context":
+            "https://schema.org",
+
+        "@type":
+            "Event",
+
+
+        /* =====================================================
+           BASIC EVENT INFORMATION
+        ===================================================== */
 
         name:
             event.title,
 
-        description:
-            event.description,
+
+        ...(event.description
+            ? {
+                description:
+                    event.description,
+            }
+            : {}
+        ),
+
+
+        /* =====================================================
+           DATE
+        ===================================================== */
 
         startDate:
             event.dateStart,
 
-        ...(event.dateEnd && {
-            endDate:
-                event.dateEnd,
-        }),
+
+        ...(event.dateEnd
+            ? {
+                endDate:
+                    event.dateEnd,
+            }
+            : {}
+        ),
+
+
+        /* =====================================================
+           EVENT STATUS
+        ===================================================== */
 
         eventStatus:
             "https://schema.org/EventScheduled",
 
+
         eventAttendanceMode:
             "https://schema.org/OfflineEventAttendanceMode",
 
+
+        /* =====================================================
+           CANONICAL EVENT URL
+        ===================================================== */
+
         url,
 
+
+        /* =====================================================
+           EVENT IMAGE
+        ===================================================== */
+
         ...(event.images &&
-            event.images.length > 0 && {
+            event.images.length > 0
+            ? {
                 image:
                     event.images,
-            }),
+            }
+            : {}
+        ),
+
+
+        /* =====================================================
+           LOCATION
+        ===================================================== */
 
         location: {
 
             "@type":
                 "Place",
 
+
             name:
                 event.cityId,
 
-            address:
-                event.address,
 
-            ...(event.location && {
-                geo: {
-                    "@type":
-                        "GeoCoordinates",
+            address: {
 
-                    longitude:
-                        event.location
-                            .coordinates[0],
+                "@type":
+                    "PostalAddress",
 
-                    latitude:
-                        event.location
-                            .coordinates[1],
-                },
-            }),
+
+                ...(event.address
+                    ? {
+                        streetAddress:
+                            event.address,
+                    }
+                    : {}
+                ),
+
+
+                ...(event.cityId
+                    ? {
+                        addressLocality:
+                            event.cityId,
+                    }
+                    : {}
+                ),
+
+            },
+
+
+            /* =============================================
+               GEO COORDINATES
+
+               GeoJSON coordinates are:
+               [longitude, latitude]
+            ============================================= */
+
+            ...(event.location
+                ? {
+                    geo: {
+
+                        "@type":
+                            "GeoCoordinates",
+
+
+                        longitude:
+                            event.location
+                                .coordinates[0],
+
+
+                        latitude:
+                            event.location
+                                .coordinates[1],
+
+                    },
+                }
+                : {}
+            ),
 
         },
 
-        ...(event.createdBy && {
-            organizer: {
 
-                "@type":
-                    "Person",
+        /* =====================================================
+           ORGANIZER
+        ===================================================== */
 
-                name:
-                    event.createdBy.name,
+        ...(event.createdBy
+            ? {
 
-            },
-        }),
+                organizer: {
+
+                    "@type":
+                        "Person",
+
+
+                    name:
+                        event.createdBy.name,
+
+                },
+
+            }
+            : {}
+        ),
+
+
+        /* =====================================================
+           MAIN ENTITY
+        ===================================================== */
 
         mainEntityOfPage: {
 
             "@type":
                 "WebPage",
 
+
             "@id":
                 url,
 
         },
+
     };
 
 
     return (
+
         <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
@@ -132,5 +237,7 @@ export default function EventJsonLd({
                     ),
             }}
         />
+
     );
+
 }
