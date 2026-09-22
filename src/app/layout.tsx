@@ -1,5 +1,6 @@
 import "./globals.css";
 import Script from "next/script";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 
 export const metadata = {
   title: "VECI – Latin Events & Community in Europe",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body suppressHydrationWarning>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
 
         <Script
           src="https://kit.fontawesome.com/fe8085a031.js"
