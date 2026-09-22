@@ -1,14 +1,29 @@
-import api  from "@/lib/api";
+import api from "@/lib/api";
+
 import {
-  LoginRequest,
-  RegisterRequest,
-  ForgotPasswordRequest,
-  ResetPasswordRequest,
+    LoginRequest,
+    RegisterRequest,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
+    LoginResponse,
+    ApiResponse,
+    AuthUser,
 } from "./types";
 
 export const authService = {
     login(data: LoginRequest) {
-        return api.post("/auth/login", data);
+        return api.post<ApiResponse<LoginResponse>>(
+            "/auth/login",
+            data
+        );
+        
+    },
+    
+
+    getMe() {
+        return api.get<ApiResponse<AuthUser>>(
+            "/auth/me"
+        );
     },
 
     register(data: RegisterRequest) {
@@ -20,9 +35,6 @@ export const authService = {
     },
 
     resetPassword(data: ResetPasswordRequest) {
-        console.log("Base URL:", api.defaults.baseURL);
-        console.log("Request:", data);
-
         return api.post("/auth/reset-password", data);
-    }
+    },
 };

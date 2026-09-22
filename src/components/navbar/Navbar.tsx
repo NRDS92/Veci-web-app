@@ -10,6 +10,8 @@ import {
     useRouter,
 } from "../../i18n/navigation";
 
+import { useAuth } from "@/components/auth/AuthProvider";
+
 import VeciLogo from "../../../public/logoVeci.webp";
 
 const links = [
@@ -33,6 +35,13 @@ export default function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
 
+    const {
+        user,
+        isAuthenticated,
+        loading,
+        logout,
+    } = useAuth();
+
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
@@ -51,6 +60,12 @@ export default function Navbar() {
         router.replace(pathnameWithoutLocale, { locale });
 
         setOpen(false);
+    };
+
+    const handleLogout = () => {
+        logout();
+        setOpen(false);
+        router.push("/");
     };
 
     return (
@@ -190,16 +205,13 @@ export default function Navbar() {
                                         onClick={() =>
                                             changeLocale(locale.code)
                                         }
-                                        className={`
+                                        className="
                                             text-sm
                                             font-medium
                                             transition
-                                            ${
-                                                pathname
-                                                    ? "text-neutral-500 hover:text-black"
-                                                    : "text-neutral-500"
-                                            }
-                                        `}
+                                            text-neutral-500
+                                            hover:text-black
+                                        "
                                     >
                                         {locale.label}
                                     </button>
@@ -212,6 +224,67 @@ export default function Navbar() {
                                 </div>
                             ))}
                         </div>
+
+                        {/* AUTH */}
+
+                        {loading ? (
+                            <div
+                                className="
+                                    h-10
+                                    w-24
+                                    animate-pulse
+                                    rounded-xl
+                                    bg-neutral-200
+                                "
+                            />
+                        ) : isAuthenticated && user ? (
+                            <div className="flex items-center gap-3">
+                                <span
+                                    className="
+                                        text-sm
+                                        font-medium
+                                        text-neutral-700
+                                    "
+                                >
+                                    {user.name}
+                                </span>
+
+                                <button
+                                    onClick={handleLogout}
+                                    className="
+                                        rounded-xl
+                                        border
+                                        border-neutral-200
+                                        px-4
+                                        py-2
+                                        text-sm
+                                        font-medium
+                                        text-neutral-700
+                                        transition
+                                        hover:bg-neutral-100
+                                    "
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        ) : (
+                            <Link
+                                href="/login"
+                                className="
+                                    rounded-xl
+                                    bg-[#FF7A00]
+                                    px-5
+                                    py-3
+                                    text-sm
+                                    font-semibold
+                                    text-white
+                                    transition
+                                    hover:scale-105
+                                "
+                            >
+                                Iniciar sesión
+                            </Link>
+                        )}
 
                         {/* DOWNLOAD APP */}
 
@@ -372,6 +445,77 @@ export default function Navbar() {
                                     ))}
                                 </div>
                             </div>
+
+                            {/* AUTH MOBILE */}
+
+                            {loading ? (
+                                <div
+                                    className="
+                                        h-11
+                                        w-full
+                                        animate-pulse
+                                        rounded-xl
+                                        bg-neutral-200
+                                    "
+                                />
+                            ) : isAuthenticated && user ? (
+                                <div
+                                    className="
+                                        flex
+                                        flex-col
+                                        gap-3
+                                        border-t
+                                        pt-4
+                                    "
+                                >
+                                    <div>
+                                        <p className="text-xs text-neutral-500">
+                                            Sesión iniciada como
+                                        </p>
+
+                                        <p className="font-semibold text-neutral-800">
+                                            {user.name}
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        onClick={handleLogout}
+                                        className="
+                                            w-full
+                                            rounded-xl
+                                            border
+                                            border-neutral-200
+                                            px-5
+                                            py-3
+                                            text-neutral-700
+                                            font-semibold
+                                            transition
+                                            hover:bg-neutral-100
+                                        "
+                                    >
+                                        Cerrar sesión
+                                    </button>
+                                </div>
+                            ) : (
+                                <Link
+                                    href="/login"
+                                    onClick={() => setOpen(false)}
+                                    className="
+                                        w-full
+                                        rounded-xl
+                                        bg-[#FF7A00]
+                                        px-5
+                                        py-3
+                                        text-center
+                                        text-white
+                                        font-semibold
+                                        transition
+                                        hover:scale-[1.02]
+                                    "
+                                >
+                                    Iniciar sesión
+                                </Link>
+                            )}
 
                             {/* DOWNLOAD APP */}
 
