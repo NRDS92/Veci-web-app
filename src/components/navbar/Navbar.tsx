@@ -2,7 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+
+import {
+    Menu,
+    X,
+    ChevronDown,
+    User,
+    Heart,
+    CalendarDays,
+    Store,
+    LogOut,
+} from "lucide-react";
 
 import {
     Link,
@@ -31,6 +41,7 @@ const locales = [
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [open, setOpen] = useState(false);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
 
     const router = useRouter();
     const pathname = usePathname();
@@ -50,26 +61,54 @@ export default function Navbar() {
         window.addEventListener("scroll", handleScroll);
 
         return () =>
-            window.removeEventListener("scroll", handleScroll);
+            window.removeEventListener(
+                "scroll",
+                handleScroll
+            );
     }, []);
 
-    const changeLocale = (locale: "es" | "en" | "de") => {
+    const changeLocale = (
+        locale: "es" | "en" | "de"
+    ) => {
         const pathnameWithoutLocale =
-            pathname.replace(/^\/(es|en|de)(?=\/|$)/, "") || "/";
+            pathname.replace(
+                /^\/(es|en|de)(?=\/|$)/,
+                ""
+            ) || "/";
 
-        router.replace(pathnameWithoutLocale, { locale });
+        router.replace(
+            pathnameWithoutLocale,
+            { locale }
+        );
 
         setOpen(false);
+        setUserMenuOpen(false);
     };
 
     const handleLogout = () => {
         logout();
+
         setOpen(false);
+        setUserMenuOpen(false);
+
         router.push("/");
+    };
+
+    const handleUserNavigation = (
+        path: string
+    ) => {
+        setUserMenuOpen(false);
+        setOpen(false);
+
+        router.push(path);
     };
 
     return (
         <>
+            {/* =====================================================
+                DESKTOP / MAIN NAVBAR
+            ====================================================== */}
+
             <motion.header
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
@@ -95,7 +134,7 @@ export default function Navbar() {
                                 border-black/5
                                 shadow-lg
                             `
-                            : `bg-transparent`
+                            : "bg-transparent"
                     }
                 `}
             >
@@ -108,9 +147,16 @@ export default function Navbar() {
                         px-6
                     "
                 >
-                    {/* LOGO */}
+                    {/* =================================================
+                        LOGO
+                    ================================================== */}
 
-                    <Link href="/">
+                    <Link
+                        href="/"
+                        onClick={() => {
+                            setUserMenuOpen(false);
+                        }}
+                    >
                         <img
                             src={VeciLogo.src}
                             alt="Veci Logo"
@@ -118,7 +164,9 @@ export default function Navbar() {
                         />
                     </Link>
 
-                    {/* DESKTOP NAV */}
+                    {/* =================================================
+                        DESKTOP NAVIGATION
+                    ================================================== */}
 
                     <nav
                         className="
@@ -183,7 +231,9 @@ export default function Navbar() {
                         })}
                     </nav>
 
-                    {/* RIGHT */}
+                    {/* =================================================
+                        RIGHT SIDE
+                    ================================================== */}
 
                     <div
                         className="
@@ -196,36 +246,51 @@ export default function Navbar() {
                         {/* LANGUAGE */}
 
                         <div className="flex items-center gap-2">
-                            {locales.map((locale, index) => (
-                                <div
-                                    key={locale.code}
-                                    className="flex items-center"
-                                >
-                                    <button
-                                        onClick={() =>
-                                            changeLocale(locale.code)
+                            {locales.map(
+                                (locale, index) => (
+                                    <div
+                                        key={
+                                            locale.code
                                         }
                                         className="
-                                            text-sm
-                                            font-medium
-                                            transition
-                                            text-neutral-500
-                                            hover:text-black
+                                            flex
+                                            items-center
                                         "
                                     >
-                                        {locale.label}
-                                    </button>
+                                        <button
+                                            onClick={() =>
+                                                changeLocale(
+                                                    locale.code
+                                                )
+                                            }
+                                            className="
+                                                text-sm
+                                                font-medium
+                                                text-neutral-500
+                                                transition
+                                                hover:text-black
+                                            "
+                                        >
+                                            {
+                                                locale.label
+                                            }
+                                        </button>
 
-                                    {index < locales.length - 1 && (
-                                        <span className="mx-1 text-neutral-300">
-                                            |
-                                        </span>
-                                    )}
-                                </div>
-                            ))}
+                                        {index <
+                                            locales.length -
+                                                1 && (
+                                            <span className="mx-1 text-neutral-300">
+                                                |
+                                            </span>
+                                        )}
+                                    </div>
+                                )
+                            )}
                         </div>
 
-                        {/* AUTH */}
+                        {/* =================================================
+                            AUTHENTICATION
+                        ================================================== */}
 
                         {loading ? (
                             <div
@@ -237,35 +302,362 @@ export default function Navbar() {
                                     bg-neutral-200
                                 "
                             />
-                        ) : isAuthenticated && user ? (
-                            <div className="flex items-center gap-3">
-                                <span
-                                    className="
-                                        text-sm
-                                        font-medium
-                                        text-neutral-700
-                                    "
-                                >
-                                    {user.name}
-                                </span>
+                        ) : isAuthenticated &&
+                          user ? (
+                            <div className="relative">
+                                {/* USER BUTTON */}
 
                                 <button
-                                    onClick={handleLogout}
+                                    type="button"
+                                    onClick={() =>
+                                        setUserMenuOpen(
+                                            !userMenuOpen
+                                        )
+                                    }
                                     className="
+                                        flex
+                                        items-center
+                                        gap-2
                                         rounded-xl
-                                        border
-                                        border-neutral-200
-                                        px-4
+                                        px-3
                                         py-2
                                         text-sm
                                         font-medium
                                         text-neutral-700
                                         transition
-                                        hover:bg-neutral-100
+                                        hover:bg-white/70
                                     "
                                 >
-                                    Logout
+                                    {user.profileImage ? (
+                                        <img
+                                            src={
+                                                user.profileImage
+                                            }
+                                            alt={
+                                                user.name
+                                            }
+                                            className="
+                                                h-9
+                                                w-9
+                                                rounded-full
+                                                object-cover
+                                            "
+                                        />
+                                    ) : (
+                                        <div
+                                            className="
+                                                flex
+                                                h-9
+                                                w-9
+                                                items-center
+                                                justify-center
+                                                rounded-full
+                                                bg-[#F2C94C]
+                                                text-sm
+                                                font-bold
+                                                text-[#111827]
+                                            "
+                                        >
+                                            {user.name
+                                                .charAt(
+                                                    0
+                                                )
+                                                .toUpperCase()}
+                                        </div>
+                                    )}
+
+                                    <span>
+                                        {user.name}
+                                    </span>
+
+                                    <ChevronDown
+                                        size={16}
+                                        className={`
+                                            transition-transform
+                                            duration-200
+                                            ${
+                                                userMenuOpen
+                                                    ? "rotate-180"
+                                                    : ""
+                                            }
+                                        `}
+                                    />
                                 </button>
+
+                                {/* USER DROPDOWN */}
+
+                                {userMenuOpen && (
+                                    <div
+                                        className="
+                                            absolute
+                                            right-0
+                                            top-14
+                                            w-64
+                                            overflow-hidden
+                                            rounded-2xl
+                                            border
+                                            border-neutral-100
+                                            bg-white
+                                            shadow-xl
+                                        "
+                                    >
+                                        {/* USER HEADER */}
+
+                                        <div
+                                            className="
+                                                border-b
+                                                border-neutral-100
+                                                px-4
+                                                py-4
+                                            "
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                {user.profileImage ? (
+                                                    <img
+                                                        src={
+                                                            user.profileImage
+                                                        }
+                                                        alt={
+                                                            user.name
+                                                        }
+                                                        className="
+                                                            h-11
+                                                            w-11
+                                                            rounded-full
+                                                            object-cover
+                                                        "
+                                                    />
+                                                ) : (
+                                                    <div
+                                                        className="
+                                                            flex
+                                                            h-11
+                                                            w-11
+                                                            shrink-0
+                                                            items-center
+                                                            justify-center
+                                                            rounded-full
+                                                            bg-[#F2C94C]
+                                                            font-bold
+                                                            text-[#111827]
+                                                        "
+                                                    >
+                                                        {user.name
+                                                            .charAt(
+                                                                0
+                                                            )
+                                                            .toUpperCase()}
+                                                    </div>
+                                                )}
+
+                                                <div className="min-w-0">
+                                                    <p
+                                                        className="
+                                                            truncate
+                                                            text-sm
+                                                            font-semibold
+                                                            text-neutral-900
+                                                        "
+                                                    >
+                                                        {
+                                                            user.name
+                                                        }
+                                                    </p>
+
+                                                    <p
+                                                        className="
+                                                            truncate
+                                                            text-xs
+                                                            text-neutral-500
+                                                        "
+                                                    >
+                                                        {
+                                                            user.email
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* USER LINKS */}
+
+                                        <div className="p-2">
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleUserNavigation(
+                                                        "/profile"
+                                                    )
+                                                }
+                                                className="
+                                                    flex
+                                                    w-full
+                                                    items-center
+                                                    gap-3
+                                                    rounded-xl
+                                                    px-3
+                                                    py-2.5
+                                                    text-left
+                                                    text-sm
+                                                    text-neutral-700
+                                                    transition
+                                                    hover:bg-neutral-100
+                                                "
+                                            >
+                                                <User
+                                                    size={
+                                                        17
+                                                    }
+                                                />
+
+                                                <span>
+                                                    Profile
+                                                </span>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleUserNavigation(
+                                                        "/favorites"
+                                                    )
+                                                }
+                                                className="
+                                                    flex
+                                                    w-full
+                                                    items-center
+                                                    gap-3
+                                                    rounded-xl
+                                                    px-3
+                                                    py-2.5
+                                                    text-left
+                                                    text-sm
+                                                    text-neutral-700
+                                                    transition
+                                                    hover:bg-neutral-100
+                                                "
+                                            >
+                                                <Heart
+                                                    size={
+                                                        17
+                                                    }
+                                                />
+
+                                                <span>
+                                                    Favorites
+                                                </span>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleUserNavigation(
+                                                        "/my-events"
+                                                    )
+                                                }
+                                                className="
+                                                    flex
+                                                    w-full
+                                                    items-center
+                                                    gap-3
+                                                    rounded-xl
+                                                    px-3
+                                                    py-2.5
+                                                    text-left
+                                                    text-sm
+                                                    text-neutral-700
+                                                    transition
+                                                    hover:bg-neutral-100
+                                                "
+                                            >
+                                                <CalendarDays
+                                                    size={
+                                                        17
+                                                    }
+                                                />
+
+                                                <span>
+                                                    My Events
+                                                </span>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleUserNavigation(
+                                                        "/my-businesses"
+                                                    )
+                                                }
+                                                className="
+                                                    flex
+                                                    w-full
+                                                    items-center
+                                                    gap-3
+                                                    rounded-xl
+                                                    px-3
+                                                    py-2.5
+                                                    text-left
+                                                    text-sm
+                                                    text-neutral-700
+                                                    transition
+                                                    hover:bg-neutral-100
+                                                "
+                                            >
+                                                <Store
+                                                    size={
+                                                        17
+                                                    }
+                                                />
+
+                                                <span>
+                                                    My Businesses
+                                                </span>
+                                            </button>
+                                        </div>
+
+                                        {/* LOGOUT */}
+
+                                        <div
+                                            className="
+                                                border-t
+                                                border-neutral-100
+                                                p-2
+                                            "
+                                        >
+                                            <button
+                                                type="button"
+                                                onClick={
+                                                    handleLogout
+                                                }
+                                                className="
+                                                    flex
+                                                    w-full
+                                                    items-center
+                                                    gap-3
+                                                    rounded-xl
+                                                    px-3
+                                                    py-2.5
+                                                    text-left
+                                                    text-sm
+                                                    font-medium
+                                                    text-red-600
+                                                    transition
+                                                    hover:bg-red-50
+                                                "
+                                            >
+                                                <LogOut
+                                                    size={
+                                                        17
+                                                    }
+                                                />
+
+                                                <span>
+                                                    Logout
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <Link
@@ -305,10 +697,15 @@ export default function Navbar() {
                         </button>
                     </div>
 
-                    {/* MOBILE */}
+                    {/* =================================================
+                        MOBILE MENU BUTTON
+                    ================================================== */}
 
                     <button
-                        onClick={() => setOpen(!open)}
+                        onClick={() => {
+                            setOpen(!open);
+                            setUserMenuOpen(false);
+                        }}
                         className="lg:hidden"
                         aria-label="Toggle menu"
                     >
@@ -317,7 +714,9 @@ export default function Navbar() {
                 </div>
             </motion.header>
 
-            {/* MOBILE MENU */}
+            {/* =====================================================
+                MOBILE MENU
+            ====================================================== */}
 
             <AnimatePresence>
                 {open && (
@@ -342,8 +741,8 @@ export default function Navbar() {
                             z-40
                             rounded-2xl
                             bg-white
-                            shadow-xl
                             p-6
+                            shadow-xl
                             lg:hidden
                         "
                     >
@@ -352,7 +751,10 @@ export default function Navbar() {
                             {/* NAV LINKS */}
 
                             {links.map((item) => {
-                                if (item === "Eventos") {
+                                if (
+                                    item ===
+                                    "Eventos"
+                                ) {
                                     return (
                                         <Link
                                             key={item}
@@ -362,7 +764,9 @@ export default function Navbar() {
                                                 text-neutral-700
                                             "
                                             onClick={() =>
-                                                setOpen(false)
+                                                setOpen(
+                                                    false
+                                                )
                                             }
                                         >
                                             {item}
@@ -370,7 +774,10 @@ export default function Navbar() {
                                     );
                                 }
 
-                                if (item === "Negocios") {
+                                if (
+                                    item ===
+                                    "Negocios"
+                                ) {
                                     return (
                                         <Link
                                             key={item}
@@ -380,7 +787,9 @@ export default function Navbar() {
                                                 text-neutral-700
                                             "
                                             onClick={() =>
-                                                setOpen(false)
+                                                setOpen(
+                                                    false
+                                                )
                                             }
                                         >
                                             {item}
@@ -397,7 +806,9 @@ export default function Navbar() {
                                             text-neutral-700
                                         "
                                         onClick={() =>
-                                            setOpen(false)
+                                            setOpen(
+                                                false
+                                            )
                                         }
                                     >
                                         {item}
@@ -409,97 +820,304 @@ export default function Navbar() {
 
                             <div
                                 className="
-                                    pt-4
                                     border-t
+                                    pt-4
                                 "
                             >
                                 <div className="flex items-center gap-3">
-                                    {locales.map((locale, index) => (
-                                        <div
-                                            key={locale.code}
-                                            className="flex items-center"
-                                        >
-                                            <button
-                                                onClick={() =>
-                                                    changeLocale(
-                                                        locale.code
-                                                    )
+                                    {locales.map(
+                                        (
+                                            locale,
+                                            index
+                                        ) => (
+                                            <div
+                                                key={
+                                                    locale.code
                                                 }
                                                 className="
-                                                    font-medium
-                                                    text-neutral-500
-                                                    transition
-                                                    hover:text-black
+                                                    flex
+                                                    items-center
                                                 "
                                             >
-                                                {locale.label}
-                                            </button>
+                                                <button
+                                                    onClick={() =>
+                                                        changeLocale(
+                                                            locale.code
+                                                        )
+                                                    }
+                                                    className="
+                                                        font-medium
+                                                        text-neutral-500
+                                                        transition
+                                                        hover:text-black
+                                                    "
+                                                >
+                                                    {
+                                                        locale.label
+                                                    }
+                                                </button>
 
-                                            {index <
-                                                locales.length - 1 && (
-                                                <span className="ml-3 text-neutral-300">
-                                                    |
-                                                </span>
-                                            )}
-                                        </div>
-                                    ))}
+                                                {index <
+                                                    locales.length -
+                                                        1 && (
+                                                    <span className="ml-3 text-neutral-300">
+                                                        |
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )
+                                    )}
                                 </div>
                             </div>
 
-                            {/* AUTH MOBILE */}
+                            {/* =================================================
+                                MOBILE AUTH
+                            ================================================== */}
 
                             {loading ? (
                                 <div
                                     className="
-                                        h-11
+                                        h-20
                                         w-full
                                         animate-pulse
                                         rounded-xl
                                         bg-neutral-200
                                     "
                                 />
-                            ) : isAuthenticated && user ? (
+                            ) : isAuthenticated &&
+                              user ? (
                                 <div
                                     className="
-                                        flex
-                                        flex-col
-                                        gap-3
                                         border-t
                                         pt-4
                                     "
                                 >
-                                    <div>
-                                        <p className="text-xs text-neutral-500">
-                                            Sesión iniciada como
-                                        </p>
+                                    {/* USER */}
 
-                                        <p className="font-semibold text-neutral-800">
-                                            {user.name}
-                                        </p>
+                                    <div className="mb-4 flex items-center gap-3">
+                                        {user.profileImage ? (
+                                            <img
+                                                src={
+                                                    user.profileImage
+                                                }
+                                                alt={
+                                                    user.name
+                                                }
+                                                className="
+                                                    h-11
+                                                    w-11
+                                                    rounded-full
+                                                    object-cover
+                                                "
+                                            />
+                                        ) : (
+                                            <div
+                                                className="
+                                                    flex
+                                                    h-11
+                                                    w-11
+                                                    shrink-0
+                                                    items-center
+                                                    justify-center
+                                                    rounded-full
+                                                    bg-[#F2C94C]
+                                                    font-bold
+                                                    text-[#111827]
+                                                "
+                                            >
+                                                {user.name
+                                                    .charAt(
+                                                        0
+                                                    )
+                                                    .toUpperCase()}
+                                            </div>
+                                        )}
+
+                                        <div className="min-w-0">
+                                            <p className="text-xs text-neutral-500">
+                                                Sesión iniciada como
+                                            </p>
+
+                                            <p className="truncate font-semibold text-neutral-900">
+                                                {
+                                                    user.name
+                                                }
+                                            </p>
+                                        </div>
                                     </div>
 
+                                    {/* PROFILE */}
+
                                     <button
-                                        onClick={handleLogout}
+                                        type="button"
+                                        onClick={() =>
+                                            handleUserNavigation(
+                                                "/profile"
+                                            )
+                                        }
                                         className="
+                                            flex
                                             w-full
+                                            items-center
+                                            gap-3
                                             rounded-xl
-                                            border
-                                            border-neutral-200
-                                            px-5
+                                            px-3
                                             py-3
+                                            text-left
+                                            text-sm
                                             text-neutral-700
-                                            font-semibold
                                             transition
                                             hover:bg-neutral-100
                                         "
                                     >
-                                        Cerrar sesión
+                                        <User
+                                            size={18}
+                                        />
+
+                                        Profile
                                     </button>
+
+                                    {/* FAVORITES */}
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleUserNavigation(
+                                                "/favorites"
+                                            )
+                                        }
+                                        className="
+                                            flex
+                                            w-full
+                                            items-center
+                                            gap-3
+                                            rounded-xl
+                                            px-3
+                                            py-3
+                                            text-left
+                                            text-sm
+                                            text-neutral-700
+                                            transition
+                                            hover:bg-neutral-100
+                                        "
+                                    >
+                                        <Heart
+                                            size={18}
+                                        />
+
+                                        Favorites
+                                    </button>
+
+                                    {/* MY EVENTS */}
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleUserNavigation(
+                                                "/my-events"
+                                            )
+                                        }
+                                        className="
+                                            flex
+                                            w-full
+                                            items-center
+                                            gap-3
+                                            rounded-xl
+                                            px-3
+                                            py-3
+                                            text-left
+                                            text-sm
+                                            text-neutral-700
+                                            transition
+                                            hover:bg-neutral-100
+                                        "
+                                    >
+                                        <CalendarDays
+                                            size={18}
+                                        />
+
+                                        My Events
+                                    </button>
+
+                                    {/* MY BUSINESSES */}
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleUserNavigation(
+                                                "/my-businesses"
+                                            )
+                                        }
+                                        className="
+                                            flex
+                                            w-full
+                                            items-center
+                                            gap-3
+                                            rounded-xl
+                                            px-3
+                                            py-3
+                                            text-left
+                                            text-sm
+                                            text-neutral-700
+                                            transition
+                                            hover:bg-neutral-100
+                                        "
+                                    >
+                                        <Store
+                                            size={18}
+                                        />
+
+                                        My Businesses
+                                    </button>
+
+                                    {/* LOGOUT */}
+
+                                    <div
+                                        className="
+                                            mt-3
+                                            border-t
+                                            pt-3
+                                        "
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={
+                                                handleLogout
+                                            }
+                                            className="
+                                                flex
+                                                w-full
+                                                items-center
+                                                gap-3
+                                                rounded-xl
+                                                px-3
+                                                py-3
+                                                text-left
+                                                text-sm
+                                                font-medium
+                                                text-red-600
+                                                transition
+                                                hover:bg-red-50
+                                            "
+                                        >
+                                            <LogOut
+                                                size={
+                                                    18
+                                                }
+                                            />
+
+                                            Cerrar sesión
+                                        </button>
+                                    </div>
                                 </div>
                             ) : (
                                 <Link
                                     href="/login"
-                                    onClick={() => setOpen(false)}
+                                    onClick={() =>
+                                        setOpen(
+                                            false
+                                        )
+                                    }
                                     className="
                                         w-full
                                         rounded-xl
@@ -507,8 +1125,8 @@ export default function Navbar() {
                                         px-5
                                         py-3
                                         text-center
-                                        text-white
                                         font-semibold
+                                        text-white
                                         transition
                                         hover:scale-[1.02]
                                     "
@@ -525,8 +1143,8 @@ export default function Navbar() {
                                     bg-[#2563EB]
                                     px-5
                                     py-3
-                                    text-white
                                     font-semibold
+                                    text-white
                                 "
                             >
                                 Descargar App
