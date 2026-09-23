@@ -1,8 +1,11 @@
+
 "use client";
 
 import { FormEvent, useState } from "react";
 
 import ImageUpload from "@/components/upload/ImageUpload";
+import LocationSelector from "@/components/location/LocationSelector";
+
 import { businessService } from "@/features/business/business.service";
 import {
     BusinessCategory,
@@ -10,6 +13,8 @@ import {
     BusinessSubCategory,
     CreateBusinessRequest,
 } from "@/features/business/business.types";
+
+import { LocationData } from "@/features/location/location.types";
 
 const categories: {
     value: BusinessCategory;
@@ -28,11 +33,26 @@ const subCategories: {
     label: string;
     category: BusinessCategory;
 }[] = [
-    { value: "restaurant", label: "Restaurant", category: "food" },
-    { value: "cafe", label: "Café", category: "food" },
-    { value: "bar", label: "Bar", category: "food" },
-    { value: "bakery", label: "Bakery", category: "food" },
-
+    {
+        value: "restaurant",
+        label: "Restaurant",
+        category: "food",
+    },
+    {
+        value: "cafe",
+        label: "Café",
+        category: "food",
+    },
+    {
+        value: "bar",
+        label: "Bar",
+        category: "food",
+    },
+    {
+        value: "bakery",
+        label: "Bakery",
+        category: "food",
+    },
     {
         value: "club",
         label: "Club",
@@ -48,7 +68,6 @@ const subCategories: {
         label: "Cultural Center",
         category: "entertainment",
     },
-
     {
         value: "beauty_salon",
         label: "Beauty Salon",
@@ -69,7 +88,6 @@ const subCategories: {
         label: "Agency",
         category: "services",
     },
-
     {
         value: "latin_store",
         label: "Latin Store",
@@ -85,7 +103,6 @@ const subCategories: {
         label: "Clothing",
         category: "shopping",
     },
-
     {
         value: "language_school",
         label: "Language School",
@@ -96,7 +113,6 @@ const subCategories: {
         label: "Academy",
         category: "education",
     },
-
     {
         value: "clinic",
         label: "Clinic",
@@ -128,18 +144,8 @@ export default function BusinessForm() {
     const [profileImage, setProfileImage] = useState("");
     const [coverImage, setCoverImage] = useState("");
 
-    const [cityId, setCityId] =
-        useState("Cologne");
-
-    const [address, setAddress] = useState("");
-    const [country, setCountry] =
-        useState("Germany");
-
-    const [latitude, setLatitude] =
-        useState("50.9375");
-
-    const [longitude, setLongitude] =
-        useState("6.9603");
+    const [location, setLocation] =
+        useState<LocationData | null>(null);
 
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -155,7 +161,8 @@ export default function BusinessForm() {
     const [tagsInput, setTagsInput] =
         useState("");
 
-    const [tags, setTags] = useState<string[]>([]);
+    const [tags, setTags] =
+        useState<string[]>([]);
 
     const [languagesInput, setLanguagesInput] =
         useState("");
@@ -177,7 +184,8 @@ export default function BusinessForm() {
 
     const filteredSubCategories =
         subCategories.filter(
-            (item) => item.category === category
+            (item) =>
+                item.category === category
         );
 
     const addTag = () => {
@@ -187,20 +195,30 @@ export default function BusinessForm() {
             return;
         }
 
-        setTags((current) => [...current, value]);
+        setTags((current) => [
+            ...current,
+            value,
+        ]);
+
         setTagsInput("");
     };
 
     const removeTag = (tag: string) => {
         setTags((current) =>
-            current.filter((item) => item !== tag)
+            current.filter(
+                (item) => item !== tag
+            )
         );
     };
 
     const addLanguage = () => {
-        const value = languagesInput.trim();
+        const value =
+            languagesInput.trim();
 
-        if (!value || languages.includes(value)) {
+        if (
+            !value ||
+            languages.includes(value)
+        ) {
             return;
         }
 
@@ -212,9 +230,13 @@ export default function BusinessForm() {
         setLanguagesInput("");
     };
 
-    const removeLanguage = (language: string) => {
+    const removeLanguage = (
+        language: string
+    ) => {
         setLanguages((current) =>
-            current.filter((item) => item !== language)
+            current.filter(
+                (item) => item !== language
+            )
         );
     };
 
@@ -246,25 +268,9 @@ export default function BusinessForm() {
             return;
         }
 
-        if (!address.trim()) {
+        if (!location) {
             setError(
-                "Please enter the business address."
-            );
-            return;
-        }
-
-        const parsedLatitude =
-            Number(latitude);
-
-        const parsedLongitude =
-            Number(longitude);
-
-        if (
-            Number.isNaN(parsedLatitude) ||
-            Number.isNaN(parsedLongitude)
-        ) {
-            setError(
-                "Please enter valid coordinates."
+                "Please select a business location."
             );
             return;
         }
@@ -276,7 +282,8 @@ export default function BusinessForm() {
                 name: name.trim(),
 
                 description:
-                    description.trim() || undefined,
+                    description.trim() ||
+                    undefined,
 
                 category,
 
@@ -286,39 +293,56 @@ export default function BusinessForm() {
                 images: {
                     profile: profileImage,
                     cover:
-                        coverImage || undefined,
+                        coverImage ||
+                        undefined,
                 },
 
                 location: {
-                    address: address.trim(),
-                    cityId: cityId.trim(),
-                    country: country.trim(),
-                    latitude: parsedLatitude,
-                    longitude: parsedLongitude,
+                    address:
+                        location.formattedAddress,
+
+                    cityId:
+                        location.city,
+
+                    country:
+                        location.country,
+
+                    latitude:
+                        location.latitude,
+
+                    longitude:
+                        location.longitude,
                 },
 
                 contact: {
                     email:
-                        email.trim() || undefined,
+                        email.trim() ||
+                        undefined,
 
                     phone:
-                        phone.trim() || undefined,
+                        phone.trim() ||
+                        undefined,
 
                     website:
-                        website.trim() || undefined,
+                        website.trim() ||
+                        undefined,
 
                     instagram:
-                        instagram.trim() || undefined,
+                        instagram.trim() ||
+                        undefined,
 
                     whatsapp:
-                        whatsapp.trim() || undefined,
+                        whatsapp.trim() ||
+                        undefined,
                 },
 
                 menu:
-                    menu.trim() || undefined,
+                    menu.trim() ||
+                    undefined,
 
                 priceRange:
-                    priceRange || undefined,
+                    priceRange ||
+                    undefined,
 
                 tags,
 
@@ -527,101 +551,55 @@ export default function BusinessForm() {
             {/* LOCATION */}
 
             <section className="space-y-5">
-                <h2 className="text-lg font-semibold text-gray-900">
-                    Location
-                </h2>
-
                 <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                        City
-                    </label>
+                    <h2 className="text-lg font-semibold text-gray-900">
+                        Location
+                    </h2>
 
-                    <select
-                        value={cityId}
-                        onChange={(event) =>
-                            setCityId(
-                                event.target.value
-                            )
-                        }
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    >
-                        <option value="Cologne">
-                            Cologne
-                        </option>
-                    </select>
+                    <p className="mt-1 text-sm text-gray-500">
+                        Search and select the location of the business.
+                    </p>
                 </div>
 
-                <div>
-                    <label
-                        htmlFor="business-address"
-                        className="mb-2 block text-sm font-medium text-gray-700"
-                    >
-                        Address
-                    </label>
+                <LocationSelector
+                    value={location}
+                    onChange={setLocation}
+                    disabled={loading}
+                />
 
-                    <input
-                        id="business-address"
-                        type="text"
-                        value={address}
-                        onChange={(event) =>
-                            setAddress(
-                                event.target.value
-                            )
-                        }
-                        placeholder="Street, number..."
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-[#FF7A00]"
-                        disabled={loading}
-                    />
-                </div>
+                {location && (
+                    <div className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                        <p>
+                            <span className="font-medium">
+                                City:
+                            </span>{" "}
+                            {location.city}
+                        </p>
 
-                <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Country
-                    </label>
+                        <p>
+                            <span className="font-medium">
+                                Country:
+                            </span>{" "}
+                            {location.country}
+                        </p>
 
-                    <input
-                        type="text"
-                        value={country}
-                        onChange={(event) =>
-                            setCountry(
-                                event.target.value
-                            )
-                        }
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    />
-                </div>
+                        {location.state && (
+                            <p>
+                                <span className="font-medium">
+                                    State:
+                                </span>{" "}
+                                {location.state}
+                            </p>
+                        )}
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                    <input
-                        type="number"
-                        step="any"
-                        value={latitude}
-                        onChange={(event) =>
-                            setLatitude(
-                                event.target.value
-                            )
-                        }
-                        placeholder="Latitude"
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    />
-
-                    <input
-                        type="number"
-                        step="any"
-                        value={longitude}
-                        onChange={(event) =>
-                            setLongitude(
-                                event.target.value
-                            )
-                        }
-                        placeholder="Longitude"
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    />
-                </div>
+                        <p>
+                            <span className="font-medium">
+                                Address:
+                            </span>{" "}
+                            {location.formattedAddress}
+                        </p>
+                    </div>
+                )}
             </section>
 
             {/* CONTACT */}
@@ -641,7 +619,9 @@ export default function BusinessForm() {
                     type="email"
                     value={email}
                     onChange={(event) =>
-                        setEmail(event.target.value)
+                        setEmail(
+                            event.target.value
+                        )
                     }
                     placeholder="Email"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
@@ -652,7 +632,9 @@ export default function BusinessForm() {
                     type="tel"
                     value={phone}
                     onChange={(event) =>
-                        setPhone(event.target.value)
+                        setPhone(
+                            event.target.value
+                        )
                     }
                     placeholder="Phone"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
@@ -663,7 +645,9 @@ export default function BusinessForm() {
                     type="url"
                     value={website}
                     onChange={(event) =>
-                        setWebsite(event.target.value)
+                        setWebsite(
+                            event.target.value
+                        )
                     }
                     placeholder="Website"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
@@ -674,7 +658,9 @@ export default function BusinessForm() {
                     type="text"
                     value={instagram}
                     onChange={(event) =>
-                        setInstagram(event.target.value)
+                        setInstagram(
+                            event.target.value
+                        )
                     }
                     placeholder="Instagram"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
@@ -685,7 +671,9 @@ export default function BusinessForm() {
                     type="text"
                     value={whatsapp}
                     onChange={(event) =>
-                        setWhatsapp(event.target.value)
+                        setWhatsapp(
+                            event.target.value
+                        )
                     }
                     placeholder="WhatsApp"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
@@ -704,7 +692,9 @@ export default function BusinessForm() {
                     type="url"
                     value={menu}
                     onChange={(event) =>
-                        setMenu(event.target.value)
+                        setMenu(
+                            event.target.value
+                        )
                     }
                     placeholder="Menu URL"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
@@ -720,7 +710,8 @@ export default function BusinessForm() {
                         value={priceRange}
                         onChange={(event) =>
                             setPriceRange(
-                                event.target.value as
+                                event.target
+                                    .value as
                                     | BusinessPriceRange
                                     | ""
                             )
@@ -830,7 +821,9 @@ export default function BusinessForm() {
                                 key={tag}
                                 type="button"
                                 onClick={() =>
-                                    removeTag(tag)
+                                    removeTag(
+                                        tag
+                                    )
                                 }
                                 className="rounded-full bg-gray-100 px-3 py-2 text-sm"
                             >
@@ -925,3 +918,4 @@ export default function BusinessForm() {
         </form>
     );
 }
+
