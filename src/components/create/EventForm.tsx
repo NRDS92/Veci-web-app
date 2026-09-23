@@ -1,6 +1,11 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import {
+    FormEvent,
+    useEffect,
+    useState,
+} from "react";
+
 import { useRouter } from "@/i18n/navigation";
 
 import ImageUpload from "@/components/upload/ImageUpload";
@@ -14,6 +19,9 @@ import {
 } from "@/features/events/events.types";
 
 import { LocationData } from "@/features/location/location.types";
+
+import { businessService } from "@/features/business/business.service";
+import { MyBusiness } from "@/features/business/business.types";
 
 const categories: {
     value: EventCategory;
@@ -56,10 +64,70 @@ export default function EventForm() {
     const [goodToKnow, setGoodToKnow] =
         useState<string[]>([]);
 
+    /*
+     * BUSINESS
+     */
+    const [businesses, setBusinesses] =
+        useState<MyBusiness[]>([]);
+
+    const [selectedBusinessId, setSelectedBusinessId] =
+        useState("");
+
+    const [loadingBusinesses, setLoadingBusinesses] =
+        useState(false);
+
+    /*
+     * FORM
+     */
     const [loading, setLoading] = useState(false);
+
     const [error, setError] =
         useState<string | null>(null);
 
+    /*
+     * FETCH USER BUSINESSES
+     */
+    const fetchMyBusinesses = async () => {
+        try {
+            setLoadingBusinesses(true);
+            setError(null);
+
+            const response =
+                await businessService.getMyBusinesses();
+
+            setBusinesses(response.data.data);
+        } catch (error) {
+            console.error(
+                "Failed to load businesses:",
+                error
+            );
+
+            setBusinesses([]);
+
+            setError(
+                "Unable to load your businesses."
+            );
+        } finally {
+            setLoadingBusinesses(false);
+        }
+    };
+
+    /*
+     * LOAD BUSINESSES ONLY FOR OFFICIAL EVENTS
+     */
+    useEffect(() => {
+        if (eventType === "official") {
+            fetchMyBusinesses();
+            return;
+        }
+
+        setBusinesses([]);
+        setSelectedBusinessId("");
+    }, [eventType]);
+
+    /*
+     * GOOD TO KNOW
+     */
     const addGoodToKnow = () => {
         const value = goodToKnowInput.trim();
 
@@ -86,6 +154,9 @@ export default function EventForm() {
         );
     };
 
+    /*
+     * SUBMIT
+     */
     const handleSubmit = async (
         event: FormEvent<HTMLFormElement>
     ) => {
@@ -93,6 +164,9 @@ export default function EventForm() {
 
         setError(null);
 
+        /*
+         * BASIC VALIDATION
+         */
         if (!title.trim()) {
             setError(
                 "Please enter an event title."
@@ -110,6 +184,19 @@ export default function EventForm() {
         if (!image) {
             setError(
                 "Please upload an event image."
+            );
+            return;
+        }
+
+        /*
+         * OFFICIAL EVENT VALIDATION
+         */
+        if (
+            eventType === "official" &&
+            !selectedBusinessId
+        ) {
+            setError(
+                "Please select a business for this official event."
             );
             return;
         }
@@ -141,7 +228,18 @@ export default function EventForm() {
         try {
             setLoading(true);
 
-            const payload: CreateEventRequest = {
+            /*
+             * EVENT PAYLOAD
+             *
+             * Community event:
+             * businessId = undefined
+             *
+             * Official event:
+             * businessId = selected business
+             */
+            const payload: CreateEventRequest & {
+                businessId?: string;
+            } = {
                 title: title.trim(),
 
                 description:
@@ -150,6 +248,11 @@ export default function EventForm() {
                 eventType,
 
                 category,
+
+                businessId:
+                    eventType === "official"
+                        ? selectedBusinessId
+                        : undefined,
 
                 cityId: location.city,
 
@@ -191,7 +294,10 @@ export default function EventForm() {
             router.push("/");
 
         } catch (err) {
-            console.error(err);
+            console.error(
+                "Event creation failed:",
+                err
+            );
 
             setError(
                 "The event could not be submitted. Please try again."
@@ -382,6 +488,98 @@ export default function EventForm() {
                     </button>
                 </div>
             </section>
+
+            {/* BUSINESS */}
+
+            {eventType === "official" && (
+                <section className="space-y-5">
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-900">
+                            Business
+                        </h2>
+
+                        <p className="text-sm text-gray-500">
+                            Select the business associated with this official event.
+                        </p>
+                    </div>
+
+                    {loadingBusinesses ? (
+                        <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-4 text-sm text-gray-500">
+                            Loading your businesses...
+                        </div>
+                    ) : businesses.length === 0 ? (
+                        <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                            <p className="font-medium text-gray-900">
+                                You don't have any business yet.
+                            </p>
+
+                            <p className="mt-1 text-sm text-gray-500">
+                                Create a business before creating an official event.
+                            </p>
+
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    router.push(
+                                        "/create/business"
+                                    )
+                                }
+                                disabled={loading}
+                                className="mt-4 rounded-xl bg-[#FF7A00] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+                            >
+                                Create a business
+                            </button>
+                        </div>
+                    ) : (
+                        <div>
+                            <label
+                                htmlFor="business"
+                                className="mb-2 block text-sm font-medium text-gray-700"
+                            >
+                                Associated business
+                            </label>
+
+                            <select
+                                id="business"
+                                value={
+                                    selectedBusinessId
+                                }
+                                onChange={(event) =>
+                                    setSelectedBusinessId(
+                                        event.target.value
+                                    )
+                                }
+                                disabled={
+                                    loading ||
+                                    loadingBusinesses
+                                }
+                                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-[#FF7A00] focus:ring-2 focus:ring-[#FF7A00]/20"
+                            >
+                                <option value="">
+                                    Select a business
+                                </option>
+
+                                {businesses.map(
+                                    (business) => (
+                                        <option
+                                            key={
+                                                business._id
+                                            }
+                                            value={
+                                                business._id
+                                            }
+                                        >
+                                            {
+                                                business.name
+                                            }
+                                        </option>
+                                    )
+                                )}
+                            </select>
+                        </div>
+                    )}
+                </section>
+            )}
 
             {/* LOCATION */}
 
@@ -588,7 +786,10 @@ export default function EventForm() {
 
             <button
                 type="submit"
-                disabled={loading}
+                disabled={
+                    loading ||
+                    loadingBusinesses
+                }
                 className="w-full rounded-xl bg-[#FF7A00] px-6 py-4 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
                 {loading
@@ -598,4 +799,3 @@ export default function EventForm() {
         </form>
     );
 }
-

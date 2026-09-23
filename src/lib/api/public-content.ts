@@ -36,6 +36,10 @@ export interface PublicBusiness {
     cityId: string;
     country?: string;
     address?: string;
+    coordinates?: {
+        lat: number;
+        lng: number;
+    };  
     image?: string;
     coverImage?: string;
     website?: string;

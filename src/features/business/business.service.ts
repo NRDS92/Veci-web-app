@@ -2,6 +2,7 @@ import api from "@/lib/api";
 import { ApiResponse } from "@/features/auth/types";
 import {
     CreateBusinessRequest,
+    MyBusiness,
 } from "./business.types";
 
 export const businessService = {
@@ -13,7 +14,7 @@ export const businessService = {
     },
 
     async getMyBusinesses() {
-        return api.get<ApiResponse<unknown[]>>(
+        return api.get<ApiResponse<MyBusiness[]>>(
             "/business/me"
         );
     },
