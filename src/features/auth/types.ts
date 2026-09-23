@@ -65,3 +65,32 @@ export interface ApiResponse<T> {
     success: boolean;
     data: T;
 }
+
+export interface Subscription {
+  plan: SubscriptionPlan;
+  maxBusinesses: number;
+}
+
+export interface AuthUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  provider: AuthProvider;
+
+  subscription: Subscription;
+
+  cityId?: string;
+  originCountry?: string;
+
+  profileImage?: string;
+  bio?: string;
+
+  favorites: string[];
+
+  onboardingCompleted: boolean;
+  isVerified: boolean;
+
+  createdAt: string;
+  updatedAt: string;
+}
