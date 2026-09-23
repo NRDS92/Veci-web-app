@@ -4,12 +4,16 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 
 import ImageUpload from "@/components/upload/ImageUpload";
+import LocationSelector from "@/components/location/LocationSelector";
+
 import { eventsService } from "@/features/events/events.service";
 import {
     EventCategory,
     EventType,
     CreateEventRequest,
 } from "@/features/events/events.types";
+
+import { LocationData } from "@/features/location/location.types";
 
 const categories: {
     value: EventCategory;
@@ -37,10 +41,8 @@ export default function EventForm() {
 
     const [image, setImage] = useState("");
 
-    const [cityId, setCityId] =
-        useState("Cologne");
-
-    const [address, setAddress] = useState("");
+    const [location, setLocation] =
+        useState<LocationData | null>(null);
 
     const [dateStart, setDateStart] = useState("");
 
@@ -55,7 +57,8 @@ export default function EventForm() {
         useState<string[]>([]);
 
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] =
+        useState<string | null>(null);
 
     const addGoodToKnow = () => {
         const value = goodToKnowInput.trim();
@@ -72,9 +75,14 @@ export default function EventForm() {
         setGoodToKnowInput("");
     };
 
-    const removeGoodToKnow = (index: number) => {
+    const removeGoodToKnow = (
+        index: number
+    ) => {
         setGoodToKnow((current) =>
-            current.filter((_, itemIndex) => itemIndex !== index)
+            current.filter(
+                (_, itemIndex) =>
+                    itemIndex !== index
+            )
         );
     };
 
@@ -86,34 +94,47 @@ export default function EventForm() {
         setError(null);
 
         if (!title.trim()) {
-            setError("Please enter an event title.");
+            setError(
+                "Please enter an event title."
+            );
             return;
         }
 
         if (!description.trim()) {
-            setError("Please enter a description.");
+            setError(
+                "Please enter a description."
+            );
             return;
         }
 
         if (!image) {
-            setError("Please upload an event image.");
+            setError(
+                "Please upload an event image."
+            );
             return;
         }
 
-        if (!address.trim()) {
-            setError("Please enter the event address.");
+        if (!location) {
+            setError(
+                "Please select the event location."
+            );
             return;
         }
 
         if (!dateStart) {
-            setError("Please select a date.");
+            setError(
+                "Please select a date."
+            );
             return;
         }
 
-        const selectedDate = new Date(dateStart);
+        const selectedDate =
+            new Date(dateStart);
 
         if (selectedDate <= new Date()) {
-            setError("The event date must be in the future.");
+            setError(
+                "The event date must be in the future."
+            );
             return;
         }
 
@@ -122,31 +143,50 @@ export default function EventForm() {
 
             const payload: CreateEventRequest = {
                 title: title.trim(),
-                description: description.trim(),
+
+                description:
+                    description.trim(),
+
                 eventType,
+
                 category,
-                cityId,
+
+                cityId: location.city,
+
                 images: [image],
-                address: address.trim(),
 
-                // Temporary Cologne coordinates.
-                // We should replace these with the actual
-                // selected-city coordinates before production.
-                latitude: 50.9375,
-                longitude: 6.9603,
+                address:
+                    location.formattedAddress,
 
-                dateStart: selectedDate.toISOString(),
+                latitude:
+                    location.latitude,
+
+                longitude:
+                    location.longitude,
+
+                dateStart:
+                    selectedDate.toISOString(),
 
                 contact: {
-                    website: website.trim() || undefined,
-                    instagram: instagram.trim() || undefined,
-                    whatsapp: whatsapp.trim() || undefined,
+                    website:
+                        website.trim() ||
+                        undefined,
+
+                    instagram:
+                        instagram.trim() ||
+                        undefined,
+
+                    whatsapp:
+                        whatsapp.trim() ||
+                        undefined,
                 },
 
                 goodToKnow,
             };
 
-            await eventsService.createEvent(payload);
+            await eventsService.createEvent(
+                payload
+            );
 
             router.push("/");
 
@@ -166,6 +206,8 @@ export default function EventForm() {
             onSubmit={handleSubmit}
             className="space-y-8"
         >
+            {/* EVENT IMAGE */}
+
             <section className="space-y-4">
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900">
@@ -180,10 +222,14 @@ export default function EventForm() {
                 <ImageUpload
                     value={image}
                     onChange={setImage}
-                    onRemove={() => setImage("")}
+                    onRemove={() =>
+                        setImage("")
+                    }
                     disabled={loading}
                 />
             </section>
+
+            {/* BASIC INFORMATION */}
 
             <section className="space-y-5">
                 <div>
@@ -205,7 +251,9 @@ export default function EventForm() {
                         type="text"
                         value={title}
                         onChange={(event) =>
-                            setTitle(event.target.value)
+                            setTitle(
+                                event.target.value
+                            )
                         }
                         placeholder="e.g. Latin Night in Cologne"
                         className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-[#FF7A00]"
@@ -225,7 +273,9 @@ export default function EventForm() {
                         id="description"
                         value={description}
                         onChange={(event) =>
-                            setDescription(event.target.value)
+                            setDescription(
+                                event.target.value
+                            )
                         }
                         placeholder="Tell people about your event..."
                         rows={5}
@@ -234,6 +284,8 @@ export default function EventForm() {
                     />
                 </div>
             </section>
+
+            {/* CATEGORY */}
 
             <section className="space-y-5">
                 <div>
@@ -246,22 +298,27 @@ export default function EventForm() {
                     value={category}
                     onChange={(event) =>
                         setCategory(
-                            event.target.value as EventCategory
+                            event.target
+                                .value as EventCategory
                         )
                     }
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
                     disabled={loading}
                 >
-                    {categories.map((item) => (
-                        <option
-                            key={item.value}
-                            value={item.value}
-                        >
-                            {item.label}
-                        </option>
-                    ))}
+                    {categories.map(
+                        (item) => (
+                            <option
+                                key={item.value}
+                                value={item.value}
+                            >
+                                {item.label}
+                            </option>
+                        )
+                    )}
                 </select>
             </section>
+
+            {/* EVENT TYPE */}
 
             <section className="space-y-5">
                 <div>
@@ -279,10 +336,13 @@ export default function EventForm() {
                     <button
                         type="button"
                         onClick={() =>
-                            setEventType("community")
+                            setEventType(
+                                "community"
+                            )
                         }
                         className={`rounded-xl border p-4 text-left ${
-                            eventType === "community"
+                            eventType ===
+                            "community"
                                 ? "border-[#FF7A00] bg-orange-50"
                                 : "border-gray-200"
                         }`}
@@ -300,10 +360,13 @@ export default function EventForm() {
                     <button
                         type="button"
                         onClick={() =>
-                            setEventType("official")
+                            setEventType(
+                                "official"
+                            )
                         }
                         className={`rounded-xl border p-4 text-left ${
-                            eventType === "official"
+                            eventType ===
+                            "official"
                                 ? "border-[#FF7A00] bg-orange-50"
                                 : "border-gray-200"
                         }`}
@@ -320,57 +383,61 @@ export default function EventForm() {
                 </div>
             </section>
 
+            {/* LOCATION */}
+
             <section className="space-y-5">
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900">
                         Location
                     </h2>
+
+                    <p className="text-sm text-gray-500">
+                        Search and select the location of the event.
+                    </p>
                 </div>
 
-                <div>
-                    <label
-                        htmlFor="city"
-                        className="mb-2 block text-sm font-medium text-gray-700"
-                    >
-                        City
-                    </label>
+                <LocationSelector
+                    value={location}
+                    onChange={setLocation}
+                    disabled={loading}
+                />
 
-                    <select
-                        id="city"
-                        value={cityId}
-                        onChange={(event) =>
-                            setCityId(event.target.value)
-                        }
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    >
-                        <option value="Cologne">
-                            Cologne
-                        </option>
-                    </select>
-                </div>
+                {location && (
+                    <div className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
+                        <p>
+                            <span className="font-medium">
+                                City:
+                            </span>{" "}
+                            {location.city}
+                        </p>
 
-                <div>
-                    <label
-                        htmlFor="address"
-                        className="mb-2 block text-sm font-medium text-gray-700"
-                    >
-                        Address
-                    </label>
+                        <p>
+                            <span className="font-medium">
+                                Country:
+                            </span>{" "}
+                            {location.country}
+                        </p>
 
-                    <input
-                        id="address"
-                        type="text"
-                        value={address}
-                        onChange={(event) =>
-                            setAddress(event.target.value)
-                        }
-                        placeholder="Street, number..."
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-[#FF7A00]"
-                        disabled={loading}
-                    />
-                </div>
+                        {location.state && (
+                            <p>
+                                <span className="font-medium">
+                                    State:
+                                </span>{" "}
+                                {location.state}
+                            </p>
+                        )}
+
+                        <p>
+                            <span className="font-medium">
+                                Address:
+                            </span>{" "}
+                            {location.formattedAddress}
+                        </p>
+                    </div>
+                )}
             </section>
+
+            {/* DATE */}
 
             <section className="space-y-5">
                 <div>
@@ -383,12 +450,16 @@ export default function EventForm() {
                     type="datetime-local"
                     value={dateStart}
                     onChange={(event) =>
-                        setDateStart(event.target.value)
+                        setDateStart(
+                            event.target.value
+                        )
                     }
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
                     disabled={loading}
                 />
             </section>
+
+            {/* CONTACT */}
 
             <section className="space-y-5">
                 <div>
@@ -405,7 +476,9 @@ export default function EventForm() {
                     type="url"
                     value={website}
                     onChange={(event) =>
-                        setWebsite(event.target.value)
+                        setWebsite(
+                            event.target.value
+                        )
                     }
                     placeholder="Website"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
@@ -416,7 +489,9 @@ export default function EventForm() {
                     type="text"
                     value={instagram}
                     onChange={(event) =>
-                        setInstagram(event.target.value)
+                        setInstagram(
+                            event.target.value
+                        )
                     }
                     placeholder="Instagram"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
@@ -427,13 +502,17 @@ export default function EventForm() {
                     type="text"
                     value={whatsapp}
                     onChange={(event) =>
-                        setWhatsapp(event.target.value)
+                        setWhatsapp(
+                            event.target.value
+                        )
                     }
                     placeholder="WhatsApp"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3"
                     disabled={loading}
                 />
             </section>
+
+            {/* GOOD TO KNOW */}
 
             <section className="space-y-5">
                 <div>
@@ -447,10 +526,15 @@ export default function EventForm() {
                         type="text"
                         value={goodToKnowInput}
                         onChange={(event) =>
-                            setGoodToKnowInput(event.target.value)
+                            setGoodToKnowInput(
+                                event.target.value
+                            )
                         }
                         onKeyDown={(event) => {
-                            if (event.key === "Enter") {
+                            if (
+                                event.key ===
+                                "Enter"
+                            ) {
                                 event.preventDefault();
                                 addGoodToKnow();
                             }
@@ -472,27 +556,35 @@ export default function EventForm() {
 
                 {goodToKnow.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                        {goodToKnow.map((item, index) => (
-                            <button
-                                key={`${item}-${index}`}
-                                type="button"
-                                onClick={() =>
-                                    removeGoodToKnow(index)
-                                }
-                                className="rounded-full bg-gray-100 px-3 py-2 text-sm"
-                            >
-                                {item} ×
-                            </button>
-                        ))}
+                        {goodToKnow.map(
+                            (item, index) => (
+                                <button
+                                    key={`${item}-${index}`}
+                                    type="button"
+                                    onClick={() =>
+                                        removeGoodToKnow(
+                                            index
+                                        )
+                                    }
+                                    className="rounded-full bg-gray-100 px-3 py-2 text-sm"
+                                >
+                                    {item} ×
+                                </button>
+                            )
+                        )}
                     </div>
                 )}
             </section>
+
+            {/* ERROR */}
 
             {error && (
                 <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
                     {error}
                 </div>
             )}
+
+            {/* SUBMIT */}
 
             <button
                 type="submit"
@@ -506,3 +598,4 @@ export default function EventForm() {
         </form>
     );
 }
+
