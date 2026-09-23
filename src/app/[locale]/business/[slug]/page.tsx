@@ -9,6 +9,8 @@ import {
     Mundo,
     Dolar,
 } from "@mteherandev/colombia-icons-react";
+import BusinessHero from "@/components/business/BusinessHero";
+import LocationMapClient from "@/components/location/LocationMapClient";
 
 
 interface BusinessPageProps {
@@ -33,13 +35,11 @@ export async function generateMetadata(
     const {
         slug,
     } = await params;
-
-
+    
     const content =
         await getPublicBusinessContentBySlug(
             slug
         );
-
 
     if (!content) {
 
@@ -446,41 +446,6 @@ export default async function BusinessPage(
                     pb-16
                 "
             >
-
-
-                {/* =========================================
-                    COVER IMAGE
-                ========================================= */}
-
-                {entity.coverImage && (
-
-                    <div
-                        className="
-                            mb-8
-                            overflow-hidden
-                            rounded-3xl
-                        "
-                    >
-
-                        <img
-                            src={
-                                entity.coverImage
-                            }
-                            alt={
-                                entity.name
-                            }
-                            className="
-                                aspect-[3/1]
-                                w-full
-                                object-cover
-                            "
-                        />
-
-                    </div>
-
-                )}
-
-
                 {/* =========================================
                     MAIN CARD
                 ========================================= */}
@@ -494,102 +459,16 @@ export default async function BusinessPage(
                         bg-white
                     "
                 >
-
-
-                    {/* =====================================
-                        PROFILE IMAGE
-                    ===================================== */}
-
-                    {entity.image && (
-
-                        <div
-                            className="
-                                overflow-hidden
-                            "
-                        >
-
-                            <img
-                                src={
-                                    entity.image
-                                }
-                                alt={
-                                    entity.name
-                                }
-                                className="
-                                    aspect-video
-                                    w-full
-                                    object-cover
-                                "
-                            />
-
-                        </div>
-
-                    )}
-
-
+                    <BusinessHero
+                        name={entity.name}
+                        category={entity.category}
+                        subCategory={entity.subCategory}
+                        image={entity.image}
+                        coverImage={entity.coverImage}
+                    />
                     <div
                         className="p-8"
                     >
-
-
-                        {/* =================================
-                            CATEGORY
-                        ================================= */}
-
-                        <p
-                            className="
-                                text-sm
-                                font-medium
-                                uppercase
-                                tracking-wide
-                                text-gray-500
-                            "
-                        >
-                            {
-                                entity.category
-                            }
-                        </p>
-
-
-                        {/* =================================
-                            NAME
-                        ================================= */}
-
-                        <h1
-                            className="
-                                mt-2
-                                text-4xl
-                                font-bold
-                                text-gray-900
-                            "
-                        >
-                            {
-                                entity.name
-                            }
-                        </h1>
-
-
-                        {/* =================================
-                            SUBCATEGORY
-                        ================================= */}
-
-                        {entity.subCategory && (
-
-                            <p
-                                className="
-                                    mt-2
-                                    text-lg
-                                    text-gray-500
-                                "
-                            >
-                                {
-                                    entity.subCategory
-                                }
-                            </p>
-
-                        )}
-
-
                         {/* =================================
                             DESCRIPTION
                         ================================= */}
@@ -956,8 +835,26 @@ export default async function BusinessPage(
                             </div>
 
                         )}
+                        {entity.coordinates && (
+                                <section className="mt-10">
+                                    <h2 className="text-2xl font-semibold text-gray-900">
+                                        Location
+                                    </h2>
 
+                                    <div className="mt-4 overflow-hidden rounded-2xl">
+                                        <LocationMapClient
+                                            coordinates={[
+                                                entity.coordinates.lng,
+                                                entity.coordinates.lat,
+                                            ]}
+                                            address={entity.address}
+                                            title={entity.name}
+                                        />
+                                    </div>
+                                </section>
+                            )}
                     </div>
+                    
 
                 </div>
 

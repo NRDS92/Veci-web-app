@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -14,9 +13,11 @@ import {
     locationService,
 } from "@/features/location/location.service";
 
+import LocationMapClient from "@/components/location/LocationMapClient";
+
 interface LocationSelectorProps {
     value: LocationData | null;
-    onChange: (location: LocationData) => void;
+    onChange: (location: LocationData | null) => void;
     disabled?: boolean;
 }
 
@@ -83,23 +84,16 @@ export default function LocationSelector({
     };
 
     const handleClear = () => {
+        onChange(null);
+
         setQuery("");
         setResults([]);
         setError(null);
-
-        /*
-         * LocationSelector currently receives
-         * only a LocationData setter.
-         *
-         * The parent can clear the selected
-         * location by passing null to its state.
-         */
     };
 
     return (
         <div className="space-y-4">
             {/* SEARCH */}
-
             <div className="relative">
                 <label
                     htmlFor="location-search"
@@ -135,7 +129,6 @@ export default function LocationSelector({
                 </div>
 
                 {/* RESULTS */}
-
                 {results.length > 0 && (
                     <div className="absolute left-0 right-0 z-30 mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
                         {results.map(
@@ -171,7 +164,6 @@ export default function LocationSelector({
             </div>
 
             {/* ERROR */}
-
             {error && (
                 <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
                     {error}
@@ -179,7 +171,6 @@ export default function LocationSelector({
             )}
 
             {/* SELECTED LOCATION */}
-
             {value && (
                 <div className="space-y-4">
                     <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
@@ -209,16 +200,9 @@ export default function LocationSelector({
 
                             <button
                                 type="button"
-                                onClick={() => {
-                                    /*
-                                     * The actual clearing is handled
-                                     * by the parent.
-                                     *
-                                     * This button currently only
-                                     * resets the selector UI.
-                                     */
-                                    handleClear();
-                                }}
+                                onClick={
+                                    handleClear
+                                }
                                 disabled={disabled}
                                 className="shrink-0 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition hover:bg-white hover:text-gray-900 disabled:opacity-50"
                             >
@@ -227,42 +211,23 @@ export default function LocationSelector({
                         </div>
                     </div>
 
-                    {/* MAP PLACEHOLDER */}
-
-                    <div className="relative h-64 overflow-hidden rounded-xl border border-gray-200 bg-gray-100">
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-center">
-                                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-sm">
-                                    <span className="text-2xl">
-                                        📍
-                                    </span>
-                                </div>
-
-                                <p className="font-medium text-gray-700">
-                                    {value.city}
-                                </p>
-
-                                <p className="mt-1 text-sm text-gray-500">
-                                    {value.latitude.toFixed(
-                                        5
-                                    )}
-                                    {" · "}
-                                    {value.longitude.toFixed(
-                                        5
-                                    )}
-                                </p>
-
-                                <p className="mt-2 text-xs text-gray-400">
-                                    Map preview
-                                </p>
-                            </div>
-                        </div>
+                    {/* MAP */}
+                    <div className="overflow-hidden rounded-xl border border-gray-200">
+                        <LocationMapClient
+                            coordinates={[
+                                value.longitude,
+                                value.latitude,
+                            ]}
+                            address={
+                                value.formattedAddress
+                            }
+                            title={value.city}
+                        />
                     </div>
                 </div>
             )}
 
             {/* EMPTY MAP AREA */}
-
             {!value && !loading && (
                 <div className="relative h-64 overflow-hidden rounded-xl border border-dashed border-gray-300 bg-gray-50">
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -287,4 +252,3 @@ export default function LocationSelector({
         </div>
     );
 }
-

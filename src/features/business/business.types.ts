@@ -65,3 +65,7 @@ export interface CreateBusinessRequest {
     isLatinoOwned: boolean;
     countryOfOrigin?: string;
 }
+export interface MyBusiness {
+    _id: string;
+    name: string;
+}
