@@ -1,10 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import {
+    useEffect,
+    useState,
+} from "react";
+
+import {
+    AnimatePresence,
+    motion,
+} from "framer-motion";
 
 import { Link } from "@/i18n/navigation";
-import type { PublicEvent } from "@/lib/api/public-content";
+
+import type {
+    PublicEvent,
+} from "@/lib/api/public-content";
 
 
 interface EventHeroCarouselProps {
@@ -16,15 +26,38 @@ export default function EventHeroCarousel({
     events,
 }: EventHeroCarouselProps) {
 
-    const eventsWithImages = events.filter(
-        (event) =>
-            typeof event.image === "string" &&
-            event.image.trim().length > 0
-    );
+    /*
+     * ==================================================
+     * EVENTS WITH IMAGES
+     *
+     * PublicEvent now uses:
+     *
+     * images: string[]
+     *
+     * The first image is the event
+     * cover / hero image.
+     * ==================================================
+     */
+
+    const eventsWithImages =
+        events.filter(
+            (event) =>
+                Array.isArray(
+                    event.images
+                ) &&
+                event.images.length > 0 &&
+                typeof event.images[0] ===
+                    "string" &&
+                event.images[0]
+                    .trim()
+                    .length > 0
+        );
 
 
-    const [currentIndex, setCurrentIndex] =
-        useState(0);
+    const [
+        currentIndex,
+        setCurrentIndex,
+    ] = useState(0);
 
 
     /*
@@ -35,28 +68,39 @@ export default function EventHeroCarousel({
 
     useEffect(() => {
 
-        if (eventsWithImages.length <= 1) {
+        if (
+            eventsWithImages.length <= 1
+        ) {
             return;
         }
 
 
         const interval =
-            window.setInterval(() => {
+            window.setInterval(
+                () => {
 
-                setCurrentIndex(
-                    (current) =>
-                        (current + 1) %
-                        eventsWithImages.length
-                );
+                    setCurrentIndex(
+                        (current) =>
+                            (
+                                current + 1
+                            ) %
+                            eventsWithImages.length
+                    );
 
-            }, 5000);
+                },
+                5000
+            );
 
 
         return () => {
-            window.clearInterval(interval);
+            window.clearInterval(
+                interval
+            );
         };
 
-    }, [eventsWithImages.length]);
+    }, [
+        eventsWithImages.length,
+    ]);
 
 
     /*
@@ -65,7 +109,9 @@ export default function EventHeroCarousel({
      * ==================================================
      */
 
-    if (eventsWithImages.length === 0) {
+    if (
+        eventsWithImages.length === 0
+    ) {
 
         return (
             <div
@@ -99,7 +145,7 @@ export default function EventHeroCarousel({
     const event =
         eventsWithImages[
             currentIndex %
-            eventsWithImages.length
+                eventsWithImages.length
         ];
 
 
@@ -116,7 +162,8 @@ export default function EventHeroCarousel({
 
                 if (current === 0) {
                     return (
-                        eventsWithImages.length - 1
+                        eventsWithImages.length -
+                        1
                     );
                 }
 
@@ -156,7 +203,6 @@ export default function EventHeroCarousel({
             "
         >
 
-
             {/* ==========================================
                 IMAGE
             ========================================== */}
@@ -178,7 +224,7 @@ export default function EventHeroCarousel({
 
                     <motion.img
                         key={event.id}
-                        src={event.image}
+                        src={event.images[0]}
                         alt={event.title}
                         initial={{
                             opacity: 0,
@@ -301,7 +347,8 @@ export default function EventHeroCarousel({
                             ).toLocaleDateString(
                                 "es-ES",
                                 {
-                                    dateStyle: "medium",
+                                    dateStyle:
+                                        "medium",
                                 }
                             )}
                         </span>
@@ -319,7 +366,9 @@ export default function EventHeroCarousel({
 
                     <button
                         type="button"
-                        onClick={previousEvent}
+                        onClick={
+                            previousEvent
+                        }
                         aria-label="Evento anterior"
                         className="
                             absolute
@@ -356,7 +405,9 @@ export default function EventHeroCarousel({
 
                     <button
                         type="button"
-                        onClick={nextEvent}
+                        onClick={
+                            nextEvent
+                        }
                         aria-label="Siguiente evento"
                         className="
                             absolute
@@ -404,13 +455,18 @@ export default function EventHeroCarousel({
                 >
 
                     {eventsWithImages.map(
-                        (item, index) => (
+                        (
+                            item,
+                            index
+                        ) => (
 
                             <button
                                 key={item.id}
                                 type="button"
                                 onClick={() =>
-                                    setCurrentIndex(index)
+                                    setCurrentIndex(
+                                        index
+                                    )
                                 }
                                 aria-label={`Mostrar ${item.title}`}
                                 className={`
@@ -419,7 +475,8 @@ export default function EventHeroCarousel({
                                     transition-all
                                     duration-300
                                     ${
-                                        index === currentIndex
+                                        index ===
+                                        currentIndex
                                             ? "w-8 bg-gray-900"
                                             : "w-2 bg-gray-300"
                                     }

@@ -13,6 +13,20 @@ export const eventsService = {
         );
     },
 
+    uploadEventAttachment: async (
+        eventId: string,
+        file: File
+    ) => {
+        const formData = new FormData();
+
+        formData.append("attachment", file);
+
+        return api.post(
+            `/events/${eventId}/attachment`,
+            formData
+        );
+    },
+
     async getMyEvents() {
         return api.get<ApiResponse<Event[]>>(
             "/events/me"
