@@ -37,35 +37,22 @@ export default async function PublicEvents({
     category,
     limit = 6,
 }: PublicEventsProps) {
-
     const events =
         await getPublicEvents({
             cityId,
             category,
             limit,
         });
-
-
-    console.log(
-        "🔥 PUBLIC EVENTS:",
-        events
-    );
-
-
     return (
-
         <main
             className="
                 min-h-screen
                 bg-white py-24
             "
         >
-
-
             {/* =====================================================
                 01 — HERO
             ===================================================== */}
-
             <section
                 className="
                     relative
@@ -76,7 +63,6 @@ export default async function PublicEvents({
                     pb-20
                 "
             >
-
                 <div
                     className="
                         mx-auto
@@ -89,18 +75,14 @@ export default async function PublicEvents({
                         lg:gap-20
                     "
                 >
-
-
                     {/* =================================================
                         LEFT — TEXT
                     ================================================= */}
-
                     <div
                         className="
                             max-w-2xl
                         "
                     >
-
                         <p
                             className="
                                 text-sm
@@ -112,8 +94,6 @@ export default async function PublicEvents({
                         >
                             Nuestra comunidad
                         </p>
-
-
                         <h1
                             className="
                                 mt-4
@@ -129,8 +109,6 @@ export default async function PublicEvents({
                             <br />
                             en Europa
                         </h1>
-
-
                         <p
                             className="
                                 mt-6
@@ -144,10 +122,7 @@ export default async function PublicEvents({
                             encuentros culturales y eventos
                             de nuestra comunidad cerca de ti.
                         </p>
-
-
                         {/* POPULAR */}
-
                         <div
                             className="
                                 mt-8
@@ -157,7 +132,6 @@ export default async function PublicEvents({
                                 gap-3
                             "
                         >
-
                             <span
                                 className="
                                     mr-1
@@ -168,11 +142,8 @@ export default async function PublicEvents({
                             >
                                 Popular:
                             </span>
-
-
                             {categories.map(
                                 (item) => (
-
                                     <button
                                         key={item}
                                         type="button"
@@ -192,13 +163,9 @@ export default async function PublicEvents({
                                     >
                                         {item}
                                     </button>
-
                                 )
                             )}
-
                         </div>
-
-
                         <p
                             className="
                                 mt-8
@@ -213,15 +180,10 @@ export default async function PublicEvents({
                             mantienen conectada nuestra
                             comunidad lejos de casa.
                         </p>
-
                     </div>
-
-
-
                     {/* =================================================
                         RIGHT — EVENT CAROUSEL
                     ================================================= */}
-
                     <div
                         className="
                             w-full
@@ -230,23 +192,15 @@ export default async function PublicEvents({
                             lg:justify-self-end
                         "
                     >
-
                         <EventHeroCarousel
                             events={events}
                         />
-
                     </div>
-
                 </div>
-
             </section>
-
-
-
             {/* =====================================================
                 02 — CATEGORIES
             ===================================================== */}
-
             <section
                 className="
                     mx-auto
@@ -255,9 +209,7 @@ export default async function PublicEvents({
                     py-20
                 "
             >
-
                 <div className="mb-10">
-
                     <p
                         className="
                             text-sm
@@ -269,8 +221,6 @@ export default async function PublicEvents({
                     >
                         Explora
                     </p>
-
-
                     <h2
                         className="
                             mt-2
@@ -281,10 +231,7 @@ export default async function PublicEvents({
                     >
                         Encuentra tu próximo plan
                     </h2>
-
                 </div>
-
-
                 <div
                     className="
                         grid
@@ -293,10 +240,8 @@ export default async function PublicEvents({
                         lg:grid-cols-3
                     "
                 >
-
                     {categories.map(
                         (item) => (
-
                             <button
                                 key={item}
                                 type="button"
@@ -318,7 +263,6 @@ export default async function PublicEvents({
                                     hover:shadow-lg
                                 "
                             >
-
                                 <span
                                     className="
                                         text-xl
@@ -328,8 +272,6 @@ export default async function PublicEvents({
                                 >
                                     {item}
                                 </span>
-
-
                                 <span
                                     className="
                                         text-xl
@@ -340,18 +282,11 @@ export default async function PublicEvents({
                                 >
                                     →
                                 </span>
-
                             </button>
-
                         )
                     )}
-
                 </div>
-
             </section>
-
-
-
             {/* =====================================================
                 03 — UPCOMING EVENTS
             ===================================================== */}
@@ -363,7 +298,6 @@ export default async function PublicEvents({
                     bg-gray-50
                 "
             >
-
                 <div
                     className="
                         mx-auto
@@ -372,7 +306,6 @@ export default async function PublicEvents({
                         py-20
                     "
                 >
-
                     <div
                         className="
                             mb-10
@@ -382,9 +315,7 @@ export default async function PublicEvents({
                             gap-6
                         "
                     >
-
                         <div>
-
                             <p
                                 className="
                                     text-sm
@@ -396,8 +327,6 @@ export default async function PublicEvents({
                             >
                                 Próximamente
                             </p>
-
-
                             <h2
                                 className="
                                     mt-2
@@ -408,10 +337,7 @@ export default async function PublicEvents({
                             >
                                 No te pierdas lo que viene
                             </h2>
-
                         </div>
-
-
                         <Link
                             href="/events"
                             className="
@@ -424,12 +350,8 @@ export default async function PublicEvents({
                         >
                             Ver todos →
                         </Link>
-
                     </div>
-
-
                     {events.length === 0 ? (
-
                         <div
                             className="
                                 rounded-3xl
@@ -441,13 +363,10 @@ export default async function PublicEvents({
                                 text-center
                             "
                         >
-
                             <p className="text-gray-500">
                                 No hay eventos públicos disponibles.
                             </p>
-
                         </div>
-
                     ) : (
 
                         <div
@@ -489,10 +408,9 @@ export default async function PublicEvents({
                                             "
                                         >
 
-                                            {event.image ? (
-
+                                            {event.images?.[0] ? (
                                                 <img
-                                                    src={event.image}
+                                                    src={event.images[0]}
                                                     alt={event.title}
                                                     className="
                                                         h-full
@@ -503,9 +421,7 @@ export default async function PublicEvents({
                                                         group-hover:scale-105
                                                     "
                                                 />
-
                                             ) : (
-
                                                 <div
                                                     className="
                                                         flex
@@ -518,7 +434,6 @@ export default async function PublicEvents({
                                                 >
                                                     Imagen del evento
                                                 </div>
-
                                             )}
 
                                         </div>

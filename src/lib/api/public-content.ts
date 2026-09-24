@@ -18,7 +18,7 @@ export interface PublicEvent {
     address: string;
     dateStart: string;
     dateEnd?: string;
-    image?: string;
+    images: string[];
 }
 
 interface PublicEventsResponse {
@@ -153,22 +153,14 @@ export async function getPublicEvents(
             options.limit.toString()
         );
     }
-
     const query =
         params.toString();
-
     const url =
         `${API_URL}/public/events${
             query
                 ? `?${query}`
                 : ""
         }`;
-
-    console.log(
-        "🔥 PUBLIC CONTENT API:",
-        `${API_URL}/public/events`
-    );
-
     const response =
         await fetch(
             url,

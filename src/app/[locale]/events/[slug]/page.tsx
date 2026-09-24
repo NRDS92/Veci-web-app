@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+
 import LocationMapClient from "../../../../components/location/LocationMapClient";
 import EventHero from "../../../../components/events/EventHero";
 import EventJsonLd from "../../../../components/seo/EventJsonLd";
@@ -38,30 +39,51 @@ interface Event {
     dateStart: string;
     dateEnd?: string;
 
-    image?: string;
+    images: string[];
 
     location?: {
         type: "Point";
         coordinates: [number, number];
     };
 
+    price?: {
+        type: "free" | "paid";
+        amount?: number;
+        currency: "EUR";
+    };
+
+    links: {
+        label: string;
+        url: string;
+    }[];
+
     createdBy?: {
-        _id: string;
+        id: string;
         name: string;
         profileImage?: string | null;
     };
 
+    goodToKnow: string[];
+
+    attachment?: {
+        url: string;
+        name: string;
+        size: number;
+    };
+
+    /*
+     * Kept optional because the current public DTO
+     * does not guarantee contact information.
+     */
     contact?: {
         website?: string;
         instagram?: string;
         whatsapp?: string;
     };
 
-    goodToKnow: string[];
+    status?: string;
 
-    status: string;
-
-    moderation: {
+    moderation?: {
         status: string;
     };
 }
@@ -99,6 +121,71 @@ const buildEventUrl = (
     slug: string
 ): string => {
     return `${PUBLIC_SITE_URL}/events/${slug}`;
+};
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const formatDate = (
+    value: string
+): string => {
+    return new Date(value).toLocaleString(
+        "en-US",
+        {
+            dateStyle: "long",
+            timeStyle: "short",
+        }
+    );
+};
+
+const formatPrice = (
+    price?: Event["price"]
+): string => {
+    if (!price || price.type === "free") {
+        return "Free";
+    }
+
+    if (
+        typeof price.amount !== "number"
+    ) {
+        return "Paid";
+    }
+
+    return new Intl.NumberFormat(
+        "en-DE",
+        {
+            style: "currency",
+            currency: price.currency,
+        }
+    ).format(price.amount);
+};
+
+const formatFileSize = (
+    size: number
+): string => {
+    if (size < 1024) {
+        return `${size} B`;
+    }
+
+    if (size < 1024 * 1024) {
+        return `${(size / 1024).toFixed(1)} KB`;
+    }
+
+    return `${(
+        size /
+        (1024 * 1024)
+    ).toFixed(1)} MB`;
+};
+
+const formatEventType = (
+    eventType: Event["eventType"]
+): string => {
+    if (eventType === "official") {
+        return "Official event";
+    }
+
+    return "Community event";
 };
 
 /* =========================================================
@@ -143,6 +230,7 @@ async function getEvent(
     const data:
         PublicContentResponse =
         await response.json();
+
     /*
      * Make sure both publication and
      * entity exist.
@@ -218,7 +306,7 @@ export async function generateMetadata(
      */
 
     const image =
-        entity.image;
+        entity.images?.[0];
 
     /*
      * Use the publication canonical
@@ -237,44 +325,55 @@ export async function generateMetadata(
     return {
         title,
         description,
+
         /* =================================================
            CANONICAL
         ================================================= */
+
         alternates: {
             canonical:
                 canonicalUrl,
         },
+
         /* =================================================
            ROBOTS
         ================================================= */
+
         robots: {
             index: true,
             follow: true,
         },
+
         /* =================================================
            OPEN GRAPH
         ================================================= */
+
         openGraph: {
             title,
             description,
+
             url:
                 canonicalUrl,
+
             siteName:
                 "VECI",
+
             type:
                 "website",
+
             images:
                 image
                     ? [
-                        {
-                            url:
-                                image,
-                            alt:
-                                entity.title,
-                        },
-                    ]
+                          {
+                              url:
+                                  image,
+                              alt:
+                                  entity.title,
+                          },
+                      ]
                     : undefined,
         },
+
         /* =================================================
            TWITTER
         ================================================= */
@@ -284,8 +383,11 @@ export async function generateMetadata(
                 image
                     ? "summary_large_image"
                     : "summary",
+
             title,
+
             description,
+
             images:
                 image
                     ? [image]
@@ -293,9 +395,11 @@ export async function generateMetadata(
         },
     };
 }
+
 /* =========================================================
    EVENT PAGE
 ========================================================= */
+
 export default async function EventPage(
     {
         params,
@@ -304,51 +408,93 @@ export default async function EventPage(
     const {
         slug,
     } = await params;
+
     const data =
         await getEvent(slug);
-        
+
     /*
      * If the event is not public,
      * let Next.js render the 404 page.
      */
+
     if (!data) {
         notFound();
     }
+
     const {
         publication,
         entity,
     } = data;
+
     /*
      * IMPORTANT:
      *
      * Use exactly the same canonical URL
      * used by metadata and Open Graph.
      */
+
     const canonicalUrl =
         publication.canonicalUrl ||
         buildEventUrl(
             publication.slug
         );
+
+    /*
+     * Main image is still used by EventHero.
+     * The complete gallery is rendered below it.
+     */
+
+    const mainImage =
+        entity.images?.[0];
+
+    const galleryImages =
+        entity.images ?? [];
+
+    /* =================================================
+       STRUCTURED DATA
+    ================================================= */
+
     const jsonLdEvent = {
         _id: entity.id,
-        title: entity.title,
-        description: entity.description,
-        eventType: entity.eventType,
-        category: entity.category,
-        images: entity.image
-            ? [entity.image]
-            : [],
-        cityId: entity.cityId,
-        address: entity.address,
-        dateStart: entity.dateStart,
-        dateEnd: entity.dateEnd,
-        location: entity.location,
-        createdBy: entity.createdBy,
-        contact: entity.contact,
-        goodToKnow: entity.goodToKnow,
-        status: entity.status,
-        moderation: entity.moderation,
+        title:
+            entity.title,
+        description:
+            entity.description,
+        eventType:
+            entity.eventType,
+        category:
+            entity.category,
+        images:
+            entity.images ?? [],
+        cityId:
+            entity.cityId,
+        address:
+            entity.address,
+        dateStart:
+            entity.dateStart,
+        dateEnd:
+            entity.dateEnd,
+        location:
+            entity.location,
+        createdBy:
+        entity.createdBy
+            ? {
+                _id:
+                    entity.createdBy.id,
+                name:
+                    entity.createdBy.name,
+                profileImage:
+                    entity.createdBy.profileImage,
+            }
+            : undefined,
+        goodToKnow:
+            entity.goodToKnow,
+        status:
+            entity.status,
+        moderation:
+            entity.moderation,
     };
+
     return (
         <main
             className="
@@ -358,13 +504,16 @@ export default async function EventPage(
             {/* =================================================
                 STRUCTURED DATA
             ================================================= */}
+
             <EventJsonLd
                 event={jsonLdEvent}
                 url={canonicalUrl}
             />
+
             {/* =================================================
                 EVENT ARTICLE
             ================================================= */}
+
             <article
                 className="
                     mx-auto
@@ -376,22 +525,216 @@ export default async function EventPage(
                 {/* =================================================
                     EVENT HERO
                 ================================================= */}
+
                 <EventHero
                     title={entity.title}
                     category={entity.category}
                     cityId={entity.cityId}
-                    image={entity.image}
+                    image={mainImage}
                 />
-                {entity.location && (
-                    <LocationMapClient
-                        coordinates={entity.location.coordinates}
-                        address={entity.address}
-                        title={entity.title}
-                    />
+
+                {/* =================================================
+                    IMAGE GALLERY
+                ================================================= */}
+
+                {galleryImages.length > 1 && (
+                    <section
+                        className="
+                            mt-6
+                        "
+                    >
+                        <div
+                            className="
+                                grid
+                                grid-cols-2
+                                gap-3
+                                md:grid-cols-3
+                            "
+                        >
+                            {galleryImages.map(
+                                (
+                                    image,
+                                    index
+                                ) => (
+                                    <a
+                                        key={`${image}-${index}`}
+                                        href={image}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="
+                                            group
+                                            overflow-hidden
+                                            rounded-2xl
+                                            bg-gray-100
+                                        "
+                                    >
+                                        <img
+                                            src={image}
+                                            alt={`${entity.title} - image ${index + 1}`}
+                                            className="
+                                                aspect-[4/3]
+                                                h-full
+                                                w-full
+                                                object-cover
+                                                transition
+                                                duration-300
+                                                group-hover:scale-105
+                                            "
+                                        />
+                                    </a>
+                                )
+                            )}
+                        </div>
+                    </section>
                 )}
+
+                {/* =================================================
+                    EVENT SUMMARY
+                ================================================= */}
+
+                <section
+                    className="
+                        mt-10
+                        grid
+                        gap-4
+                        sm:grid-cols-2
+                        lg:grid-cols-4
+                    "
+                >
+                    {/* CATEGORY */}
+
+                    <div
+                        className="
+                            rounded-2xl
+                            border
+                            border-gray-200
+                            p-5
+                        "
+                    >
+                        <p
+                            className="
+                                text-sm
+                                font-medium
+                                text-gray-500
+                            "
+                        >
+                            Category
+                        </p>
+
+                        <p
+                            className="
+                                mt-2
+                                text-lg
+                                font-semibold
+                                capitalize
+                            "
+                        >
+                            {entity.category}
+                        </p>
+                    </div>
+
+                    {/* EVENT TYPE */}
+
+                    <div
+                        className="
+                            rounded-2xl
+                            border
+                            border-gray-200
+                            p-5
+                        "
+                    >
+                        <p
+                            className="
+                                text-sm
+                                font-medium
+                                text-gray-500
+                            "
+                        >
+                            Event type
+                        </p>
+
+                        <p
+                            className="
+                                mt-2
+                                text-lg
+                                font-semibold
+                            "
+                        >
+                            {formatEventType(
+                                entity.eventType
+                            )}
+                        </p>
+                    </div>
+
+                    {/* PRICE */}
+
+                    <div
+                        className="
+                            rounded-2xl
+                            border
+                            border-gray-200
+                            p-5
+                        "
+                    >
+                        <p
+                            className="
+                                text-sm
+                                font-medium
+                                text-gray-500
+                            "
+                        >
+                            Price
+                        </p>
+
+                        <p
+                            className="
+                                mt-2
+                                text-lg
+                                font-semibold
+                            "
+                        >
+                            {formatPrice(
+                                entity.price
+                            )}
+                        </p>
+                    </div>
+
+                    {/* CITY */}
+
+                    <div
+                        className="
+                            rounded-2xl
+                            border
+                            border-gray-200
+                            p-5
+                        "
+                    >
+                        <p
+                            className="
+                                text-sm
+                                font-medium
+                                text-gray-500
+                            "
+                        >
+                            City
+                        </p>
+
+                        <p
+                            className="
+                                mt-2
+                                text-lg
+                                font-semibold
+                            "
+                        >
+                            {entity.cityId}
+                        </p>
+                    </div>
+                </section>
+
                 {/* =================================================
                     EVENT INFORMATION
                 ================================================= */}
+
                 <section
                     className="
                         mt-10
@@ -403,7 +746,14 @@ export default async function EventPage(
                     {/* =============================================
                         DATE
                     ============================================= */}
-                    <div>
+
+                    <div
+                        className="
+                            rounded-2xl
+                            bg-gray-50
+                            p-6
+                        "
+                    >
                         <h2
                             className="
                                 text-xl
@@ -412,52 +762,45 @@ export default async function EventPage(
                         >
                             When
                         </h2>
+
                         <p
                             className="
-                                mt-2
-                                text-gray-600
+                                mt-3
+                                text-gray-700
                             "
                         >
-                            {new Date(
+                            {formatDate(
                                 entity.dateStart
-                            ).toLocaleString(
-                                "en-US",
-                                {
-                                    dateStyle:
-                                        "long",
-
-                                    timeStyle:
-                                        "short",
-                                }
                             )}
                         </p>
+
                         {entity.dateEnd && (
                             <p
                                 className="
-                                    mt-1
+                                    mt-2
                                     text-sm
                                     text-gray-500
                                 "
                             >
                                 Until{" "}
-                                {new Date(
+                                {formatDate(
                                     entity.dateEnd
-                                ).toLocaleString(
-                                    "en-US",
-                                    {
-                                        dateStyle:
-                                            "long",
-                                        timeStyle:
-                                            "short",
-                                    }
                                 )}
                             </p>
                         )}
                     </div>
+
                     {/* =============================================
                         LOCATION
                     ============================================= */}
-                    <div>
+
+                    <div
+                        className="
+                            rounded-2xl
+                            bg-gray-50
+                            p-6
+                        "
+                    >
                         <h2
                             className="
                                 text-xl
@@ -466,16 +809,18 @@ export default async function EventPage(
                         >
                             Where
                         </h2>
+
                         {entity.address && (
                             <p
                                 className="
-                                    mt-2
-                                    text-gray-600
+                                    mt-3
+                                    text-gray-700
                                 "
                             >
                                 {entity.address}
                             </p>
                         )}
+
                         {entity.cityId && (
                             <p
                                 className="
@@ -489,6 +834,63 @@ export default async function EventPage(
                         )}
                     </div>
                 </section>
+
+                {/* =================================================
+                    PRICE DETAIL
+                ================================================= */}
+
+                {entity.price && (
+                    <section
+                        className="
+                            mt-10
+                            rounded-2xl
+                            border
+                            border-gray-200
+                            p-6
+                        "
+                    >
+                        <div
+                            className="
+                                flex
+                                items-center
+                                justify-between
+                                gap-4
+                            "
+                        >
+                            <div>
+                                <h2
+                                    className="
+                                        text-2xl
+                                        font-semibold
+                                    "
+                                >
+                                    Price
+                                </h2>
+
+                                <p
+                                    className="
+                                        mt-1
+                                        text-sm
+                                        text-gray-500
+                                    "
+                                >
+                                    Event admission
+                                </p>
+                            </div>
+
+                            <p
+                                className="
+                                    text-2xl
+                                    font-bold
+                                "
+                            >
+                                {formatPrice(
+                                    entity.price
+                                )}
+                            </p>
+                        </div>
+                    </section>
+                )}
 
                 {/* =================================================
                     DESCRIPTION
@@ -514,6 +916,7 @@ export default async function EventPage(
                                 mt-4
                                 whitespace-pre-line
                                 text-gray-700
+                                leading-7
                             "
                         >
                             {entity.description}
@@ -543,10 +946,7 @@ export default async function EventPage(
                         <ul
                             className="
                                 mt-4
-                                list-disc
-                                space-y-2
-                                pl-6
-                                text-gray-700
+                                space-y-3
                             "
                         >
                             {entity.goodToKnow.map(
@@ -556,8 +956,25 @@ export default async function EventPage(
                                 ) => (
                                     <li
                                         key={`${item}-${index}`}
+                                        className="
+                                            flex
+                                            gap-3
+                                            text-gray-700
+                                        "
                                     >
-                                        {item}
+                                        <span
+                                            className="
+                                                mt-1
+                                                shrink-0
+                                                font-semibold
+                                            "
+                                        >
+                                            ✓
+                                        </span>
+
+                                        <span>
+                                            {item}
+                                        </span>
                                     </li>
                                 )
                             )}
@@ -566,10 +983,246 @@ export default async function EventPage(
                 )}
 
                 {/* =================================================
+                    ORGANIZER
+                ================================================= */}
+
+                {entity.createdBy && (
+                    <section
+                        className="
+                            mt-10
+                            rounded-2xl
+                            border
+                            border-gray-200
+                            p-6
+                        "
+                    >
+                        <h2
+                            className="
+                                text-2xl
+                                font-semibold
+                            "
+                        >
+                            Organized by
+                        </h2>
+
+                        <div
+                            className="
+                                mt-5
+                                flex
+                                items-center
+                                gap-4
+                            "
+                        >
+                            {entity.createdBy.profileImage ? (
+                                <img
+                                    src={
+                                        entity.createdBy
+                                            .profileImage
+                                    }
+                                    alt={
+                                        entity.createdBy.name
+                                    }
+                                    className="
+                                        h-14
+                                        w-14
+                                        rounded-full
+                                        object-cover
+                                    "
+                                />
+                            ) : (
+                                <div
+                                    className="
+                                        flex
+                                        h-14
+                                        w-14
+                                        items-center
+                                        justify-center
+                                        rounded-full
+                                        bg-gray-200
+                                        text-lg
+                                        font-semibold
+                                        text-gray-600
+                                    "
+                                >
+                                    {entity.createdBy.name
+                                        .charAt(0)
+                                        .toUpperCase()}
+                                </div>
+                            )}
+
+                            <div>
+                                <p
+                                    className="
+                                        font-semibold
+                                    "
+                                >
+                                    {
+                                        entity.createdBy
+                                            .name
+                                    }
+                                </p>
+
+                                <p
+                                    className="
+                                        text-sm
+                                        text-gray-500
+                                    "
+                                >
+                                    Event organizer
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                )}
+
+                {/* =================================================
+                    LINKS
+                ================================================= */}
+
+                {entity.links?.length > 0 && (
+                    <section
+                        className="
+                            mt-10
+                        "
+                    >
+                        <h2
+                            className="
+                                text-2xl
+                                font-semibold
+                            "
+                        >
+                            Links
+                        </h2>
+
+                        <div
+                            className="
+                                mt-4
+                                flex
+                                flex-wrap
+                                gap-3
+                            "
+                        >
+                            {entity.links.map(
+                                (
+                                    link,
+                                    index
+                                ) => (
+                                    <a
+                                        key={`${link.url}-${index}`}
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="
+                                            rounded-xl
+                                            border
+                                            border-gray-300
+                                            px-4
+                                            py-2.5
+                                            text-sm
+                                            font-medium
+                                            transition
+                                            hover:bg-gray-50
+                                        "
+                                    >
+                                        {link.label}
+                                    </a>
+                                )
+                            )}
+                        </div>
+                    </section>
+                )}
+
+                {/* =================================================
+                    ATTACHMENT
+                ================================================= */}
+
+                {entity.attachment && (
+                    <section
+                        className="
+                            mt-10
+                            rounded-2xl
+                            border
+                            border-gray-200
+                            p-6
+                        "
+                    >
+                        <h2
+                            className="
+                                text-2xl
+                                font-semibold
+                            "
+                        >
+                            Event document
+                        </h2>
+
+                        <div
+                            className="
+                                mt-4
+                                flex
+                                flex-col
+                                gap-4
+                                sm:flex-row
+                                sm:items-center
+                                sm:justify-between
+                            "
+                        >
+                            <div>
+                                <p
+                                    className="
+                                        font-medium
+                                    "
+                                >
+                                    {entity.attachment.name}
+                                </p>
+
+                                <p
+                                    className="
+                                        mt-1
+                                        text-sm
+                                        text-gray-500
+                                    "
+                                >
+                                    PDF ·{" "}
+                                    {formatFileSize(
+                                        entity.attachment
+                                            .size
+                                    )}
+                                </p>
+                            </div>
+
+                            <a
+                                href={
+                                    entity.attachment
+                                        .url
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="
+                                    inline-flex
+                                    items-center
+                                    justify-center
+                                    rounded-xl
+                                    bg-black
+                                    px-5
+                                    py-3
+                                    text-sm
+                                    font-semibold
+                                    text-white
+                                    transition
+                                    hover:opacity-80
+                                "
+                            >
+                                Open document
+                            </a>
+                        </div>
+                    </section>
+                )}
+
+                {/* =================================================
                     CONTACT
                 ================================================= */}
 
-                {entity.contact && (
+                {entity.contact &&
                     (
                         entity.contact.website ||
                         entity.contact.instagram ||
@@ -593,64 +1246,73 @@ export default async function EventPage(
                                 className="
                                     mt-4
                                     flex
-                                    flex-col
-                                    gap-2
+                                    flex-wrap
+                                    gap-3
                                 "
                             >
-                                {/* =================================
-                                    WEBSITE
-                                ================================= */}
-
                                 {entity.contact.website && (
                                     <a
                                         href={
-                                            entity.contact.website
+                                            entity.contact
+                                                .website
                                         }
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="
-                                            text-blue-600
-                                            hover:underline
+                                            rounded-xl
+                                            border
+                                            border-gray-300
+                                            px-4
+                                            py-2.5
+                                            text-sm
+                                            font-medium
+                                            hover:bg-gray-50
                                         "
                                     >
                                         Website
                                     </a>
                                 )}
 
-                                {/* =================================
-                                    INSTAGRAM
-                                ================================= */}
-
                                 {entity.contact.instagram && (
                                     <a
                                         href={
-                                            entity.contact.instagram
+                                            entity.contact
+                                                .instagram
                                         }
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="
-                                            text-blue-600
-                                            hover:underline
+                                            rounded-xl
+                                            border
+                                            border-gray-300
+                                            px-4
+                                            py-2.5
+                                            text-sm
+                                            font-medium
+                                            hover:bg-gray-50
                                         "
                                     >
                                         Instagram
                                     </a>
                                 )}
 
-                                {/* =================================
-                                    WHATSAPP
-                                ================================= */}
-
                                 {entity.contact.whatsapp && (
                                     <a
                                         href={
-                                            entity.contact.whatsapp
+                                            entity.contact
+                                                .whatsapp
                                         }
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="
-                                            text-blue-600
-                                            hover:underline
+                                            rounded-xl
+                                            border
+                                            border-gray-300
+                                            px-4
+                                            py-2.5
+                                            text-sm
+                                            font-medium
+                                            hover:bg-gray-50
                                         "
                                     >
                                         WhatsApp
@@ -658,7 +1320,41 @@ export default async function EventPage(
                                 )}
                             </div>
                         </section>
-                    )
+                    )}
+
+                {/* =================================================
+                    MAP
+                ================================================= */}
+
+                {entity.location && (
+                    <section
+                        className="
+                            mt-10
+                        "
+                    >
+                        <h2
+                            className="
+                                mb-4
+                                text-2xl
+                                font-semibold
+                            "
+                        >
+                            Location
+                        </h2>
+
+                        <LocationMapClient
+                            coordinates={
+                                entity.location
+                                    .coordinates
+                            }
+                            address={
+                                entity.address
+                            }
+                            title={
+                                entity.title
+                            }
+                        />
+                    </section>
                 )}
             </article>
         </main>
