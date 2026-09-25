@@ -37,14 +37,9 @@ export default function EventCard({
             href={`/events/${event.slug}`}
             
             className={[
-                "group relative block overflow-hidden rounded-3xl",
+                "group relative block h-full overflow-hidden rounded-3xl",
                 "bg-gray-200 shadow-sm",
                 "transition duration-300 hover:-translate-y-1 hover:shadow-xl",
-                variant === "featured"
-                    ? "min-h-[420px]"
-                    : variant === "compact"
-                        ? "min-h-[200px]"
-                        : "min-h-[280px]",
             ].join(" ")}
         >
             {/* Image */}
@@ -65,7 +60,7 @@ export default function EventCard({
 
             {/* Content */}
 
-            <div className="relative flex min-h-[inherit] flex-col justify-end p-5 text-white">
+            <div className="relative flex h-full flex-col justify-end p-5 text-white">
 
                 {/* Category */}
 
