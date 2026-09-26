@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-
+import { useState } from "react";
+import {
+    motion,
+    AnimatePresence,
+    useScroll,
+    useMotionValueEvent,
+} from "framer-motion";
 import {
     Menu,
     X,
@@ -11,40 +15,36 @@ import {
     Heart,
     CalendarDays,
     Store,
+    Users,
     LogOut,
+    Globe,
 } from "lucide-react";
-
 import {
     Link,
     usePathname,
     useRouter,
 } from "../../i18n/navigation";
-
 import { useAuth } from "@/components/auth/AuthProvider";
-
 import VeciLogo from "../../../public/logoVeci.webp";
-
-const links = [
-    "Eventos",
-    "Negocios",
-    "Cómo Funciona",
-    "Para Emprendedores",
-    "Comunidad",
-];
+import { useLocale, useTranslations } from "next-intl";
 
 const locales = [
-    { code: "es", label: "ES" },
-    { code: "en", label: "EN" },
-    { code: "de", label: "DE" },
+{ code: "es", label: "ES" },
+{ code: "en", label: "EN" },
+{ code: "de", label: "DE" },
 ] as const;
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
+    const [navbarVisible, setNavbarVisible] = useState(true);
     const [open, setOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const [languageOpen, setLanguageOpen] = useState(false);
 
     const router = useRouter();
     const pathname = usePathname();
+    const locale = useLocale();
+    const t = useTranslations("Navbar");
 
     const {
         user,
@@ -53,19 +53,38 @@ export default function Navbar() {
         logout,
     } = useAuth();
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
+    /* =====================================================
+    SCROLL / NAVBAR VISIBILITY
+    ====================================================== */
 
-        window.addEventListener("scroll", handleScroll);
+    const { scrollY } = useScroll();
 
-        return () =>
-            window.removeEventListener(
-                "scroll",
-                handleScroll
-            );
-    }, []);
+    useMotionValueEvent(scrollY, "change", (current) => {
+        const previous = scrollY.getPrevious() ?? 0;
+
+        // Navbar background
+        setScrolled(current > 20);
+
+        // Always visible at the top
+        if (current <= 20) {
+            setNavbarVisible(true);
+            return;
+        }
+
+        // Scrolling down -> hide navbar
+        if (current > previous) {
+            setNavbarVisible(false);
+        }
+
+        // Scrolling up -> show navbar
+        if (current < previous) {
+            setNavbarVisible(true);
+        }
+    });
+
+    /* =====================================================
+    LOCALE
+    ====================================================== */
 
     const changeLocale = (
         locale: "es" | "en" | "de"
@@ -83,7 +102,12 @@ export default function Navbar() {
 
         setOpen(false);
         setUserMenuOpen(false);
+        setLanguageOpen(false);
     };
+
+    /* =====================================================
+    LOGOUT
+    ====================================================== */
 
     const handleLogout = () => {
         logout();
@@ -93,6 +117,10 @@ export default function Navbar() {
 
         router.push("/");
     };
+
+    /* =====================================================
+    USER NAVIGATION
+    ====================================================== */
 
     const handleUserNavigation = (
         path: string
@@ -110,15 +138,20 @@ export default function Navbar() {
             ====================================================== */}
 
             <motion.header
-                initial={{ y: -100 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.6 }}
+                initial={{ y: -100}}
+                animate={{
+                    y: navbarVisible ? 0 : -120,
+                }}
+                transition={{
+                    duration: 0.35,
+                    ease: [0.4, 0, 0.2, 1],
+                }}
                 className={`
                     fixed
                     top-4
                     left-1/2
                     -translate-x-1/2
-                    z-50
+                    z-100
                     w-[95%]
                     max-w-7xl
                     rounded-2xl
@@ -150,7 +183,6 @@ export default function Navbar() {
                     {/* =================================================
                         LOGO
                     ================================================== */}
-
                     <Link
                         href="/"
                         onClick={() => {
@@ -163,78 +195,197 @@ export default function Navbar() {
                             className="h-10 w-auto"
                         />
                     </Link>
-
                     {/* =================================================
                         DESKTOP NAVIGATION
                     ================================================== */}
-
                     <nav
                         className="
                             hidden
-                            lg:flex
                             items-center
-                            gap-8
+                            gap-2
+                            lg:flex
                         "
                     >
-                        {links.map((item) => {
-                            if (item === "Eventos") {
-                                return (
-                                    <Link
-                                        key={item}
-                                        href="/events"
-                                        className="
-                                            text-sm
-                                            font-medium
-                                            text-neutral-700
-                                            transition
-                                            hover:text-black
-                                        "
-                                    >
-                                        {item}
-                                    </Link>
-                                );
-                            }
+                        {/* EVENTOS */}
+                        <Link
+                            href="/events"
+                            className={`
+                                group
+                                relative
+                                flex
+                                items-center
+                                gap-2
+                                rounded-xl
+                                px-4
+                                py-2.5
+                                text-sm
+                                font-medium
+                                transition-all
+                                duration-200
 
-                            if (item === "Negocios") {
-                                return (
-                                    <Link
-                                        key={item}
-                                        href="/business"
-                                        className="
-                                            text-sm
-                                            font-medium
-                                            text-neutral-700
-                                            transition
-                                            hover:text-black
-                                        "
-                                    >
-                                        {item}
-                                    </Link>
-                                );
-                            }
-
-                            return (
-                                <a
-                                    key={item}
-                                    href="#"
+                                ${
+                                    pathname.includes("/events")
+                                        ? `
+                                            bg-[#F2C94C]/20
+                                            text-[#111827]
+                                        `
+                                        : `
+                                            text-neutral-600
+                                            hover:bg-[#F2C94C]/10
+                                            hover:text-[#111827]
+                                        `
+                                }
+                            `}
+                        >
+                            <CalendarDays
+                                size={17}
+                                strokeWidth={1.8}
+                                className="
+                                    transition-transform
+                                    duration-200
+                                    group-hover:-translate-y-0.5
+                                "
+                            />
+                            <span>
+                                {t("events")}
+                            </span>
+                            {pathname.includes("/events") && (
+                                <span
                                     className="
-                                        text-sm
-                                        font-medium
-                                        text-neutral-700
-                                        transition
-                                        hover:text-black
+                                        absolute
+                                        bottom-0.5
+                                        left-1/2
+                                        h-0.5
+                                        w-5
+                                        -translate-x-1/2
+                                        rounded-full
+                                        bg-[#F2C94C]
                                     "
-                                >
-                                    {item}
-                                </a>
-                            );
-                        })}
-                    </nav>
+                                />
+                            )}
+                        </Link>
+                        {/* NEGOCIOS */}
+                        <Link
+                            href="/business"
+                            className={`
+                                group
+                                relative
+                                flex
+                                items-center
+                                gap-2
+                                rounded-xl
+                                px-4
+                                py-2.5
+                                text-sm
+                                font-medium
+                                transition-all
+                                duration-200
 
+                                ${
+                                    pathname.includes("/business")
+                                        ? `
+                                            bg-[#F2C94C]/20
+                                            text-[#111827]
+                                        `
+                                        : `
+                                            text-neutral-600
+                                            hover:bg-[#F2C94C]/10
+                                            hover:text-[#111827]
+                                        `
+                                }
+                            `}
+                        >
+                            <Store
+                                size={17}
+                                strokeWidth={1.8}
+                                className="
+                                    transition-transform
+                                    duration-200
+                                    group-hover:-translate-y-0.5
+                                "
+                            />
+                            <span>
+                                {t("businesses")}
+                            </span>
+                            {pathname.includes("/business") && (
+                                <span
+                                    className="
+                                        absolute
+                                        bottom-0.5
+                                        left-1/2
+                                        h-0.5
+                                        w-5
+                                        -translate-x-1/2
+                                        rounded-full
+                                        bg-[#F2C94C]
+                                    "
+                                />
+                            )}
+                        </Link>
+                        {/* COMUNIDAD */}
+                        <Link
+                            href="/community"
+                            className={`
+                                group
+                                relative
+                                flex
+                                items-center
+                                gap-2
+                                rounded-xl
+                                px-4
+                                py-2.5
+                                text-sm
+                                font-medium
+                                transition-all
+                                duration-200
+
+                                ${
+                                    pathname.includes("/community")
+                                        ? `
+                                            bg-[#F2C94C]/20
+                                            text-[#111827]
+                                        `
+                                        : `
+                                            text-neutral-600
+                                            hover:bg-[#F2C94C]/10
+                                            hover:text-[#111827]
+                                        `
+                                }
+                            `}
+                        >
+                            <Users
+                                size={17}
+                                strokeWidth={1.8}
+                                className="
+                                    transition-transform
+                                    duration-200
+                                    group-hover:-translate-y-0.5
+                                "
+                            />
+
+                            <span>
+                                {t("community")}
+                            </span>
+
+                            {pathname.includes("/community") && (
+                                <span
+                                    className="
+                                        absolute
+                                        bottom-0.5
+                                        left-1/2
+                                        h-0.5
+                                        w-5
+                                        -translate-x-1/2
+                                        rounded-full
+                                        bg-[#F2C94C]
+                                    "
+                                />
+                            )}
+                        </Link>
+                    </nav>
                     {/* =================================================
                         RIGHT SIDE
                     ================================================== */}
-
                     <div
                         className="
                             hidden
@@ -244,48 +395,89 @@ export default function Navbar() {
                         "
                     >
                         {/* LANGUAGE */}
+                        <div className="relative">
+                            <button
+                                type="button"
+                                onClick={() => setLanguageOpen((prev) => !prev)}
+                                className="
+                                    flex
+                                    items-center
+                                    gap-2
+                                    text-sm
+                                    font-medium
+                                    text-neutral-500
+                                    transition
+                                    hover:text-black
+                                "
+                            >
+                                <span>
+                                    {locales.find(
+                                        (item) => item.code === locale
+                                    )?.label}
+                                </span>
 
-                        <div className="flex items-center gap-2">
-                            {locales.map(
-                                (locale, index) => (
-                                    <div
-                                        key={
-                                            locale.code
-                                        }
+                                <ChevronDown
+                                    size={15}
+                                    className={`transition-transform duration-200 ${
+                                        languageOpen ? "rotate-180" : ""
+                                    }`}
+                                />
+                            </button>
+
+                            <AnimatePresence>
+                                {languageOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -5 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -5 }}
+                                        transition={{ duration: 0.15 }}
                                         className="
-                                            flex
-                                            items-center
+                                            absolute
+                                            right-0
+                                            top-full
+                                            z-50
+                                            mt-2
+                                            min-w-[90px]
+                                            overflow-hidden
+                                            rounded-xl
+                                            border
+                                            border-neutral-200
+                                            bg-white
+                                            py-1
+                                            shadow-lg
                                         "
                                     >
-                                        <button
-                                            onClick={() =>
-                                                changeLocale(
-                                                    locale.code
-                                                )
-                                            }
-                                            className="
-                                                text-sm
-                                                font-medium
-                                                text-neutral-500
-                                                transition
-                                                hover:text-black
-                                            "
-                                        >
-                                            {
-                                                locale.label
-                                            }
-                                        </button>
-
-                                        {index <
-                                            locales.length -
-                                                1 && (
-                                            <span className="mx-1 text-neutral-300">
-                                                |
-                                            </span>
-                                        )}
-                                    </div>
-                                )
-                            )}
+                                        {locales.map((item) => (
+                                            <button
+                                                key={item.code}
+                                                type="button"
+                                                onClick={() => {
+                                                    changeLocale(item.code);
+                                                    setLanguageOpen(false);
+                                                }}
+                                                className={`
+                                                    flex
+                                                    w-full
+                                                    items-center
+                                                    px-4
+                                                    py-2
+                                                    text-left
+                                                    text-sm
+                                                    font-medium
+                                                    transition
+                                                    ${
+                                                        item.code === locale
+                                                            ? "bg-[#F2C94C]/15 text-black"
+                                                            : "text-neutral-500 hover:bg-neutral-50 hover:text-black"
+                                                    }
+                                                `}
+                                            >
+                                                {item.label}
+                                            </button>
+                                        ))}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         {/* =================================================
@@ -303,7 +495,7 @@ export default function Navbar() {
                                 "
                             />
                         ) : isAuthenticated &&
-                          user ? (
+                        user ? (
                             <div className="relative">
                                 {/* USER BUTTON */}
 
@@ -509,12 +701,10 @@ export default function Navbar() {
                                                         17
                                                     }
                                                 />
-
                                                 <span>
-                                                    Profile
+                                                    {t("profile")}
                                                 </span>
                                             </button>
-
                                             <button
                                                 type="button"
                                                 onClick={() =>
@@ -544,7 +734,7 @@ export default function Navbar() {
                                                 />
 
                                                 <span>
-                                                    Favorites
+                                                    {t("favorites")}
                                                 </span>
                                             </button>
 
@@ -610,7 +800,7 @@ export default function Navbar() {
                                                 />
 
                                                 <span>
-                                                    My Businesses
+                                                    {t("myBusinesses")}
                                                 </span>
                                             </button>
                                         </div>
@@ -674,27 +864,11 @@ export default function Navbar() {
                                     hover:scale-105
                                 "
                             >
-                                Iniciar sesión
+                                {t("login")}
                             </Link>
                         )}
 
-                        {/* DOWNLOAD APP */}
-
-                        <button
-                            className="
-                                rounded-xl
-                                bg-[#FF7A00]
-                                px-5
-                                py-3
-                                text-sm
-                                font-semibold
-                                text-white
-                                transition
-                                hover:scale-105
-                            "
-                        >
-                            Descargar App
-                        </button>
+                       
                     </div>
 
                     {/* =================================================
@@ -707,7 +881,7 @@ export default function Navbar() {
                             setUserMenuOpen(false);
                         }}
                         className="lg:hidden"
-                        aria-label="Toggle menu"
+                        aria-label={t("toggleMenu")}
                     >
                         {open ? <X /> : <Menu />}
                     </button>
@@ -746,75 +920,108 @@ export default function Navbar() {
                             lg:hidden
                         "
                     >
-                        <div className="flex flex-col gap-6">
+                        <div className="flex flex-col gap-3">
 
                             {/* NAV LINKS */}
 
-                            {links.map((item) => {
-                                if (
-                                    item ===
-                                    "Eventos"
-                                ) {
-                                    return (
-                                        <Link
-                                            key={item}
-                                            href="/events"
-                                            className="
-                                                font-medium
-                                                text-neutral-700
-                                            "
-                                            onClick={() =>
-                                                setOpen(
-                                                    false
-                                                )
-                                            }
-                                        >
-                                            {item}
-                                        </Link>
-                                    );
+                            <Link
+                                href="/events"
+                                className={`
+                                    group
+                                    flex
+                                    items-center
+                                    gap-3
+                                    rounded-xl
+                                    px-4
+                                    py-3
+                                    font-medium
+                                    transition-all
+                                    duration-200
+                                    ${
+                                        pathname.includes("/events")
+                                            ? "bg-[#F2C94C]/20 text-[#111827]"
+                                            : "text-neutral-700 hover:bg-[#F2C94C]/10 hover:text-[#111827]"
+                                    }
+                                `}
+                                onClick={() =>
+                                    setOpen(false)
                                 }
+                            >
+                                <CalendarDays
+                                    size={19}
+                                    strokeWidth={1.8}
+                                />
 
-                                if (
-                                    item ===
-                                    "Negocios"
-                                ) {
-                                    return (
-                                        <Link
-                                            key={item}
-                                            href="/business"
-                                            className="
-                                                font-medium
-                                                text-neutral-700
-                                            "
-                                            onClick={() =>
-                                                setOpen(
-                                                    false
-                                                )
-                                            }
-                                        >
-                                            {item}
-                                        </Link>
-                                    );
+                                <span>
+                                    {t("events")}
+                                </span>
+                            </Link>
+
+                            <Link
+                                href="/business"
+                                className={`
+                                    group
+                                    flex
+                                    items-center
+                                    gap-3
+                                    rounded-xl
+                                    px-4
+                                    py-3
+                                    font-medium
+                                    transition-all
+                                    duration-200
+                                    ${
+                                        pathname.includes("/business")
+                                            ? "bg-[#F2C94C]/20 text-[#111827]"
+                                            : "text-neutral-700 hover:bg-[#F2C94C]/10 hover:text-[#111827]"
+                                    }
+                                `}
+                                onClick={() =>
+                                    setOpen(false)
                                 }
+                            >
+                                <Store
+                                    size={19}
+                                    strokeWidth={1.8}
+                                />
 
-                                return (
-                                    <a
-                                        key={item}
-                                        href="#"
-                                        className="
-                                            font-medium
-                                            text-neutral-700
-                                        "
-                                        onClick={() =>
-                                            setOpen(
-                                                false
-                                            )
-                                        }
-                                    >
-                                        {item}
-                                    </a>
-                                );
-                            })}
+                                <span>
+                                    {t("businesses")}
+                                </span>
+                            </Link>
+
+                            <Link
+                                href="/community"
+                                className={`
+                                    group
+                                    flex
+                                    items-center
+                                    gap-3
+                                    rounded-xl
+                                    px-4
+                                    py-3
+                                    font-medium
+                                    transition-all
+                                    duration-200
+                                    ${
+                                        pathname.includes("/community")
+                                            ? "bg-[#F2C94C]/20 text-[#111827]"
+                                            : "text-neutral-700 hover:bg-[#F2C94C]/10 hover:text-[#111827]"
+                                    }
+                                `}
+                                onClick={() =>
+                                    setOpen(false)
+                                }
+                            >
+                                <Users
+                                    size={19}
+                                    strokeWidth={1.8}
+                                />
+
+                                <span>
+                                    {t("community")}
+                                </span>
+                            </Link>
 
                             {/* LANGUAGE */}
 
@@ -822,6 +1029,7 @@ export default function Navbar() {
                                 className="
                                     border-t
                                     pt-4
+                                    mt-2
                                 "
                             >
                                 <div className="flex items-center gap-3">
@@ -885,7 +1093,7 @@ export default function Navbar() {
                                     "
                                 />
                             ) : isAuthenticated &&
-                              user ? (
+                            user ? (
                                 <div
                                     className="
                                         border-t
@@ -935,7 +1143,7 @@ export default function Navbar() {
 
                                         <div className="min-w-0">
                                             <p className="text-xs text-neutral-500">
-                                                Sesión iniciada como
+                                                {t("loggedInAs")}
                                             </p>
 
                                             <p className="truncate font-semibold text-neutral-900">
@@ -974,7 +1182,7 @@ export default function Navbar() {
                                             size={18}
                                         />
 
-                                        Profile
+                                        {t("profile")}
                                     </button>
 
                                     {/* FAVORITES */}
@@ -1004,12 +1212,9 @@ export default function Navbar() {
                                         <Heart
                                             size={18}
                                         />
-
-                                        Favorites
+                                        {t("favorites")}
                                     </button>
-
                                     {/* MY EVENTS */}
-
                                     <button
                                         type="button"
                                         onClick={() =>
@@ -1035,8 +1240,7 @@ export default function Navbar() {
                                         <CalendarDays
                                             size={18}
                                         />
-
-                                        My Events
+                                        {t("myEvents")} 
                                     </button>
 
                                     {/* MY BUSINESSES */}
@@ -1066,12 +1270,9 @@ export default function Navbar() {
                                         <Store
                                             size={18}
                                         />
-
-                                        My Businesses
+                                        {t("myBusinesses")}
                                     </button>
-
                                     {/* LOGOUT */}
-
                                     <div
                                         className="
                                             mt-3
@@ -1106,7 +1307,7 @@ export default function Navbar() {
                                                 }
                                             />
 
-                                            Cerrar sesión
+                                            {t("logout")}
                                         </button>
                                     </div>
                                 </div>
@@ -1131,28 +1332,15 @@ export default function Navbar() {
                                         hover:scale-[1.02]
                                     "
                                 >
-                                    Iniciar sesión
+                                    {t("login")}
                                 </Link>
                             )}
-
-                            {/* DOWNLOAD APP */}
-
-                            <button
-                                className="
-                                    rounded-xl
-                                    bg-[#2563EB]
-                                    px-5
-                                    py-3
-                                    font-semibold
-                                    text-white
-                                "
-                            >
-                                Descargar App
-                            </button>
                         </div>
                     </motion.div>
                 )}
             </AnimatePresence>
         </>
     );
+
+
 }

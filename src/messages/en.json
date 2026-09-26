@@ -1,13 +1,61 @@
 {
-  "navbar": {
+  "Navbar": {
     "events": "Events",
-    "business": "Businesses",
-    "community": "Community"
+    "businesses": "Businesses",
+    "community": "Community",
+    "login": "Log in",
+    "downloadApp": "Download App",
+    "profile": "Profile",
+    "favorites": "Favorites",
+    "myEvents": "My Events",
+    "myBusinesses": "My Businesses",
+    "logout": "Log out",
+    "loggedInAs": "Logged in as",
+    "toggleMenu": "Open menu"
   },
-
   "hero": {
-    "badge": "Connecting Latinos across Europe",
-    "title": "Find your Latin community wherever you are",
-    "description": "Discover events, businesses and opportunities near you."
+      "slide1": {
+          "title": "Your community",
+          "highlight": "closer to you",
+          "description": "Discover people, culture and opportunities from the Latino community near you.",
+          "cta": "Explore Veci",
+          "brand1": "People.",
+          "brand2": "Culture.",
+          "brand3": "Opportunities."
+      },
+
+      "slide2": {
+          "title": "Explore the",
+          "highlight": "Latino community",
+          "description": "Discover events, businesses and entrepreneurs from the Latino community in your city.",
+          "cta": "Explore events",
+          "brand1": "Discover.",
+          "brand2": "Connect.",
+          "brand3": "Live."
+      },
+
+      "slide3": {
+          "title": "Opportunities",
+          "highlight": "for your business",
+          "description": "For entrepreneurs and business owners: create events, meet your community and open new opportunities.",
+          "cta": "Create business",
+          "brand1": "Create.",
+          "brand2": "Connect.",
+          "brand3": "Grow."
+      },
+
+      "slide4": {
+          "title": "Experience the",
+          "highlight": "Latino culture",
+          "description": "Discover flavors, experiences and places that make you feel at home.",
+          "cta": "Explore now",
+          "brand1": "Flavors.",
+          "brand2": "Experiences.",
+          "brand3": "Home."
+      },
+
+      "previousSlide": "Previous slide",
+      "nextSlide": "Next slide",
+      "goToSlide": "Go to slide {number}"
   }
 }

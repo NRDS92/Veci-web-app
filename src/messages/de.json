@@ -1,13 +1,60 @@
 {
-  "navbar": {
-    "events": "Events",
-    "business": "Unternehmen",
-    "community": "Community"
+  "Navbar": {
+    "events": "Veranstaltungen",
+    "businesses": "Geschäfte",
+    "community": "Community",
+    "login": "Anmelden",
+    "downloadApp": "App herunterladen",
+    "profile": "Profil",
+    "favorites": "Favoriten",
+    "myEvents": "Meine Veranstaltungen",
+    "myBusinesses": "Meine Geschäfte",
+    "logout": "Abmelden",
+    "loggedInAs": "Angemeldet als",
+    "toggleMenu": "Menü öffnen"
   },
-
   "hero": {
-    "badge": "Lateinamerikaner in Europa verbinden",
-    "title": "Finde deine lateinamerikanische Community",
-    "description": "Entdecke Events, Unternehmen und Möglichkeiten in deiner Nähe."
+      "slide1": {
+          "title": "Deine Community",
+          "highlight": "ganz in deiner Nähe",
+          "description": "Entdecke Menschen, Kultur und Möglichkeiten der lateinamerikanischen Community in deiner Nähe.",
+          "cta": "Veci entdecken",
+          "brand1": "Menschen.",
+          "brand2": "Kultur.",
+          "brand3": "Möglichkeiten."
+      },
+
+      "slide2": {
+          "title": "Entdecke die",
+          "highlight": "Latino Community",
+          "description": "Entdecke Veranstaltungen, Geschäfte und Unternehmer aus der lateinamerikanischen Community in deiner Stadt.",
+          "cta": "Events entdecken",
+          "brand1": "Entdecken.",
+          "brand2": "Verbinden.",
+          "brand3": "Erleben."
+      },
+
+      "slide3": {
+          "title": "Möglichkeiten für",
+          "highlight": "dein Unternehmen",
+          "description": "Für Unternehmer und Geschäftsinhaber: Erstelle Events, lerne deine Community kennen und entdecke neue Möglichkeiten.",
+          "cta": "Unternehmen erstellen",
+          "brand1": "Erstellen.",
+          "brand2": "Verbinden.",
+          "brand3": "Wachsen."
+      },
+      "slide4": {
+          "title": "Erlebe die",
+          "highlight": "Latino Kultur",
+          "description": "Entdecke Geschmäcker, Erlebnisse und Orte, an denen du dich wie zu Hause fühlst.",
+          "cta": "Jetzt entdecken",
+          "brand1": "Geschmäcker.",
+          "brand2": "Erlebnisse.",
+          "brand3": "Zuhause."
+      },
+
+      "previousSlide": "Vorheriger Slide",
+      "nextSlide": "Nächster Slide",
+      "goToSlide": "Zu Slide {number}"
   }
 }

@@ -1,19 +1,13 @@
 import { Link } from "@/i18n/navigation";
 
-import {
-    getPublicEvents,
-} from "@/lib/api/public-content";
-
-import EventHeroCarousel
-    from "./EventHeroCarousel";
-
+import { getPublicEvents } from "@/lib/api/public-content";
+import EventHeroCarousel from "./EventHeroCarousel";
 
 interface PublicEventsProps {
     cityId?: string;
     category?: string;
     limit?: number;
 }
-
 
 const categories = [
     "Music",
@@ -24,705 +18,468 @@ const categories = [
     "Community",
 ];
 
-
-const cities = [
-    "Cologne",
-    "Berlin",
-    "Madrid",
-];
-
+const cities = ["Cologne", "Berlin", "Madrid"];
 
 export default async function PublicEvents({
     cityId,
     category,
     limit = 6,
 }: PublicEventsProps) {
-    const events =
-        await getPublicEvents({
-            cityId,
-            category,
-            limit,
-        });
+    const events = await getPublicEvents({
+        cityId,
+        category,
+        limit,
+    });
+
     return (
-        <main
-            className="
-                min-h-screen
-                bg-white py-24
-            "
-        >
-            {/* =====================================================
-                01 — HERO
-            ===================================================== */}
-            <section
-                className="
-                    relative
-                    overflow-hidden
-                    border-b
-                    border-gray-100
-                    pt-24
-                    pb-20
-                "
-            >
-                <div
-                    className="
-                        mx-auto
-                        grid
-                        max-w-7xl
-                        items-center
-                        gap-12
-                        px-6
-                        lg:grid-cols-2
-                        lg:gap-20
-                    "
-                >
-                    {/* =================================================
-                        LEFT — TEXT
-                    ================================================= */}
-                    <div
-                        className="
-                            max-w-2xl
-                        "
-                    >
-                        <p
-                            className="
-                                text-sm
-                                font-semibold
-                                uppercase
-                                tracking-[0.2em]
-                                text-gray-500
-                            "
-                        >
-                            Nuestra comunidad
+        <main className="min-h-screen bg-white">
+            {/* =========================================================
+                01 — EVENTS FIRST
+            ========================================================== */}
+
+            <section className="relative overflow-hidden border-b border-gray-100 pt-32 pb-24">
+                <div className="mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
+                    {/* TEXT */}
+
+                    <div className="max-w-2xl">
+                        <p className="text-sm font-bold uppercase tracking-[0.22em] text-gray-400">
+                            Veci Events
                         </p>
-                        <h1
-                            className="
-                                mt-4
-                                text-5xl
-                                font-bold
-                                leading-[1.05]
-                                tracking-tight
-                                text-gray-900
-                                md:text-6xl
-                            "
-                        >
-                            Eventos latinos
+
+                        <h1 className="mt-5 text-6xl font-black leading-[0.9] tracking-[-0.05em] text-gray-950 md:text-7xl lg:text-[5.5rem]">
+                            Something is
                             <br />
-                            en Europa
-                        </h1>
-                        <p
-                            className="
-                                mt-6
-                                max-w-xl
-                                text-lg
-                                leading-8
-                                text-gray-600
-                            "
-                        >
-                            Descubre fiestas, conciertos,
-                            encuentros culturales y eventos
-                            de nuestra comunidad cerca de ti.
-                        </p>
-                        {/* POPULAR */}
-                        <div
-                            className="
-                                mt-8
-                                flex
-                                flex-wrap
-                                items-center
-                                gap-3
-                            "
-                        >
-                            <span
-                                className="
-                                    mr-1
-                                    text-sm
-                                    font-semibold
-                                    text-gray-700
-                                "
-                            >
-                                Popular:
+                            <span className="text-[#4C76F2]">
+                                happening.
                             </span>
-                            {categories.map(
-                                (item) => (
-                                    <button
-                                        key={item}
-                                        type="button"
-                                        className="
-                                            rounded-full
-                                            border
-                                            border-gray-200
-                                            bg-white
-                                            px-4
-                                            py-2
-                                            text-sm
-                                            text-gray-600
-                                            transition
-                                            hover:border-gray-900
-                                            hover:text-gray-900
-                                        "
-                                    >
-                                        {item}
-                                    </button>
-                                )
-                            )}
-                        </div>
-                        <p
-                            className="
-                                mt-8
-                                max-w-lg
-                                text-sm
-                                leading-6
-                                text-gray-400
-                            "
-                        >
-                            Encuentra experiencias,
-                            personas y momentos que
-                            mantienen conectada nuestra
-                            comunidad lejos de casa.
+                        </h1>
+
+                        <p className="mt-8 max-w-xl text-lg leading-8 text-gray-600 md:text-xl">
+                            Parties, food, culture, sports and community
+                            experiences created by Latin Americans across
+                            Europe.
                         </p>
-                    </div>
-                    {/* =================================================
-                        RIGHT — EVENT CAROUSEL
-                    ================================================= */}
-                    <div
-                        className="
-                            w-full
-                            max-w-xl
-                            justify-self-center
-                            lg:justify-self-end
-                        "
-                    >
-                        <EventHeroCarousel
-                            events={events}
-                        />
-                    </div>
-                </div>
-            </section>
-            {/* =====================================================
-                02 — CATEGORIES
-            ===================================================== */}
-            <section
-                className="
-                    mx-auto
-                    max-w-7xl
-                    px-6
-                    py-20
-                "
-            >
-                <div className="mb-10">
-                    <p
-                        className="
-                            text-sm
-                            font-semibold
-                            uppercase
-                            tracking-[0.2em]
-                            text-gray-400
-                        "
-                    >
-                        Explora
-                    </p>
-                    <h2
-                        className="
-                            mt-2
-                            text-3xl
-                            font-bold
-                            text-gray-900
-                        "
-                    >
-                        Encuentra tu próximo plan
-                    </h2>
-                </div>
-                <div
-                    className="
-                        grid
-                        gap-4
-                        sm:grid-cols-2
-                        lg:grid-cols-3
-                    "
-                >
-                    {categories.map(
-                        (item) => (
-                            <button
-                                key={item}
-                                type="button"
-                                className="
-                                    group
-                                    flex
-                                    min-h-32
-                                    items-end
-                                    justify-between
-                                    rounded-3xl
-                                    border
-                                    border-gray-200
-                                    bg-gray-50
-                                    p-6
-                                    text-left
-                                    transition
-                                    hover:-translate-y-1
-                                    hover:bg-white
-                                    hover:shadow-lg
-                                "
-                            >
+
+                        <div className="mt-8 flex flex-wrap gap-3">
+                            {categories.map((item) => (
                                 <span
-                                    className="
-                                        text-xl
-                                        font-semibold
-                                        text-gray-900
-                                    "
+                                    key={item}
+                                    className="rounded-full border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-600"
                                 >
                                     {item}
                                 </span>
-                                <span
-                                    className="
-                                        text-xl
-                                        text-gray-400
-                                        transition
-                                        group-hover:translate-x-1
-                                    "
-                                >
-                                    →
-                                </span>
-                            </button>
-                        )
-                    )}
+                            ))}
+                        </div>
+
+                        <div className="mt-10 flex flex-wrap gap-3">
+                            <Link
+                                href="/events"
+                                className="rounded-full bg-gray-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+                            >
+                                Explore all events →
+                            </Link>
+
+                            <Link
+                                href="/register"
+                                className="rounded-full border border-gray-200 px-6 py-3 text-sm font-semibold text-gray-900 transition hover:border-gray-900"
+                            >
+                                Create an event
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* FEATURED EVENTS */}
+
+                    <div className="w-full">
+                        <EventHeroCarousel events={events} />
+                    </div>
                 </div>
             </section>
-            {/* =====================================================
-                03 — UPCOMING EVENTS
-            ===================================================== */}
 
-            <section
-                className="
-                    border-y
-                    border-gray-100
-                    bg-gray-50
-                "
-            >
-                <div
-                    className="
-                        mx-auto
-                        max-w-7xl
-                        px-6
-                        py-20
-                    "
-                >
-                    <div
-                        className="
-                            mb-10
-                            flex
-                            items-end
-                            justify-between
-                            gap-6
-                        "
-                    >
-                        <div>
-                            <p
-                                className="
-                                    text-sm
-                                    font-semibold
-                                    uppercase
-                                    tracking-[0.2em]
-                                    text-gray-400
-                                "
-                            >
-                                Próximamente
+            {/* =========================================================
+                02 — THE IMPORTANT QUESTION
+            ========================================================== */}
+
+            <section className="border-b border-gray-100 bg-[#F8F8F6]">
+                <div className="mx-auto max-w-7xl px-6 py-8 md:py-12">
+                    <div className="max-w-4xl">
+                        <p className="text-sm font-bold uppercase tracking-[0.22em] text-gray-400">
+                            Before you discover
+                        </p>
+
+                        <h2 className="mt-5 text-5xl font-black leading-[0.95] tracking-[-0.04em] text-gray-950 md:text-6xl">
+                            Not every event
+                            <br />
+                            works the same way.
+                        </h2>
+
+                        <p className="mt-8 max-w-2xl text-lg leading-8 text-gray-600">
+                            Veci has two types of events. Both are part of the
+                            community, but they are created differently and
+                            give you different levels of context.
+                        </p>
+                    </div>
+
+                    {/* EVENT TYPES */}
+
+                    <div className="mt-16 grid gap-6 lg:grid-cols-2">
+                        {/* COMMUNITY */}
+
+                        <article className="group rounded-[2rem] border border-gray-200 bg-white p-8 transition hover:-translate-y-1 hover:shadow-xl md:p-10">
+                            <div className="flex items-start justify-between gap-6">
+                                <div>
+                                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
+                                        01
+                                    </p>
+
+                                    <h3 className="mt-4 text-3xl font-black tracking-tight text-gray-950 md:text-4xl">
+                                        Community event
+                                    </h3>
+                                </div>
+
+                                <div className="rounded-2xl bg-gray-100 px-4 py-3 text-2xl">
+                                    🌎
+                                </div>
+                            </div>
+
+                            <p className="mt-6 text-base leading-7 text-gray-600">
+                                An event created directly by a member of the
+                                Veci community. Anyone can create one after
+                                creating a Veci account.
                             </p>
-                            <h2
-                                className="
-                                    mt-2
-                                    text-3xl
-                                    font-bold
-                                    text-gray-900
-                                "
+
+                            <div className="mt-8 space-y-4">
+                                <div className="flex gap-4">
+                                    <span className="mt-1 text-sm font-bold text-gray-400">
+                                        01
+                                    </span>
+
+                                    <div>
+                                        <p className="font-semibold text-gray-900">
+                                            Create your account
+                                        </p>
+
+                                        <p className="mt-1 text-sm leading-6 text-gray-500">
+                                            Join Veci and become part of the
+                                            community.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <span className="mt-1 text-sm font-bold text-gray-400">
+                                        02
+                                    </span>
+
+                                    <div>
+                                        <p className="font-semibold text-gray-900">
+                                            Create your event
+                                        </p>
+
+                                        <p className="mt-1 text-sm leading-6 text-gray-500">
+                                            Add the title, description,
+                                            location, date, images and all
+                                            relevant information.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <span className="mt-1 text-sm font-bold text-gray-400">
+                                        03
+                                    </span>
+
+                                    <div>
+                                        <p className="font-semibold text-gray-900">
+                                            Share it with the community
+                                        </p>
+
+                                        <p className="mt-1 text-sm leading-6 text-gray-500">
+                                            Your event becomes discoverable on
+                                            Veci.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Link
+                                href="/register"
+                                className="mt-10 inline-flex text-sm font-bold text-gray-950 transition hover:text-[#4C76F2]"
                             >
-                                No te pierdas lo que viene
+                                Create a community event →
+                            </Link>
+                        </article>
+
+                        {/* OFFICIAL */}
+
+                        <article className="relative overflow-hidden rounded-[2rem] bg-gray-950 p-8 text-white transition hover:-translate-y-1 hover:shadow-2xl md:p-10">
+                            <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-[#4C76F2]/20 blur-3xl" />
+
+                            <div className="relative">
+                                <div className="flex items-start justify-between gap-6">
+                                    <div>
+                                        <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/40">
+                                            02
+                                        </p>
+
+                                        <h3 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">
+                                            Official event
+                                        </h3>
+                                    </div>
+
+                                    <div className="rounded-2xl bg-white/10 px-4 py-3 text-2xl">
+                                        ✦
+                                    </div>
+                                </div>
+
+                                <p className="mt-6 text-base leading-7 text-white/65">
+                                    An event connected to a business that
+                                    exists on Veci. This gives the community
+                                    more context about who is behind the
+                                    event.
+                                </p>
+
+                                <div className="mt-8 space-y-4">
+                                    <div className="flex gap-4">
+                                        <span className="mt-1 text-sm font-bold text-white/30">
+                                            01
+                                        </span>
+
+                                        <div>
+                                            <p className="font-semibold">
+                                                Create a business
+                                            </p>
+
+                                            <p className="mt-1 text-sm leading-6 text-white/50">
+                                                Create your business profile
+                                                inside Veci.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <span className="mt-1 text-sm font-bold text-white/30">
+                                            02
+                                        </span>
+
+                                        <div>
+                                            <p className="font-semibold">
+                                                Connect your event
+                                            </p>
+
+                                            <p className="mt-1 text-sm leading-6 text-white/50">
+                                                Create an event and attach it
+                                                to your business.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4">
+                                        <span className="mt-1 text-sm font-bold text-white/30">
+                                            03
+                                        </span>
+
+                                        <div>
+                                            <p className="font-semibold">
+                                                Build trust
+                                            </p>
+
+                                            <p className="mt-1 text-sm leading-6 text-white/50">
+                                                People can discover the event
+                                                together with the business
+                                                behind it.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Link
+                                    href="/businesses"
+                                    className="mt-10 inline-flex rounded-full bg-white px-5 py-3 text-sm font-bold text-gray-950 transition hover:bg-[#F2C94C]"
+                                >
+                                    Create a business →
+                                </Link>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+            {/* =========================================================
+                05 — UPCOMING EVENTS
+            ========================================================== */}
+            <section className="bg-white">
+                <div className="mx-auto max-w-7xl px-6 py:8 md:py-12">
+                    <div className="flex items-end justify-between gap-6">
+                        <div>
+                            <p className="text-sm font-bold uppercase tracking-[0.22em] text-gray-400">
+                                Happening soon
+                            </p>
+
+                            <h2 className="mt-4 text-4xl font-black tracking-[-0.03em] text-gray-950 md:text-5xl">
+                                See what&apos;s coming.
                             </h2>
                         </div>
+
                         <Link
                             href="/events"
-                            className="
-                                hidden
-                                text-sm
-                                font-semibold
-                                text-gray-900
-                                md:block
-                            "
+                            className="hidden text-sm font-bold text-gray-950 transition hover:text-[#4C76F2] md:block"
                         >
-                            Ver todos →
+                            View all events →
                         </Link>
                     </div>
+
                     {events.length === 0 ? (
-                        <div
-                            className="
-                                rounded-3xl
-                                border
-                                border-dashed
-                                border-gray-300
-                                bg-white
-                                p-12
-                                text-center
-                            "
-                        >
+                        <div className="mt-12 rounded-[2rem] border border-dashed border-gray-300 bg-[#F8F8F6] p-16 text-center">
                             <p className="text-gray-500">
-                                No hay eventos públicos disponibles.
+                                No public events available right now.
                             </p>
+
+                            <Link
+                                href="/register"
+                                className="mt-5 inline-flex font-semibold text-gray-950"
+                            >
+                                Be the first to create one →
+                            </Link>
                         </div>
                     ) : (
+                        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                            {events.map((event) => (
+                                <Link
+                                    key={event.id}
+                                    href={`/events/${event.slug}`}
+                                    className="group overflow-hidden rounded-[2rem] border border-gray-200 bg-white transition hover:-translate-y-1 hover:shadow-xl"
+                                >
+                                    <div className="aspect-[4/3] overflow-hidden bg-gray-100">
+                                        {event.images?.[0] ? (
+                                            <img
+                                                src={event.images[0]}
+                                                alt={event.title}
+                                                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                            />
+                                        ) : (
+                                            <div className="flex h-full items-center justify-center text-sm text-gray-400">
+                                                Event image
+                                            </div>
+                                        )}
+                                    </div>
 
-                        <div
-                            className="
-                                grid
-                                gap-6
-                                sm:grid-cols-2
-                                lg:grid-cols-3
-                            "
-                        >
-
-                            {events.map(
-                                (event) => (
-
-                                    <Link
-                                        key={event.id}
-                                        href={`/events/${event.slug}`}
-                                        className="
-                                            group
-                                            overflow-hidden
-                                            rounded-3xl
-                                            border
-                                            border-gray-200
-                                            bg-white
-                                            transition
-                                            hover:-translate-y-1
-                                            hover:shadow-xl
-                                        "
-                                    >
-
-                                        {/* IMAGE */}
-
-                                        <div
-                                            className="
-                                                aspect-[4/3]
-                                                w-full
-                                                overflow-hidden
-                                                bg-gray-100
-                                            "
-                                        >
-
-                                            {event.images?.[0] ? (
-                                                <img
-                                                    src={event.images[0]}
-                                                    alt={event.title}
-                                                    className="
-                                                        h-full
-                                                        w-full
-                                                        object-cover
-                                                        transition
-                                                        duration-500
-                                                        group-hover:scale-105
-                                                    "
-                                                />
-                                            ) : (
-                                                <div
-                                                    className="
-                                                        flex
-                                                        h-full
-                                                        items-center
-                                                        justify-center
-                                                        text-sm
-                                                        text-gray-400
-                                                    "
-                                                >
-                                                    Imagen del evento
-                                                </div>
-                                            )}
-
-                                        </div>
-
-
-                                        {/* CONTENT */}
-
-                                        <div className="p-6">
-
-                                            <p
-                                                className="
-                                                    text-xs
-                                                    font-semibold
-                                                    uppercase
-                                                    tracking-wide
-                                                    text-gray-400
-                                                "
-                                            >
+                                    <div className="p-6">
+                                        <div className="flex items-center justify-between gap-4">
+                                            <p className="text-xs font-bold uppercase tracking-wide text-gray-400">
                                                 {event.category}
                                             </p>
 
-
-                                            <h3
-                                                className="
-                                                    mt-2
-                                                    text-xl
-                                                    font-semibold
-                                                    text-gray-900
-                                                "
-                                            >
-                                                {event.title}
-                                            </h3>
-
-
-                                            <p
-                                                className="
-                                                    mt-3
-                                                    text-sm
-                                                    text-gray-500
-                                                "
-                                            >
-                                                📍 {event.cityId}
-                                            </p>
-
-
-                                            <p
-                                                className="
-                                                    mt-2
-                                                    text-sm
-                                                    text-gray-600
-                                                "
-                                            >
-                                                {new Date(
-                                                    event.dateStart
-                                                ).toLocaleDateString(
-                                                    "es-ES",
-                                                    {
-                                                        dateStyle:
-                                                            "medium",
-                                                    }
-                                                )}
-                                            </p>
-
+                                            <span className="rounded-full bg-gray-100 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-gray-500">
+                                                {event.eventType ===
+                                                "official"
+                                                    ? "Official"
+                                                    : "Community"}
+                                            </span>
                                         </div>
 
-                                    </Link>
+                                        <h3 className="mt-3 text-xl font-bold text-gray-950">
+                                            {event.title}
+                                        </h3>
 
-                                )
-                            )}
+                                        <p className="mt-3 text-sm text-gray-500">
+                                            📍 {event.cityId}
+                                        </p>
 
+                                        <p className="mt-2 text-sm text-gray-600">
+                                            {new Date(
+                                                event.dateStart
+                                            ).toLocaleDateString("es-ES", {
+                                                dateStyle: "medium",
+                                            })}
+                                        </p>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="mt-8 md:hidden">
+                        <Link
+                            href="/events"
+                            className="text-sm font-bold text-gray-950"
+                        >
+                            View all events →
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* =========================================================
+                06 — CREATE
+            ========================================================== */}
+
+            <section className="px-6 pb-24">
+                <div className="mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] bg-gray-950 px-8 py-8  text-white md:px-16 md:py-12">
+                    <div className="grid gap-12 lg:grid-cols-[1fr_auto] lg:items-end">
+                        <div className="max-w-3xl">
+                            <p className="text-sm font-bold uppercase tracking-[0.22em] text-white/40">
+                                Your turn
+                            </p>
+
+                            <h2 className="mt-5 text-5xl font-black leading-[0.9] tracking-[-0.05em] md:text-7xl">
+                                Don&apos;t just
+                                <br />
+                                discover Veci.
+                                <br />
+                                <span className="text-[#F2C94C]">
+                                    Build it.
+                                </span>
+                            </h2>
+
+                            <p className="mt-8 max-w-2xl text-lg leading-8 text-white/60">
+                                Start with an event. Build a business. Create
+                                something that brings people together.
+                            </p>
                         </div>
 
-                    )}
+                        <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+                            <Link
+                                href="/register"
+                                className="rounded-full bg-white px-7 py-4 text-center text-sm font-bold text-gray-950 transition hover:bg-[#F2C94C]"
+                            >
+                                Create a community event
+                            </Link>
 
+                            <Link
+                                href="/businesses"
+                                className="rounded-full border border-white/20 px-7 py-4 text-center text-sm font-bold text-white transition hover:border-white hover:bg-white/10"
+                            >
+                                Create a business
+                            </Link>
+                        </div>
+                    </div>
                 </div>
-
             </section>
 
+            {/* =========================================================
+                07 — SIMPLE FOOTER MESSAGE
+            ========================================================== */}
 
-
-            {/* =====================================================
-                04 — DISCOVER BY CITY
-            ===================================================== */}
-
-            <section
-                className="
-                    mx-auto
-                    max-w-7xl
-                    px-6
-                    py-20
-                "
-            >
-
-                <div className="mb-10">
-
-                    <p
-                        className="
-                            text-sm
-                            font-semibold
-                            uppercase
-                            tracking-[0.2em]
-                            text-gray-400
-                        "
-                    >
-                        Descubre cerca de ti
+            <section className="border-t border-gray-100 bg-[#F8F8F6]">
+                <div className="mx-auto max-w-4xl px-6 py-20 text-center">
+                    <p className="text-sm font-bold uppercase tracking-[0.22em] text-gray-400">
+                        Veci
                     </p>
 
-
-                    <h2
-                        className="
-                            mt-2
-                            text-3xl
-                            font-bold
-                            text-gray-900
-                        "
-                    >
-                        Eventos por ciudad
+                    <h2 className="mt-5 text-3xl font-black tracking-tight text-gray-950 md:text-4xl">
+                        Far from home doesn&apos;t have to mean
+                        <br />
+                        far from your community.
                     </h2>
 
+                    <Link
+                        href="/"
+                        className="mt-8 inline-flex text-sm font-bold text-gray-950 transition hover:text-[#4C76F2]"
+                    >
+                        Discover Veci →
+                    </Link>
                 </div>
-
-
-                <div
-                    className="
-                        grid
-                        gap-6
-                        md:grid-cols-3
-                    "
-                >
-
-                    {cities.map(
-                        (city) => (
-
-                            <div
-                                key={city}
-                                className="
-                                    min-h-56
-                                    rounded-3xl
-                                    border
-                                    border-gray-200
-                                    bg-gray-50
-                                    p-8
-                                "
-                            >
-
-                                <p
-                                    className="
-                                        text-sm
-                                        text-gray-400
-                                    "
-                                >
-                                    VECI
-                                </p>
-
-
-                                <h3
-                                    className="
-                                        mt-3
-                                        text-2xl
-                                        font-bold
-                                        text-gray-900
-                                    "
-                                >
-                                    {city}
-                                </h3>
-
-
-                                <p
-                                    className="
-                                        mt-3
-                                        text-gray-500
-                                    "
-                                >
-                                    Descubre eventos latinos
-                                    en {city}.
-                                </p>
-
-
-                                <div
-                                    className="
-                                        mt-6
-                                        text-sm
-                                        font-semibold
-                                        text-gray-900
-                                    "
-                                >
-                                    Explorar →
-                                </div>
-
-                            </div>
-
-                        )
-                    )}
-
-                </div>
-
             </section>
-
-
-
-            {/* =====================================================
-                05 — EVENT CTA
-            ===================================================== */}
-
-            <section
-                className="
-                    px-6
-                    pb-20
-                "
-            >
-
-                <div
-                    className="
-                        mx-auto
-                        max-w-7xl
-                        overflow-hidden
-                        rounded-[2rem]
-                        bg-gray-900
-                        px-8
-                        py-16
-                        text-white
-                        md:px-16
-                    "
-                >
-
-                    <div className="max-w-2xl">
-
-                        <p
-                            className="
-                                text-sm
-                                font-semibold
-                                uppercase
-                                tracking-[0.2em]
-                                text-gray-400
-                            "
-                        >
-                            Para organizadores
-                        </p>
-
-
-                        <h2
-                            className="
-                                mt-4
-                                text-3xl
-                                font-bold
-                                md:text-4xl
-                            "
-                        >
-                            ¿Organizas un evento?
-                        </h2>
-
-
-                        <p
-                            className="
-                                mt-4
-                                text-lg
-                                leading-8
-                                text-gray-300
-                            "
-                        >
-                            Comparte tu próximo evento
-                            con nuestra comunidad.
-                        </p>
-
-
-                        <button
-                            type="button"
-                            className="
-                                mt-8
-                                rounded-full
-                                bg-white
-                                px-6
-                                py-3
-                                text-sm
-                                font-semibold
-                                text-gray-900
-                                transition
-                                hover:bg-gray-100
-                            "
-                        >
-                            Publicar evento
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </section>
-
         </main>
     );
 }
