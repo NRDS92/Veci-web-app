@@ -1,5 +1,8 @@
 import api from "@/lib/api";
-import { UploadImageResponse } from "./upload.types";
+import {
+    UploadImageResponse,
+    UploadDocumentResponse,
+} from "./upload.types";
 
 export const uploadService = {
     async uploadImage(file: File): Promise<string> {
@@ -11,6 +14,20 @@ export const uploadService = {
             "/upload",
             formData
         );
+
+        return response.data.data;
+    },
+
+    async uploadDocument(file: File) {
+        const formData = new FormData();
+
+        formData.append("document", file);
+
+        const response =
+            await api.post<UploadDocumentResponse>(
+                "/upload/document",
+                formData
+            );
 
         return response.data.data;
     },
