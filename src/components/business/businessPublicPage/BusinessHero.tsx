@@ -23,23 +23,23 @@ export default function BusinessHero({
                             src={coverImage}
                             alt={`${name} cover`}
                             className="
-                                h-64
+                                h-56
                                 w-full
                                 object-cover
-                                sm:h-72
-                                md:h-80
+                                sm:h-64
+                                md:h-72
                             "
                         />
                     </div>
                 ) : (
                     <div
                         className="
-                            h-64
+                            h-56
                             w-full
                             rounded-3xl
                             bg-gray-100
-                            sm:h-72
-                            md:h-80
+                            sm:h-64
+                            md:h-72
                         "
                     />
                 )}
@@ -56,16 +56,16 @@ export default function BusinessHero({
                 >
                     <div
                         className="
-                            h-28
-                            w-28
+                            h-24
+                            w-24
                             overflow-hidden
-                            rounded-full
+                            rounded-2xl
                             border-4
                             border-white
                             bg-white
                             shadow-lg
-                            sm:h-32
-                            sm:w-32
+                            sm:h-28
+                            sm:w-28
                         "
                     >
                         {image ? (
@@ -99,17 +99,15 @@ export default function BusinessHero({
             <div
                 className="
                     px-6
-                    pt-20
+                    pt-16
                     sm:px-8
-                    sm:pt-24
+                    sm:pt-20
                 "
             >
                 <p
                     className="
                         text-sm
                         font-medium
-                        uppercase
-                        tracking-wide
                         text-gray-500
                     "
                 >
@@ -118,11 +116,12 @@ export default function BusinessHero({
 
                 <h1
                     className="
-                        mt-2
-                        text-4xl
+                        mt-1
+                        text-3xl
                         font-bold
                         tracking-tight
                         text-gray-900
+                        sm:text-4xl
                         md:text-5xl
                     "
                 >
@@ -132,9 +131,10 @@ export default function BusinessHero({
                 {subCategory && (
                     <p
                         className="
-                            mt-3
-                            text-lg
+                            mt-2
+                            text-base
                             text-gray-500
+                            sm:text-lg
                         "
                     >
                         {subCategory}

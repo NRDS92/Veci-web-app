@@ -11,6 +11,7 @@ import {
     BusinessSubCategory,
     BusinessPricingType,
     CreateBusinessRequest,
+    BusinessOpeningHours,
 } from "@/features/business/business.types";
 import { LocationData } from "@/features/location/location.types";
 import DocumentUpload, {
@@ -24,8 +25,7 @@ import BusinessContactSection from "./BusinessContactSection";
 import BusinessDetailsSection, {
     BusinessDocument,
 } from "./BusinessDetailsSection";
-
-
+import BusinessOpengHours from "./BusinessOpenHours";
 // ======================================================
 // CATEGORIES
 // ======================================================
@@ -245,6 +245,40 @@ export default function BusinessForm() {
     const [priceDescription, setPriceDescription] =
         useState("");
     // ==================================================
+    // SCHEDULE
+    // ==================================================
+    const [openingHours, setOpeningHours] =
+    useState<BusinessOpeningHours>({
+        monday: {
+            isOpen: false,
+            intervals: [],
+        },
+        tuesday: {
+            isOpen: false,
+            intervals: [],
+        },
+        wednesday: {
+            isOpen: false,
+            intervals: [],
+        },
+        thursday: {
+            isOpen: false,
+            intervals: [],
+        },
+        friday: {
+            isOpen: false,
+            intervals: [],
+        },
+        saturday: {
+            isOpen: false,
+            intervals: [],
+        },
+        sunday: {
+            isOpen: false,
+            intervals: [],
+        },
+    });
+    // ==================================================
     // COMMUNITY
     // ==================================================
     const [isLatinoOwned, setIsLatinoOwned] =
@@ -437,6 +471,7 @@ export default function BusinessForm() {
                     services: [],
                     specialties: [],
                     serviceArea: [],
+                    openingHours,
                 },
                 // ------------------------------------------------
                 // Images
@@ -605,6 +640,15 @@ export default function BusinessForm() {
                 filteredSubCategories={filteredSubCategories}
                 onCategoryChange={handleCategoryChange}
                 onSubCategoryChange={setSubCategory}
+                loading={loading}
+            />
+            {/* ==================================================
+                OPENING HOURS
+            ================================================== */}
+
+            <BusinessOpengHours
+                value={openingHours}
+                onChange={setOpeningHours}
                 loading={loading}
             />
             {/* ==================================================
