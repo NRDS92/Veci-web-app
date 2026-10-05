@@ -120,7 +120,7 @@ export default function RegisterForm() {
                     />
 
                     {/* Dark cinematic overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/10" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/35 to-black/10" />
 
                     {/* =================================================
                         DECORATIVE COLOMBIA ELEMENTS
