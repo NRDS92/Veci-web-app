@@ -19,9 +19,17 @@ export interface ResetPasswordRequest {
     password: string;
 }
 
-export type AuthProvider = "email" | "google";
+/* =================================================
+   AUTH TYPES
+================================================= */
 
-export type UserRole = "user" | "admin";
+export type AuthProvider =
+    | "email"
+    | "google";
+
+export type UserRole =
+    | "user"
+    | "admin";
 
 export type SubscriptionPlan =
     | "FREE"
@@ -29,14 +37,25 @@ export type SubscriptionPlan =
     | "BUSINESS_PRO"
     | "ENTERPRISE";
 
+/* =================================================
+   SUBSCRIPTION
+================================================= */
+
 export interface Subscription {
     plan: SubscriptionPlan;
+    maxBusinesses: number;
 }
+
+/* =================================================
+   AUTH USER
+================================================= */
 
 export interface AuthUser {
     _id: string;
+
     name: string;
     email: string;
+
     role: UserRole;
     provider: AuthProvider;
 
@@ -44,6 +63,7 @@ export interface AuthUser {
 
     cityId?: string;
     originCountry?: string;
+
     profileImage?: string;
     bio?: string;
 
@@ -56,41 +76,20 @@ export interface AuthUser {
     updatedAt: string;
 }
 
+/* =================================================
+   LOGIN
+================================================= */
+
 export interface LoginResponse {
     user: AuthUser;
     token: string;
 }
 
+/* =================================================
+   API
+================================================= */
+
 export interface ApiResponse<T> {
     success: boolean;
     data: T;
-}
-
-export interface Subscription {
-  plan: SubscriptionPlan;
-  maxBusinesses: number;
-}
-
-export interface AuthUser {
-  _id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-  provider: AuthProvider;
-
-  subscription: Subscription;
-
-  cityId?: string;
-  originCountry?: string;
-
-  profileImage?: string;
-  bio?: string;
-
-  favorites: string[];
-
-  onboardingCompleted: boolean;
-  isVerified: boolean;
-
-  createdAt: string;
-  updatedAt: string;
 }
