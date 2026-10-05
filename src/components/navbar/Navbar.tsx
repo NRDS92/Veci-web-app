@@ -13,6 +13,7 @@ import {
     ChevronDown,
     User,
     Heart,
+    Plus,
     CalendarDays,
     Store,
     Users,
@@ -737,6 +738,32 @@ export default function Navbar() {
                                                     {t("favorites")}
                                                 </span>
                                             </button>
+                                            <button
+    type="button"
+    onClick={() =>
+        handleUserNavigation("/create")
+    }
+    className="
+        flex
+        w-full
+        items-center
+        gap-3
+        rounded-xl
+        px-3
+        py-2.5
+        text-left
+        text-sm
+        text-neutral-700
+        transition
+        hover:bg-neutral-100
+    "
+>
+    <Plus size={17} />
+
+    <span>
+        Create
+    </span>
+</button>
 
                                             <button
                                                 type="button"
@@ -1213,6 +1240,32 @@ export default function Navbar() {
                                             size={18}
                                         />
                                         {t("favorites")}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            handleUserNavigation("/create")
+                                        }
+                                        className="
+                                            flex
+                                            w-full
+                                            items-center
+                                            gap-3
+                                            rounded-xl
+                                            px-3
+                                            py-2.5
+                                            text-left
+                                            text-sm
+                                            text-neutral-700
+                                            transition
+                                            hover:bg-neutral-100
+                                        "
+                                    >
+                                        <Plus size={17} />
+
+                                        <span>
+                                            Create
+                                        </span>
                                     </button>
                                     {/* MY EVENTS */}
                                     <button

@@ -115,3 +115,17 @@ export interface DiscoverData {
 
     hasMore: boolean;
 }
+
+/* =========================================================
+   EVENT CARD
+========================================================= */
+
+export interface EventCardEvent {
+    _id: string;
+    slug?: string;
+    title: string;
+    category?: string;
+    images?: string[];
+    cityId?: string;
+    dateStart?: string;
+}

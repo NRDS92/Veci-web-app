@@ -1,10 +1,13 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import type { DiscoverEvent } from "../../features/discover/discover.types";
+
+import type {
+    EventCardEvent,
+} from "../../features/discover/discover.types";
 
 interface EventCardProps {
-    event: DiscoverEvent;
+    event: EventCardEvent;
     variant?: "featured" | "default" | "compact";
 }
 
@@ -35,7 +38,6 @@ export default function EventCard({
     return (
         <Link
             href={`/events/${event.slug}`}
-            
             className={[
                 "group relative block h-full overflow-hidden rounded-3xl",
                 "bg-gray-200 shadow-sm",
