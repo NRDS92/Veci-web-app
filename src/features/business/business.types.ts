@@ -98,6 +98,33 @@ export type BusinessDocumentType =
 
 
 // ======================================================
+// OPENING HOURS
+// ======================================================
+
+export interface BusinessOpeningHoursInterval {
+    open: string;
+    close: string;
+}
+
+
+export interface BusinessOpeningHoursDay {
+    isOpen: boolean;
+    intervals: BusinessOpeningHoursInterval[];
+}
+
+
+export interface BusinessOpeningHours {
+    monday: BusinessOpeningHoursDay;
+    tuesday: BusinessOpeningHoursDay;
+    wednesday: BusinessOpeningHoursDay;
+    thursday: BusinessOpeningHoursDay;
+    friday: BusinessOpeningHoursDay;
+    saturday: BusinessOpeningHoursDay;
+    sunday: BusinessOpeningHoursDay;
+}
+
+
+// ======================================================
 // PROFILE
 // ======================================================
 
@@ -129,6 +156,8 @@ export interface BusinessProfile {
     serviceArea: string[];
 
     availability?: BusinessAvailability;
+
+    openingHours?: BusinessOpeningHours;
 
     pricing?: BusinessPricing;
 }

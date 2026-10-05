@@ -27,36 +27,250 @@ interface PublicEventsResponse {
 }
 
 export interface PublicBusiness {
+
+    // ==================================================
+    // IDENTITY
+    // ==================================================
+
     id: string;
+
     slug: string;
+
     name: string;
+
     description?: string;
+
+
+    // ==================================================
+    // CLASSIFICATION
+    // ==================================================
+
     category: string;
+
     subCategory?: string;
+
+
+    // ==================================================
+    // LOCATION
+    // ==================================================
+
     cityId: string;
+
     country?: string;
+
     address?: string;
+
     coordinates?: {
         lat: number;
         lng: number;
-    };  
+    };
+
+
+    // ==================================================
+    // IMAGES
+    // ==================================================
+
     image?: string;
+
     coverImage?: string;
+
+    gallery: string[];
+
+
+    // ==================================================
+    // CONTACT
+    // ==================================================
+
     website?: string;
+
     instagram?: string;
+
     whatsapp?: string;
+
+
+    // ==================================================
+    // PROFILE
+    // ==================================================
+
+    profile: {
+
+        headline?: string;
+
+        services: string[];
+
+        specialties: string[];
+
+        languages: string[];
+
+        serviceArea: string[];
+
+        availability?: {
+
+            type:
+                | "appointment"
+                | "walk_in"
+                | "online"
+                | "flexible";
+
+            description?: string;
+        };
+
+        openingHours?: {
+
+            monday: {
+                isOpen: boolean;
+
+                intervals: {
+                    open: string;
+                    close: string;
+                }[];
+            };
+
+            tuesday: {
+                isOpen: boolean;
+
+                intervals: {
+                    open: string;
+                    close: string;
+                }[];
+            };
+
+            wednesday: {
+                isOpen: boolean;
+
+                intervals: {
+                    open: string;
+                    close: string;
+                }[];
+            };
+
+            thursday: {
+                isOpen: boolean;
+
+                intervals: {
+                    open: string;
+                    close: string;
+                }[];
+            };
+
+            friday: {
+                isOpen: boolean;
+
+                intervals: {
+                    open: string;
+                    close: string;
+                }[];
+            };
+
+            saturday: {
+                isOpen: boolean;
+
+                intervals: {
+                    open: string;
+                    close: string;
+                }[];
+            };
+
+            sunday: {
+                isOpen: boolean;
+
+                intervals: {
+                    open: string;
+                    close: string;
+                }[];
+            };
+        };
+
+        pricing?: {
+
+            type:
+                | "fixed"
+                | "hourly"
+                | "starting_at"
+                | "range";
+
+            currency: "EUR";
+
+            amount?: number;
+
+            minAmount?: number;
+
+            maxAmount?: number;
+
+            description?: string;
+        };
+    };
+
+
+    // ==================================================
+    // DOCUMENTS
+    // ==================================================
+
+    documents: {
+
+        type:
+            | "menu"
+            | "catalog"
+            | "portfolio"
+            | "brochure";
+
+        url: string;
+
+        name?: string;
+
+    }[];
+
+
+    // ==================================================
+    // DISCOVERY
+    // ==================================================
+
     priceRange?:
         | "$"
         | "$$"
         | "$$$";
+
     tags: string[];
+
     languages: string[];
+
+
+    // ==================================================
+    // COMMUNITY
+    // ==================================================
+
     isLatinoOwned: boolean;
+
     countryOfOrigin?: string;
+
+
+    // ==================================================
+    // RATING
+    // ==================================================
+
     rating: {
+
         average: number;
+
         count: number;
     };
+
+
+    // ==================================================
+    // SOCIAL
+    // ==================================================
+
+    likesCount: number;
+
+    followersCount: number;
+
+    eventsCount: number;
+
+
+    // ==================================================
+    // VERIFICATION
+    // ==================================================
+
     verificationStatus:
         | "unverified"
         | "pending"
