@@ -1,21 +1,34 @@
-
 "use client";
 
 import { FormEvent, useState } from "react";
-
-import ImageUpload from "@/components/upload/ImageUpload";
+import { useRouter } from "next/navigation";
+import { useNotification } from "@/components/notifications/NotificationProvider";
+import { getApiError } from "@/lib/api/apiError";
 import LocationSelector from "@/components/location/LocationSelector";
-
 import { businessService } from "@/features/business/business.service";
 import {
     BusinessCategory,
-    BusinessPriceRange,
     BusinessSubCategory,
+    BusinessPricingType,
     CreateBusinessRequest,
 } from "@/features/business/business.types";
-
 import { LocationData } from "@/features/location/location.types";
+import DocumentUpload, {
+    type DocumentUploadValue,
+} from "../../components/upload/DocumentUpload";
+import BusinessImagesSection from "./BusinessImagesSection";
+import BusinessBasicInformation from "./BusinessBasicInformation";
+import BusinessCategorySection from "./BusinessCategorySection";
+import BusinessPricingSection from "./BusinessPricingSection";
+import BusinessContactSection from "./BusinessContactSection";
+import BusinessDetailsSection, {
+    BusinessDocument,
+} from "./BusinessDetailsSection";
 
+
+// ======================================================
+// CATEGORIES
+// ======================================================
 const categories: {
     value: BusinessCategory;
     label: string;
@@ -27,12 +40,15 @@ const categories: {
     { value: "education", label: "Education" },
     { value: "health", label: "Health" },
 ];
-
+// ======================================================
+// SUBCATEGORIES
+// ======================================================
 const subCategories: {
     value: BusinessSubCategory;
     label: string;
     category: BusinessCategory;
 }[] = [
+    // FOOD
     {
         value: "restaurant",
         label: "Restaurant",
@@ -54,6 +70,12 @@ const subCategories: {
         category: "food",
     },
     {
+        value: "catering",
+        label: "Catering",
+        category: "food",
+    },
+    // ENTERTAINMENT
+    {
         value: "club",
         label: "Club",
         category: "entertainment",
@@ -64,10 +86,22 @@ const subCategories: {
         category: "entertainment",
     },
     {
+        value: "event_organizer",
+        label: "Event Organizer",
+        category: "entertainment",
+    },
+    {
         value: "cultural_center",
         label: "Cultural Center",
         category: "entertainment",
     },
+    {
+        value: "dance_school",
+        label: "Dance School",
+        category: "entertainment",
+    },
+
+    // SERVICES
     {
         value: "beauty_salon",
         label: "Beauty Salon",
@@ -89,6 +123,23 @@ const subCategories: {
         category: "services",
     },
     {
+        value: "translator",
+        label: "Translator",
+        category: "services",
+    },
+    {
+        value: "photographer",
+        label: "Photographer",
+        category: "services",
+    },
+    {
+        value: "freelancer",
+        label: "Freelancer",
+        category: "services",
+    },
+
+    // SHOPPING
+    {
         value: "latin_store",
         label: "Latin Store",
         category: "shopping",
@@ -104,6 +155,13 @@ const subCategories: {
         category: "shopping",
     },
     {
+        value: "product_seller",
+        label: "Product Seller",
+        category: "shopping",
+    },
+
+    // EDUCATION
+    {
         value: "language_school",
         label: "Language School",
         category: "education",
@@ -113,6 +171,13 @@ const subCategories: {
         label: "Academy",
         category: "education",
     },
+    {
+        value: "private_teacher",
+        label: "Private Teacher",
+        category: "education",
+    },
+
+    // HEALTH
     {
         value: "clinic",
         label: "Clinic",
@@ -125,84 +190,110 @@ const subCategories: {
     },
 ];
 
-const priceRanges: BusinessPriceRange[] = [
-    "$",
-    "$$",
-    "$$$",
-];
 
 export default function BusinessForm() {
+    
+    const router = useRouter();
+    const { notify } = useNotification();
+    // ==================================================
+    // IDENTITY
+    // ==================================================
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-
+    // ==================================================
+    // CLASSIFICATION
+    // ==================================================
     const [category, setCategory] =
         useState<BusinessCategory>("food");
-
     const [subCategory, setSubCategory] =
         useState<BusinessSubCategory | "">("");
-
+    // ==================================================
+    // IMAGES
+    // ==================================================
     const [profileImage, setProfileImage] = useState("");
     const [coverImage, setCoverImage] = useState("");
-
+    const [galleryImages, setGalleryImages] =
+        useState<string[]>([]);
+    // ==================================================
+    // LOCATION
+    // ==================================================
     const [location, setLocation] =
         useState<LocationData | null>(null);
-
+    // ==================================================
+    // CONTACT
+    // ==================================================
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [website, setWebsite] = useState("");
     const [instagram, setInstagram] = useState("");
     const [whatsapp, setWhatsapp] = useState("");
-
-    const [menu, setMenu] = useState("");
-
-    const [priceRange, setPriceRange] =
-        useState<BusinessPriceRange | "">("");
-
-    const [tagsInput, setTagsInput] =
+    // ==================================================
+    // DOCUMENTS
+    // ==================================================
+    const [documents, setDocuments] = useState<BusinessDocument[]>([]);
+    // ==================================================
+    // PRICING
+    // ==================================================
+    const [pricingType, setPricingType] =
+        useState<BusinessPricingType>("starting_at");
+    const [priceAmount, setPriceAmount] =
         useState("");
-
-    const [tags, setTags] =
-        useState<string[]>([]);
-
-    const [languagesInput, setLanguagesInput] =
+    const [priceMinAmount, setPriceMinAmount] =
         useState("");
-
-    const [languages, setLanguages] =
-        useState<string[]>([]);
-
+    const [priceMaxAmount, setPriceMaxAmount] =
+        useState("");
+    const [priceDescription, setPriceDescription] =
+        useState("");
+    // ==================================================
+    // COMMUNITY
+    // ==================================================
     const [isLatinoOwned, setIsLatinoOwned] =
         useState(true);
-
     const [countryOfOrigin, setCountryOfOrigin] =
         useState("");
-
+    // ==================================================
+    // TAGS
+    // ==================================================
+    const [tagsInput, setTagsInput] =
+        useState("");
+    const [tags, setTags] =
+        useState<string[]>([]);
+    // ==================================================
+    // LANGUAGES
+    // ==================================================
+    const [languagesInput, setLanguagesInput] =
+        useState("");
+    const [languages, setLanguages] =
+        useState<string[]>([]);
+    // =================================================
+    // UI
+    // ==================================================
     const [loading, setLoading] =
         useState(false);
-
     const [error, setError] =
         useState<string | null>(null);
-
+    // =================================================
+    // FILTER SUBCATEGORIES
+    // ==================================================
     const filteredSubCategories =
         subCategories.filter(
             (item) =>
                 item.category === category
         );
-
+    // ==================================================
+    // TAGS
+    // ==================================================
     const addTag = () => {
         const value = tagsInput.trim();
-
         if (!value || tags.includes(value)) {
             return;
         }
-
         setTags((current) => [
             ...current,
             value,
         ]);
-
         setTagsInput("");
     };
-
     const removeTag = (tag: string) => {
         setTags((current) =>
             current.filter(
@@ -210,26 +301,24 @@ export default function BusinessForm() {
             )
         );
     };
-
+    // ==================================================
+    // LANGUAGES
+    // ==================================================
     const addLanguage = () => {
         const value =
             languagesInput.trim();
-
         if (
             !value ||
             languages.includes(value)
         ) {
             return;
         }
-
         setLanguages((current) => [
             ...current,
             value,
         ]);
-
         setLanguagesInput("");
     };
-
     const removeLanguage = (
         language: string
     ) => {
@@ -239,342 +328,355 @@ export default function BusinessForm() {
             )
         );
     };
-
+    // ==================================================
+    // CATEGORY
+    // ==================================================
     const handleCategoryChange = (
         value: BusinessCategory
     ) => {
         setCategory(value);
         setSubCategory("");
     };
+    // ==================================================
+    // PRICING
+    // ==================================================
+    const buildPricing = () => {
+        const description =
+            priceDescription.trim() || undefined;
 
+        if (pricingType === "range") {
+            if (
+                !priceMinAmount &&
+                !priceMaxAmount &&
+                !description
+            ) {
+                return undefined;
+            }
+
+            return {
+                type: pricingType,
+                currency: "EUR" as const,
+                minAmount: priceMinAmount
+                    ? Number(priceMinAmount)
+                    : undefined,
+                maxAmount: priceMaxAmount
+                    ? Number(priceMaxAmount)
+                    : undefined,
+                description,
+            };
+        }
+
+        if (!priceAmount && !description) {
+            return undefined;
+        }
+
+        return {
+            type: pricingType,
+            currency: "EUR" as const,
+            amount: priceAmount
+                ? Number(priceAmount)
+                : undefined,
+            description,
+        };
+    };
+    // ==================================================
+    // SUBMIT
+    // ==================================================
     const handleSubmit = async (
         event: FormEvent<HTMLFormElement>
     ) => {
         event.preventDefault();
-
         setError(null);
-
+        // ------------------------------------------------
+        // Basic validation
+        // ------------------------------------------------
         if (!name.trim()) {
             setError(
                 "Please enter the business name."
             );
             return;
         }
-
         if (!profileImage) {
             setError(
                 "Please upload a profile image."
             );
             return;
         }
-
         if (!location) {
             setError(
                 "Please select a business location."
             );
             return;
         }
-
         try {
             setLoading(true);
-
+            // ==================================================
+            // NEW BUSINESS API CONTRACT
+            // ==================================================
             const payload: CreateBusinessRequest = {
+                // ------------------------------------------------
+                // Identity
+                // ------------------------------------------------
                 name: name.trim(),
-
                 description:
                     description.trim() ||
                     undefined,
-
+                // ------------------------------------------------
+                // Classification
+                // ------------------------------------------------
+                providerType: "business",
                 category,
-
                 subCategory:
-                    subCategory || undefined,
-
+                    subCategory ||
+                    undefined,
+                // ------------------------------------------------
+                // Profile
+                // ------------------------------------------------
+                profile: {
+                    languages,
+                    services: [],
+                    specialties: [],
+                    serviceArea: [],
+                },
+                // ------------------------------------------------
+                // Images
+                // ------------------------------------------------
                 images: {
                     profile: profileImage,
                     cover:
                         coverImage ||
                         undefined,
+                    gallery: galleryImages,
                 },
-
+                // ------------------------------------------------
+                // Documents
+                // ------------------------------------------------
+                documents: documents.map((document) => ({
+                    type: document.type,
+                    url: document.url,
+                    name: document.name,
+                })),
+                // -----------------------------------------------
+                // Location
+                // ------------------------------------------------
                 location: {
                     address:
                         location.formattedAddress,
-
                     cityId:
                         location.city,
-
                     country:
                         location.country,
-
                     latitude:
                         location.latitude,
-
                     longitude:
                         location.longitude,
                 },
-
+                // ------------------------------------------------
+                // Contact
+                // ------------------------------------------------
                 contact: {
                     email:
                         email.trim() ||
                         undefined,
-
                     phone:
                         phone.trim() ||
                         undefined,
-
                     website:
                         website.trim() ||
                         undefined,
-
                     instagram:
                         instagram.trim() ||
                         undefined,
-
                     whatsapp:
                         whatsapp.trim() ||
                         undefined,
                 },
-
-                menu:
-                    menu.trim() ||
-                    undefined,
-
-                priceRange:
-                    priceRange ||
-                    undefined,
-
+                // ------------------------------------------------
+                // Community
+                // ------------------------------------------------
+                community: {
+                    isLatinoOwned,
+                    countryOfOrigin:
+                        countryOfOrigin.trim() ||
+                        undefined,
+                },
+                // ------------------------------------------------
+                // Discovery
+                // ------------------------------------------------
                 tags,
-
-                languages,
-
-                isLatinoOwned,
-
-                countryOfOrigin:
-                    countryOfOrigin.trim() ||
-                    undefined,
             };
-
-            await businessService.createBusiness(
-                payload
+            // ==================================================
+            // CREATE
+            // ==================================================
+            const response =
+                await businessService.createBusiness(
+                    payload
+                );
+            // ==================================================
+            // DEBUG
+            // ==================================================
+            notify({
+                type: "success",
+                title: "Business created",
+                message: "Your business has been created successfully.",
+            });
+            console.log(
+                "✅ BUSINESS CREATED:",
+                response
             );
-
-            window.location.href = "/";
-
+            // ==================================================
+            // REDIRECT
+            // ==================================================
+            router.push("/");
         } catch (err) {
-            console.error(err);
 
-            setError(
-                "The business could not be created. Please try again."
+            console.error(
+                "❌ BUSINESS CREATION ERROR:",
+                err
             );
-        } finally {
-            setLoading(false);
-        }
-    };
 
+            const apiError = getApiError(err);
+
+            if (apiError.code === "BUSINESS_LIMIT_REACHED") {
+
+                notify({
+                    type: "warning",
+                    title: "Business limit reached",
+                    message:
+                        "Your current plan does not allow you to create another business.",
+                });
+
+                return;
+            }
+
+            setError(apiError.message);
+        } finally {
+                    setLoading(false);
+                }
+            };
     return (
         <form
             onSubmit={handleSubmit}
             className="space-y-10"
         >
-            {/* IMAGES */}
-
-            <section className="space-y-5">
-                <div>
-                    <h2 className="text-lg font-semibold text-gray-900">
-                        Business images
-                    </h2>
-
-                    <p className="mt-1 text-sm text-gray-500">
-                        Add a profile image and an optional
-                        cover image.
-                    </p>
-                </div>
-
-                <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Profile image
-                    </label>
-
-                    <ImageUpload
-                        value={profileImage}
-                        onChange={setProfileImage}
-                        onRemove={() =>
-                            setProfileImage("")
-                        }
-                        disabled={loading}
-                    />
-                </div>
-
-                <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Cover image
-                    </label>
-
-                    <ImageUpload
-                        value={coverImage}
-                        onChange={setCoverImage}
-                        onRemove={() =>
-                            setCoverImage("")
-                        }
-                        disabled={loading}
-                    />
-                </div>
-            </section>
-
-            {/* BASIC INFORMATION */}
-
-            <section className="space-y-5">
-                <h2 className="text-lg font-semibold text-gray-900">
-                    Basic information
-                </h2>
-
-                <div>
-                    <label
-                        htmlFor="business-name"
-                        className="mb-2 block text-sm font-medium text-gray-700"
-                    >
-                        Business name
-                    </label>
-
-                    <input
-                        id="business-name"
-                        type="text"
-                        value={name}
-                        onChange={(event) =>
-                            setName(
-                                event.target.value
-                            )
-                        }
-                        placeholder="e.g. Colombian Café"
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-[#FF7A00]"
-                        disabled={loading}
-                    />
-                </div>
-
-                <div>
-                    <label
-                        htmlFor="business-description"
-                        className="mb-2 block text-sm font-medium text-gray-700"
-                    >
-                        Description
-                    </label>
-
-                    <textarea
-                        id="business-description"
-                        value={description}
-                        onChange={(event) =>
-                            setDescription(
-                                event.target.value
-                            )
-                        }
-                        rows={5}
-                        placeholder="Tell the community about this business..."
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-[#FF7A00]"
-                        disabled={loading}
-                    />
-                </div>
-            </section>
-
-            {/* CATEGORY */}
-
-            <section className="space-y-5">
-                <h2 className="text-lg font-semibold text-gray-900">
-                    Category
-                </h2>
-
-                <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Category
-                    </label>
-
-                    <select
-                        value={category}
-                        onChange={(event) =>
-                            handleCategoryChange(
-                                event.target
-                                    .value as BusinessCategory
-                            )
-                        }
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    >
-                        {categories.map(
-                            (item) => (
-                                <option
-                                    key={item.value}
-                                    value={item.value}
-                                >
-                                    {item.label}
-                                </option>
-                            )
-                        )}
-                    </select>
-                </div>
-
-                <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Subcategory
-                    </label>
-
-                    <select
-                        value={subCategory}
-                        onChange={(event) =>
-                            setSubCategory(
-                                event.target
-                                    .value as
-                                    | BusinessSubCategory
-                                    | ""
-                            )
-                        }
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    >
-                        <option value="">
-                            Select a subcategory
-                        </option>
-
-                        {filteredSubCategories.map(
-                            (item) => (
-                                <option
-                                    key={item.value}
-                                    value={item.value}
-                                >
-                                    {item.label}
-                                </option>
-                            )
-                        )}
-                    </select>
-                </div>
-            </section>
-
-            {/* LOCATION */}
-
+            {/* ==================================================
+                IMAGES
+            ================================================== */}
+                <BusinessImagesSection
+                    profileImage={profileImage}
+                    coverImage={coverImage}
+                    galleryImages={galleryImages}
+                    onProfileChange={setProfileImage}
+                    onCoverChange={setCoverImage}
+                    onGalleryChange={setGalleryImages}
+                    loading={loading}
+                />
+            {/* ==================================================
+                BASIC INFORMATION
+            ================================================== */}
+            <BusinessBasicInformation
+                name={name}
+                description={description}
+                isLatinoOwned={isLatinoOwned}
+                countryOfOrigin={countryOfOrigin}
+                tagsInput={tagsInput}
+                tags={tags}
+                languagesInput={languagesInput}
+                languages={languages}
+                onNameChange={setName}
+                onDescriptionChange={setDescription}
+                onLatinoOwnedChange={setIsLatinoOwned}
+                onCountryOfOriginChange={setCountryOfOrigin}
+                onTagsInputChange={setTagsInput}
+                onAddTag={addTag}
+                onRemoveTag={removeTag}
+                onLanguagesInputChange={setLanguagesInput}
+                onAddLanguage={addLanguage}
+                onRemoveLanguage={removeLanguage}
+                loading={loading}
+            />
+            {/* ==================================================
+                CATEGORY
+            ================================================== */}
+            <BusinessCategorySection
+                category={category}
+                subCategory={subCategory}
+                categories={categories}
+                filteredSubCategories={filteredSubCategories}
+                onCategoryChange={handleCategoryChange}
+                onSubCategoryChange={setSubCategory}
+                loading={loading}
+            />
+            {/* ==================================================
+                PRICING
+            ================================================== */}
+            <BusinessPricingSection
+                pricingType={pricingType}
+                priceAmount={priceAmount}
+                priceMinAmount={priceMinAmount}
+                priceMaxAmount={priceMaxAmount}
+                priceDescription={priceDescription}
+                onPricingTypeChange={setPricingType}
+                onPriceAmountChange={setPriceAmount}
+                onPriceMinAmountChange={setPriceMinAmount}
+                onPriceMaxAmountChange={setPriceMaxAmount}
+                onPriceDescriptionChange={setPriceDescription}
+                loading={loading}
+            />
+            {/* ==================================================
+                CONTACT
+            ================================================== */}
+            <BusinessContactSection
+                email={email}
+                phone={phone}
+                website={website}
+                instagram={instagram}
+                whatsapp={whatsapp}
+                onEmailChange={setEmail}
+                onPhoneChange={setPhone}
+                onWebsiteChange={setWebsite}
+                onInstagramChange={setInstagram}
+                onWhatsappChange={setWhatsapp}
+                loading={loading}
+            />
+            {/* ==================================================
+                BUSINESS DETAILS
+            ================================================== */}
+            <BusinessDetailsSection
+                documents={documents}
+                onDocumentsChange={setDocuments}
+                loading={loading}
+            />
+            {/* ==================================================
+                LOCATION
+            ================================================== */}
             <section className="space-y-5">
                 <div>
                     <h2 className="text-lg font-semibold text-gray-900">
                         Location
                     </h2>
-
                     <p className="mt-1 text-sm text-gray-500">
                         Search and select the location of the business.
                     </p>
                 </div>
-
                 <LocationSelector
                     value={location}
                     onChange={setLocation}
                     disabled={loading}
                 />
 
+
                 {location && (
+
                     <div className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">
+
                         <p>
                             <span className="font-medium">
                                 City:
                             </span>{" "}
                             {location.city}
                         </p>
+
 
                         <p>
                             <span className="font-medium">
@@ -583,14 +685,18 @@ export default function BusinessForm() {
                             {location.country}
                         </p>
 
+
                         {location.state && (
+
                             <p>
                                 <span className="font-medium">
                                     State:
                                 </span>{" "}
                                 {location.state}
                             </p>
+
                         )}
+
 
                         <p>
                             <span className="font-medium">
@@ -598,324 +704,42 @@ export default function BusinessForm() {
                             </span>{" "}
                             {location.formattedAddress}
                         </p>
+
                     </div>
+
                 )}
+
             </section>
-
-            {/* CONTACT */}
-
-            <section className="space-y-5">
-                <div>
-                    <h2 className="text-lg font-semibold text-gray-900">
-                        Contact
-                    </h2>
-
-                    <p className="mt-1 text-sm text-gray-500">
-                        All contact information is optional.
-                    </p>
-                </div>
-
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(event) =>
-                        setEmail(
-                            event.target.value
-                        )
-                    }
-                    placeholder="Email"
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                    disabled={loading}
-                />
-
-                <input
-                    type="tel"
-                    value={phone}
-                    onChange={(event) =>
-                        setPhone(
-                            event.target.value
-                        )
-                    }
-                    placeholder="Phone"
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                    disabled={loading}
-                />
-
-                <input
-                    type="url"
-                    value={website}
-                    onChange={(event) =>
-                        setWebsite(
-                            event.target.value
-                        )
-                    }
-                    placeholder="Website"
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                    disabled={loading}
-                />
-
-                <input
-                    type="text"
-                    value={instagram}
-                    onChange={(event) =>
-                        setInstagram(
-                            event.target.value
-                        )
-                    }
-                    placeholder="Instagram"
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                    disabled={loading}
-                />
-
-                <input
-                    type="text"
-                    value={whatsapp}
-                    onChange={(event) =>
-                        setWhatsapp(
-                            event.target.value
-                        )
-                    }
-                    placeholder="WhatsApp"
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                    disabled={loading}
-                />
-            </section>
-
-            {/* BUSINESS DETAILS */}
-
-            <section className="space-y-5">
-                <h2 className="text-lg font-semibold text-gray-900">
-                    Business details
-                </h2>
-
-                <input
-                    type="url"
-                    value={menu}
-                    onChange={(event) =>
-                        setMenu(
-                            event.target.value
-                        )
-                    }
-                    placeholder="Menu URL"
-                    className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                    disabled={loading}
-                />
-
-                <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Price range
-                    </label>
-
-                    <select
-                        value={priceRange}
-                        onChange={(event) =>
-                            setPriceRange(
-                                event.target
-                                    .value as
-                                    | BusinessPriceRange
-                                    | ""
-                            )
-                        }
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    >
-                        <option value="">
-                            Select price range
-                        </option>
-
-                        {priceRanges.map(
-                            (price) => (
-                                <option
-                                    key={price}
-                                    value={price}
-                                >
-                                    {price}
-                                </option>
-                            )
-                        )}
-                    </select>
-                </div>
-
-                <div>
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                        Country of origin
-                    </label>
-
-                    <input
-                        type="text"
-                        value={countryOfOrigin}
-                        onChange={(event) =>
-                            setCountryOfOrigin(
-                                event.target.value
-                            )
-                        }
-                        placeholder="e.g. Colombia"
-                        className="w-full rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    />
-                </div>
-
-                <label className="flex items-center gap-3">
-                    <input
-                        type="checkbox"
-                        checked={isLatinoOwned}
-                        onChange={(event) =>
-                            setIsLatinoOwned(
-                                event.target.checked
-                            )
-                        }
-                        disabled={loading}
-                        className="h-4 w-4"
-                    />
-
-                    <span className="text-sm text-gray-700">
-                        Latino-owned business
-                    </span>
-                </label>
-            </section>
-
-            {/* TAGS */}
-
-            <section className="space-y-5">
-                <h2 className="text-lg font-semibold text-gray-900">
-                    Tags
-                </h2>
-
-                <div className="flex gap-2">
-                    <input
-                        type="text"
-                        value={tagsInput}
-                        onChange={(event) =>
-                            setTagsInput(
-                                event.target.value
-                            )
-                        }
-                        onKeyDown={(event) => {
-                            if (
-                                event.key ===
-                                "Enter"
-                            ) {
-                                event.preventDefault();
-                                addTag();
-                            }
-                        }}
-                        placeholder="e.g. Colombian"
-                        className="flex-1 rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    />
-
-                    <button
-                        type="button"
-                        onClick={addTag}
-                        disabled={loading}
-                        className="rounded-xl border border-gray-300 px-4 py-3 font-medium"
-                    >
-                        Add
-                    </button>
-                </div>
-
-                {tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                        {tags.map((tag) => (
-                            <button
-                                key={tag}
-                                type="button"
-                                onClick={() =>
-                                    removeTag(
-                                        tag
-                                    )
-                                }
-                                className="rounded-full bg-gray-100 px-3 py-2 text-sm"
-                            >
-                                {tag} ×
-                            </button>
-                        ))}
-                    </div>
-                )}
-            </section>
-
-            {/* LANGUAGES */}
-
-            <section className="space-y-5">
-                <h2 className="text-lg font-semibold text-gray-900">
-                    Languages
-                </h2>
-
-                <div className="flex gap-2">
-                    <input
-                        type="text"
-                        value={languagesInput}
-                        onChange={(event) =>
-                            setLanguagesInput(
-                                event.target.value
-                            )
-                        }
-                        onKeyDown={(event) => {
-                            if (
-                                event.key ===
-                                "Enter"
-                            ) {
-                                event.preventDefault();
-                                addLanguage();
-                            }
-                        }}
-                        placeholder="e.g. Spanish"
-                        className="flex-1 rounded-xl border border-gray-300 px-4 py-3"
-                        disabled={loading}
-                    />
-
-                    <button
-                        type="button"
-                        onClick={addLanguage}
-                        disabled={loading}
-                        className="rounded-xl border border-gray-300 px-4 py-3 font-medium"
-                    >
-                        Add
-                    </button>
-                </div>
-
-                {languages.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                        {languages.map(
-                            (language) => (
-                                <button
-                                    key={language}
-                                    type="button"
-                                    onClick={() =>
-                                        removeLanguage(
-                                            language
-                                        )
-                                    }
-                                    className="rounded-full bg-gray-100 px-3 py-2 text-sm"
-                                >
-                                    {language} ×
-                                </button>
-                            )
-                        )}
-                    </div>
-                )}
-            </section>
-
-            {/* ERROR */}
+            
+            {/* ==================================================
+                ERROR
+            ================================================== */}
 
             {error && (
+
                 <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
                     {error}
                 </div>
+
             )}
 
-            {/* SUBMIT */}
+
+            {/* ==================================================
+                SUBMIT
+            ================================================== */}
 
             <button
                 type="submit"
                 disabled={loading}
                 className="w-full rounded-xl bg-[#FF7A00] px-6 py-4 font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
+
                 {loading
                     ? "Creating business..."
                     : "Create Business"}
+
             </button>
+
         </form>
     );
 }
-
