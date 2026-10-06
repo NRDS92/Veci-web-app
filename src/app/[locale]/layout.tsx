@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-
+import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
 import Navbar from "@/components/navbar/Navbar";
 
 const locales = ["es", "en", "de"];
@@ -23,8 +23,8 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
+      <GoogleAnalytics />
       <Navbar />
-
       {children}
     </NextIntlClientProvider>
   );
