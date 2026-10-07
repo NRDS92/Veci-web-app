@@ -25,18 +25,11 @@ export default async function PublicBusinesses({
     category,
     limit = 6,
 }: PublicBusinessesProps) {
-    const [businesses, events] = await Promise.all([
-        getPublicBusinesses({
-            cityId,
-            category,
-            limit,
-        }),
-
-        getPublicEvents({
-            cityId,
-            limit: 6,
-        }),
-    ]);
+    const businesses = await getPublicBusinesses({
+        cityId,
+        category,
+        limit: 10,
+    });
 
     return (
         <main className="min-h-screen bg-white">
@@ -90,61 +83,62 @@ export default async function PublicBusinesses({
             </section>
 
             {/* =========================================================
-                02 — EVENTS BENTO
+                02 — COMMUNITY SIGNALS / BUSINESS BENTO
             ========================================================== */}
 
-            <section className="border-b border-gray-100 bg-[#F8F8F6] py-10">
+            <section className="border-b border-gray-100 bg-white py-10">
                 <div className="mx-auto max-w-7xl px-6">
+
                     <div className="mb-6 flex items-end justify-between gap-6">
                         <div>
                             <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
-                                Community signals
+                                Conoce tu comunidad
                             </p>
 
                             <h2 className="mt-2 text-2xl font-black tracking-tight text-gray-950 md:text-3xl">
                                 Mira qué está pasando.
                             </h2>
+
+                            <p className="mt-2 max-w-xl text-sm leading-6 text-gray-500">
+                                Descubre los negocios que forman parte de tu comunidad
+                                y encuentra nuevas oportunidades para conectar y colaborar.
+                            </p>
                         </div>
 
                         <Link
-                            href="/events"
-                            className="hidden text-sm font-bold text-gray-950 md:block"
+                            href="/business"
+                            className="hidden text-sm font-bold text-gray-950 transition hover:text-[#4C76F2] md:block"
                         >
-                            Ver eventos →
+                            Ver negocios →
                         </Link>
                     </div>
 
-                    {events.length > 0 ? (
-                        <div className="grid h-[420px] gap-3 md:grid-cols-4 md:grid-rows-2">
-                            {events.slice(0, 5).map((event, index) => {
-                                const image = event.images?.[0];
-
+                    {businesses.length > 0 ? (
+                        <div className="grid h-[480px] gap-3 md:grid-cols-4 md:grid-rows-2">
+                            {businesses.slice(0, 5).map((business, index) => {
                                 const isFeatured = index === 0;
+
                                 const isTall =
                                     index === 1 || index === 3;
 
                                 return (
                                     <Link
-                                        key={event.id}
-                                        href={`/events/${event.slug}`}
-                                        className={`
-                                            group relative overflow-hidden rounded-[1.75rem] bg-gray-200
-                                            ${
-                                                isFeatured
-                                                    ? "md:col-span-2 md:row-span-2"
-                                                    : ""
-                                            }
-                                            ${
-                                                isTall
-                                                    ? "md:row-span-2"
-                                                    : ""
-                                            }
-                                        `}
+                                        key={business.id}
+                                        href={`/business/${business.slug}`}
+                                        className={[
+                                            "group relative overflow-hidden rounded-[1.75rem] bg-gray-200",
+                                            isFeatured
+                                                ? "md:col-span-2 md:row-span-2"
+                                                : "",
+                                            isTall
+                                                ? "md:row-span-2"
+                                                : "",
+                                        ].join(" ")}
                                     >
-                                        {image ? (
+                                        {business.image ? (
                                             <img
-                                                src={image}
-                                                alt={event.title}
+                                                src={business.image}
+                                                alt={business.name}
                                                 className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                                             />
                                         ) : (
@@ -156,14 +150,7 @@ export default async function PublicBusinesses({
                                         <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
                                             <div className="flex items-center gap-2">
                                                 <span className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide backdrop-blur-sm">
-                                                    {event.eventType ===
-                                                    "official"
-                                                        ? "Official"
-                                                        : "Community"}
-                                                </span>
-
-                                                <span className="text-[10px] font-semibold uppercase tracking-wide text-white/60">
-                                                    {event.category}
+                                                    {business.category}
                                                 </span>
                                             </div>
 
@@ -174,31 +161,35 @@ export default async function PublicBusinesses({
                                                         : "mt-2 line-clamp-2 text-lg font-bold leading-tight"
                                                 }
                                             >
-                                                {event.title}
+                                                {business.name}
                                             </h3>
 
                                             <p className="mt-2 text-xs text-white/65">
-                                                📍 {event.cityId}
+                                                📍 {business.cityId}
                                             </p>
+                                        </div>
+
+                                        <div className="absolute right-5 top-5 flex h-9 w-9 translate-y-2 items-center justify-center rounded-full bg-white/90 text-gray-950 opacity-0 transition duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                                            ↗
                                         </div>
                                     </Link>
                                 );
                             })}
                         </div>
                     ) : (
-                        <div className="rounded-[1.75rem] border border-dashed border-gray-300 bg-white p-12 text-center">
+                        <div className="rounded-[1.75rem] border border-dashed border-gray-300 bg-[#F8F8F6] p-12 text-center">
                             <p className="text-gray-500">
-                                Todavía no hay eventos públicos disponibles.
+                                Todavía no hay negocios públicos disponibles.
                             </p>
                         </div>
                     )}
 
                     <div className="mt-5 md:hidden">
                         <Link
-                            href="/events"
+                            href="/business"
                             className="text-sm font-bold text-gray-950"
                         >
-                            Ver todos los eventos →
+                            Ver todos los negocios →
                         </Link>
                     </div>
                 </div>
