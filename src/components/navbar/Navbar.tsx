@@ -710,7 +710,7 @@ export default function Navbar() {
                                                 type="button"
                                                 onClick={() =>
                                                     handleUserNavigation(
-                                                        "/favorites"
+                                                        "/user/favorites"
                                                     )
                                                 }
                                                 className="
@@ -769,7 +769,7 @@ export default function Navbar() {
                                                 type="button"
                                                 onClick={() =>
                                                     handleUserNavigation(
-                                                        "/my-events"
+                                                        "/user/myEvents"
                                                     )
                                                 }
                                                 className="
@@ -802,7 +802,7 @@ export default function Navbar() {
                                                 type="button"
                                                 onClick={() =>
                                                     handleUserNavigation(
-                                                        "/my-businesses"
+                                                        "/user/myBusiness"
                                                     )
                                                 }
                                                 className="
