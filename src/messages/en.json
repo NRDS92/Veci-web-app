@@ -68,5 +68,161 @@
     "analytics": "Analytics",
     "analyticsDescription": "Allows us to measure usage of Veci through Google Analytics.",
     "settings": "Privacy and cookies"
+  },
+  "PublicEvents": {
+    "discovery": {
+      "eyebrow": "What's happening",
+      "titleLine1": "Discover what's",
+      "titleLine2": "happening.",
+      "description": "Parties, food, culture, sports and experiences created by the Latin American community.",
+      "exploreAll": "Explore all events"
+    },
+    "categories": {
+      "music": "Music",
+      "culture": "Culture",
+      "party": "Party",
+      "food": "Food",
+      "sports": "Sports",
+      "community": "Community"
+    },
+    "events": {
+      "imageFallback": "Event image",
+      "official": "Official",
+      "community": "Community",
+      "empty": "No public events are available right now.",
+      "createFirst": "Be the first to create one"
+    },
+    "whyVeci": {
+      "eyebrow": "Why Veci",
+      "titleLine1": "Your event deserves",
+      "titleLine2": "to be discovered.",
+      "description": "Connect your activities with people looking for experiences, culture and community in their city.",
+      "benefits": {
+        "discoverability": {
+          "title": "More visibility",
+          "description": "Your event can appear to people looking for activities and experiences."
+        },
+        "community": {
+          "title": "Reach the community",
+          "description": "Connect with people interested in Latin culture, food, music and experiences."
+        },
+        "eventPage": {
+          "title": "Your own event page",
+          "description": "Share the information attendees need to learn about your event."
+        },
+        "sharing": {
+          "title": "Easy to share",
+          "description": "Share an event page people can visit and pass along."
+        }
+      },
+      "primaryCta": "Publish my event",
+      "secondaryCta": "Explore events",
+      "processEyebrow": "A simple process",
+      "processTitle": "Publishing is easy.",
+      "processDescription": "You don't need technical skills. You just need something worth sharing.",
+      "steps": [
+        {
+          "title": "Create your event",
+          "description": "Add the name, date, location, images and important details."
+        },
+        {
+          "title": "Make it stand out",
+          "description": "A good image and a clear description help people understand what makes your event special."
+        },
+        {
+          "title": "Share it on Veci",
+          "description": "Publish your event so the community can discover and share it."
+        }
+      ],
+      "eventBelongsEyebrow": "Your event belongs here",
+      "eventBelongsTitle": "Your event. Your community. More ways to connect.",
+      "eventBelongsDescription": "Help more people discover what you're organizing and find new ways to connect."
+    },
+    "upcoming": {
+      "eyebrow": "Coming up",
+      "title": "See what's coming.",
+      "viewAll": "View all events"
+    }
+  },
+  "PublicBusinesses": {
+    "discovery": {
+      "eyebrow": "Veci Business",
+      "titleLine1": "Your community",
+      "titleLine2": "is also",
+      "titleLine3": "your market.",
+      "description": "Discover what's happening, reach the right people and find opportunities to grow your business within the Latin American community.",
+      "primaryCta": "Add my business",
+      "secondaryCta": "Explore events",
+      "listEyebrow": "Know your community",
+      "listTitle": "Businesses that connect.",
+      "listDescription": "Discover businesses in your community and find new opportunities to collaborate.",
+      "viewAll": "Explore businesses"
+    },
+    "categories": {
+      "restaurants": "Restaurants",
+      "cafes": "Cafés",
+      "shops": "Shops",
+      "services": "Services",
+      "beauty": "Beauty",
+      "health": "Health"
+    },
+    "businesses": {
+      "empty": "There are no public businesses available yet.",
+      "createFirst": "Add your business",
+      "imageFallback": "Business image"
+    },
+    "whyVeci": {
+      "eyebrow": "Why Veci",
+      "titleLine1": "Less noise.",
+      "titleLine2": "More opportunity.",
+      "description": "It's not just about advertising. It's about understanding your community, connecting with your audience and discovering new possibilities for your business.",
+      "benefits": {
+        "visibility": {
+          "title": "Increase your visibility",
+          "description": "Present your business to people looking for products, services and experiences."
+        },
+        "community": {
+          "title": "Connect with your community",
+          "description": "Reach people interested in Latin American culture and businesses."
+        },
+        "businessProfile": {
+          "title": "Showcase your business",
+          "description": "Give people a place to learn about your business and find useful information."
+        },
+        "opportunities": {
+          "title": "Discover opportunities",
+          "description": "Find ways to collaborate, participate in events and connect with other businesses."
+        }
+      },
+      "primaryCta": "Add my business",
+      "processEyebrow": "How it works",
+      "processTitle": "Get started in three steps.",
+      "processDescription": "Build your presence, explain what you offer and connect with people in your community.",
+      "steps": [
+        {
+          "title": "Create your presence",
+          "description": "Register your business and add the information people need to learn about it."
+        },
+        {
+          "title": "Show what you offer",
+          "description": "Present your products, services and value proposition clearly."
+        },
+        {
+          "title": "Connect with the community",
+          "description": "Share your profile and explore opportunities to participate and collaborate."
+        }
+      ],
+      "businessBelongsEyebrow": "Your business belongs here",
+      "businessBelongsTitle": "Your business. Your community. New connections.",
+      "businessBelongsDescription": "Become part of the Veci ecosystem and help more people discover what you have to offer."
+    },
+    "directory": {
+      "eyebrow": "The ecosystem",
+      "title": "Discover more businesses.",
+      "description": "Explore community businesses and find new ideas, services and potential collaborations.",
+      "viewAll": "View all businesses",
+      "noMoreBusinesses": "There are no more businesses available to display."
+    }
   }
 }
+
