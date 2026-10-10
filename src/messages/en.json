@@ -57,5 +57,16 @@
       "previousSlide": "Previous slide",
       "nextSlide": "Next slide",
       "goToSlide": "Go to slide {number}"
+  },
+  "Privacy": {
+    "title": "Your privacy matters",
+    "description": "We use analytics to understand how Veci is used. You can accept, reject or customize this option.",
+    "accept": "Accept analytics",
+    "reject": "Reject",
+    "customize": "Customize",
+    "save": "Save preferences",
+    "analytics": "Analytics",
+    "analyticsDescription": "Allows us to measure usage of Veci through Google Analytics.",
+    "settings": "Privacy and cookies"
   }
 }
