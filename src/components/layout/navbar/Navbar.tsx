@@ -24,9 +24,9 @@ import {
     Link,
     usePathname,
     useRouter,
-} from "../../i18n/navigation";
+} from "../../../i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
-import VeciLogo from "../../../public/logoVeci.webp";
+import VeciLogo from "../../../../public/logoVeci.webp";
 import { useLocale, useTranslations } from "next-intl";
 
 const locales = [
