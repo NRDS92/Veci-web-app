@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
+import ConsentManager from "@/components/privacy/ConsentManager";
 import Navbar from "@/components/layout/navbar/Navbar";
 import Footer from "@/components/layout/footer/Footer";
 
@@ -24,7 +24,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <GoogleAnalytics />
+      <ConsentManager />
       <Navbar />
       {children}
       <Footer />
