@@ -223,6 +223,151 @@
       "viewAll": "View all businesses",
       "noMoreBusinesses": "There are no more businesses available to display."
     }
+  },
+  "NotificationToast": {
+    "close": "Close notification"
+  },
+  "LoginForm": {
+    "loader": "Connecting you to Veci",
+    "brand": "Colombia → Europe",
+    "headline": {
+      "first": "Your people.",
+      "second": "Your culture.",
+      "third": "Your place."
+    },
+    "description": "Discover the people, places and experiences that make Latin America feel closer to home.",
+    "welcome": "Welcome back",
+    "heading": "Good to see you again.",
+    "subtitle": "Log in and continue discovering your community.",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot password?",
+    "submit": "Log in",
+    "noAccount": "Don't have an account?",
+    "register": "Create your account →",
+    "community": "Made for our community",
+    "validation": {
+      "emailRequired": {
+        "title": "Email required",
+        "message": "Enter your email address to continue."
+      },
+      "passwordRequired": {
+        "title": "Password required",
+        "message": "Enter your password to continue."
+      }
+    },
+    "success": {
+      "title": "Welcome to Veci!",
+      "message": "You have successfully logged in."
+    },
+    "errors": {
+      "invalidCredentials": {
+        "title": "Login failed",
+        "message": "Your email or password is incorrect."
+      },
+      "emailNotVerified": {
+        "title": "Verify your email",
+        "message": "You must verify your email before logging in."
+      },
+      "googleAccount": {
+        "title": "Google account",
+        "message": "This account was created with Google. Please use that sign-in method."
+      },
+      "generic": {
+        "title": "Login error",
+        "message": "We couldn't log you in. Please try again."
+      }
+    }
+  },
+  "RegisterForm": {
+    "loader": "Creating your Veci account",
+    "brand": "Join Veci",
+    "eyebrow": "Build with your community",
+    "headline": {
+      "first": "Create.",
+      "second": "Connect.",
+      "third": "Grow."
+    },
+    "description": "Create events, promote your business and discover new opportunities with your community in Europe.",
+    "events": "Events",
+    "businesses": "Businesses",
+    "opportunities": "Opportunities",
+    "heading": "Create your place in the community.",
+    "subtitle": "Create events, discover businesses and connect with opportunities across Europe.",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "At least 8 characters",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Repeat your password",
+    "city": "City",
+    "cologne": "Cologne",
+    "submit": "Create your account",
+    "submitting": "Creating your account...",
+    "alreadyRegistered": "Already part of Veci?",
+    "login": "Log in →",
+    "community": "Made for our community",
+    "validation": {
+      "nameRequired": {
+        "title": "Name required",
+        "message": "Enter your name to continue."
+      },
+      "emailRequired": {
+        "title": "Email required",
+        "message": "Enter your email address to continue."
+      },
+      "passwordLength": {
+        "title": "Password too short",
+        "message": "Your password must contain at least 8 characters."
+      },
+      "passwordMismatch": {
+        "title": "Passwords don't match",
+        "message": "Make sure both passwords match."
+      },
+      "cityRequired": {
+        "title": "City required",
+        "message": "Select a city to continue."
+      }
+    },
+    "success": {
+      "title": "Account created!",
+      "message": "Check your email to verify your account."
+    },
+    "errors": {
+      "emailExists": {
+        "title": "Email already registered",
+        "message": "An account with this email already exists. Try logging in."
+      },
+      "validation": {
+        "title": "Check your information",
+        "message": "Some details are invalid. Review your information and try again."
+      },
+      "generic": {
+        "title": "Couldn't create your account",
+        "message": "Something went wrong. Please try again later."
+      }
+    }
+  },
+  "CitySelector": {
+    "label": "City",
+    "placeholder": "Search for a city...",
+    "loading": "Searching cities",
+    "change": "Change",
+    "errors": {
+      "search": {
+        "title": "City search failed",
+        "message": "Unable to load cities. Please try again."
+      }
+    }
   }
+
+
+
+
+
 }
 

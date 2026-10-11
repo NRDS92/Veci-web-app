@@ -91,7 +91,7 @@ export default function MyBusinesses() {
     }
 
     return (
-        <section className="space-y-5 space-y-5 mt-25 px-30">
+        <section className="space-y-5 mt-25 px-30">
             <div className="flex items-center justify-between gap-3">
                 <div>
                     <h2 className="text-xl font-semibold text-gray-900">

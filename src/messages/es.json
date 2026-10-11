@@ -224,5 +224,151 @@
       "viewAll": "Ver todos los negocios",
       "noMoreBusinesses": "No hay más negocios disponibles para mostrar."
     }
-  }
+  },
+  "NotificationToast": {
+    "close": "Cerrar notificación"
+    },
+  "LoginForm": {
+    "loader": "Conectándote con Veci",
+    "brand": "Colombia → Europa",
+    "headline": {
+      "first": "Tu gente.",
+      "second": "Tu cultura.",
+      "third": "Tu lugar."
+    },
+    "description": "Descubre las personas, los lugares y las experiencias que hacen que Latinoamérica se sienta más cerca de casa.",
+    "welcome": "Qué bueno tenerte de vuelta",
+    "heading": "Nos alegra verte de nuevo.",
+    "subtitle": "Inicia sesión y sigue descubriendo tu comunidad.",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "tu@ejemplo.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Introduce tu contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "submit": "Iniciar sesión",
+    "noAccount": "¿Todavía no tienes una cuenta?",
+    "register": "Crea tu cuenta →",
+    "community": "Creado para nuestra comunidad",
+    "validation": {
+      "emailRequired": {
+        "title": "Correo electrónico requerido",
+        "message": "Introduce tu correo electrónico para continuar."
+      },
+      "passwordRequired": {
+        "title": "Contraseña requerida",
+        "message": "Introduce tu contraseña para continuar."
+      }
+    },
+    "success": {
+      "title": "¡Bienvenido a Veci!",
+      "message": "Has iniciado sesión correctamente."
+    },
+    "errors": {
+      "invalidCredentials": {
+        "title": "No se pudo iniciar sesión",
+        "message": "El correo electrónico o la contraseña son incorrectos."
+      },
+      "emailNotVerified": {
+        "title": "Verifica tu correo electrónico",
+        "message": "Debes verificar tu correo antes de iniciar sesión."
+      },
+      "googleAccount": {
+        "title": "Cuenta vinculada a Google",
+        "message": "Esta cuenta se creó con Google. Inicia sesión con ese método."
+      },
+      "generic": {
+        "title": "Error al iniciar sesión",
+        "message": "No ha sido posible iniciar sesión. Inténtalo de nuevo."
+      }
+    }
+  },
+  "RegisterForm": {
+    "loader": "Creando tu cuenta de Veci",
+    "brand": "Únete a Veci",
+    "eyebrow": "Construye con tu comunidad",
+    "headline": {
+      "first": "Crea.",
+      "second": "Conecta.",
+      "third": "Crece."
+    },
+    "description": "Crea eventos, promociona tu negocio y descubre nuevas oportunidades con tu comunidad en Europa.",
+    "events": "Eventos",
+    "businesses": "Negocios",
+    "opportunities": "Oportunidades",
+    "heading": "Encuentra tu lugar en la comunidad.",
+    "subtitle": "Crea eventos, descubre negocios y conecta con oportunidades en toda Europa.",
+    "name": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "tu@ejemplo.com",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Mínimo 8 caracteres",
+    "confirmPassword": "Confirmar contraseña",
+    "confirmPasswordPlaceholder": "Repite tu contraseña",
+    "city": "Ciudad",
+    "cologne": "Colonia",
+    "submit": "Crear cuenta",
+    "submitting": "Creando tu cuenta...",
+    "alreadyRegistered": "¿Ya formas parte de Veci?",
+    "login": "Iniciar sesión →",
+    "community": "Creado para nuestra comunidad",
+    "validation": {
+      "nameRequired": {
+        "title": "Nombre requerido",
+        "message": "Introduce tu nombre para continuar."
+      },
+      "emailRequired": {
+        "title": "Correo electrónico requerido",
+        "message": "Introduce tu correo electrónico para continuar."
+      },
+      "passwordLength": {
+        "title": "Contraseña demasiado corta",
+        "message": "Tu contraseña debe tener al menos 8 caracteres."
+      },
+      "passwordMismatch": {
+        "title": "Las contraseñas no coinciden",
+        "message": "Comprueba que ambas contraseñas sean iguales."
+      },
+      "cityRequired": {
+        "title": "Ciudad requerida",
+        "message": "Selecciona una ciudad para continuar."
+      }
+    },
+    "success": {
+      "title": "¡Cuenta creada!",
+      "message": "Revisa tu correo electrónico para verificar tu cuenta."
+    },
+    "errors": {
+      "emailExists": {
+        "title": "Correo ya registrado",
+        "message": "Ya existe una cuenta con este correo electrónico. Intenta iniciar sesión."
+      },
+      "validation": {
+        "title": "Revisa tus datos",
+        "message": "Algunos datos no son válidos. Comprueba la información e inténtalo de nuevo."
+      },
+      "generic": {
+        "title": "No se pudo crear la cuenta",
+        "message": "Ha ocurrido un error. Inténtalo de nuevo más tarde."
+      }
+    }
+  },
+  "CitySelector": {
+    "label": "Ciudad",
+    "placeholder": "Busca una ciudad...",
+    "loading": "Buscando ciudades",
+    "change": "Cambiar",
+    "errors": {
+      "search": {
+        "title": "Error al buscar ciudades",
+        "message": "No se pudieron cargar las ciudades. Inténtalo de nuevo."
+      }
+    }
+}
+
+
+
+  
+
+
 }
