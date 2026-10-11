@@ -1,7 +1,6 @@
+
 import "./globals.css";
 import Script from "next/script";
-import { AuthProvider } from "@/components/auth/AuthProvider";
-import { NotificationProvider } from "@/components/notifications/NotificationProvider";
 
 export const metadata = {
   title: "VECI – Latin Events & Community in Europe",
@@ -17,11 +16,8 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body suppressHydrationWarning>
-        <NotificationProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </NotificationProvider>
+        {children}
+
         <Script
           src="https://kit.fontawesome.com/fe8085a031.js"
           crossOrigin="anonymous"
@@ -31,3 +27,4 @@ export default function RootLayout({
     </html>
   );
 }
+

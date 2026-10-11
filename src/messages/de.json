@@ -223,6 +223,147 @@
       "viewAll": "Alle Unternehmen ansehen",
       "noMoreBusinesses": "Es sind keine weiteren Unternehmen verfügbar."
     }
+  },
+  "NotificationToast": {
+    "close": "Benachrichtigung schließen"
+  },
+  "LoginForm": {
+    "loader": "Du wirst mit Veci verbunden",
+    "brand": "Kolumbien → Europa",
+    "headline": {
+      "first": "Deine Menschen.",
+      "second": "Deine Kultur.",
+      "third": "Dein Ort."
+    },
+    "description": "Entdecke Menschen, Orte und Erlebnisse, die Lateinamerika näher nach Hause bringen.",
+    "welcome": "Willkommen zurück",
+    "heading": "Schön, dich wiederzusehen.",
+    "subtitle": "Melde dich an und entdecke deine Community weiter.",
+    "email": "E-Mail-Adresse",
+    "emailPlaceholder": "du@beispiel.de",
+    "password": "Passwort",
+    "passwordPlaceholder": "Gib dein Passwort ein",
+    "forgotPassword": "Passwort vergessen?",
+    "submit": "Anmelden",
+    "noAccount": "Du hast noch kein Konto?",
+    "register": "Konto erstellen →",
+    "community": "Für unsere Community gemacht",
+    "validation": {
+      "emailRequired": {
+        "title": "E-Mail-Adresse erforderlich",
+        "message": "Gib deine E-Mail-Adresse ein, um fortzufahren."
+      },
+      "passwordRequired": {
+        "title": "Passwort erforderlich",
+        "message": "Gib dein Passwort ein, um fortzufahren."
+      }
+    },
+    "success": {
+      "title": "Willkommen bei Veci!",
+      "message": "Du hast dich erfolgreich angemeldet."
+    },
+    "errors": {
+      "invalidCredentials": {
+        "title": "Anmeldung fehlgeschlagen",
+        "message": "Deine E-Mail-Adresse oder dein Passwort ist falsch."
+      },
+      "emailNotVerified": {
+        "title": "E-Mail bestätigen",
+        "message": "Du musst deine E-Mail-Adresse bestätigen, bevor du dich anmeldest."
+      },
+      "googleAccount": {
+        "title": "Google-Konto",
+        "message": "Dieses Konto wurde mit Google erstellt. Bitte nutze diese Anmeldemethode."
+      },
+      "generic": {
+        "title": "Anmeldefehler",
+        "message": "Die Anmeldung war nicht möglich. Bitte versuche es erneut."
+      }
+    }
+  },
+  "RegisterForm": {
+    "loader": "Dein Veci-Konto wird erstellt",
+    "brand": "Werde Teil von Veci",
+    "eyebrow": "Gemeinsam mit deiner Community",
+    "headline": {
+      "first": "Gestalte.",
+      "second": "Verbinde.",
+      "third": "Wachse."
+    },
+    "description": "Erstelle Veranstaltungen, bewirb dein Unternehmen und entdecke neue Möglichkeiten mit deiner Community in Europa.",
+    "events": "Veranstaltungen",
+    "businesses": "Unternehmen",
+    "opportunities": "Möglichkeiten",
+    "heading": "Finde deinen Platz in der Community.",
+    "subtitle": "Erstelle Veranstaltungen, entdecke Unternehmen und knüpfe Kontakte in ganz Europa.",
+    "name": "Name",
+    "namePlaceholder": "Dein Name",
+    "email": "E-Mail-Adresse",
+    "emailPlaceholder": "du@beispiel.de",
+    "password": "Passwort",
+    "passwordPlaceholder": "Mindestens 8 Zeichen",
+    "confirmPassword": "Passwort bestätigen",
+    "confirmPasswordPlaceholder": "Wiederhole dein Passwort",
+    "city": "Stadt",
+    "cologne": "Köln",
+    "submit": "Konto erstellen",
+    "submitting": "Dein Konto wird erstellt...",
+    "alreadyRegistered": "Du bist bereits Teil von Veci?",
+    "login": "Anmelden →",
+    "community": "Für unsere Community gemacht",
+    "validation": {
+      "nameRequired": {
+        "title": "Name erforderlich",
+        "message": "Gib deinen Namen ein, um fortzufahren."
+      },
+      "emailRequired": {
+        "title": "E-Mail-Adresse erforderlich",
+        "message": "Gib deine E-Mail-Adresse ein, um fortzufahren."
+      },
+      "passwordLength": {
+        "title": "Passwort zu kurz",
+        "message": "Dein Passwort muss mindestens 8 Zeichen enthalten."
+      },
+      "passwordMismatch": {
+        "title": "Passwörter stimmen nicht überein",
+        "message": "Überprüfe, ob beide Passwörter übereinstimmen."
+      },
+      "cityRequired": {
+        "title": "Stadt erforderlich",
+        "message": "Wähle eine Stadt aus, um fortzufahren."
+      }
+    },
+    "success": {
+      "title": "Konto erstellt!",
+      "message": "Überprüfe deine E-Mails, um dein Konto zu bestätigen."
+    },
+    "errors": {
+      "emailExists": {
+        "title": "E-Mail bereits registriert",
+        "message": "Für diese E-Mail-Adresse existiert bereits ein Konto. Bitte melde dich an."
+      },
+      "validation": {
+        "title": "Überprüfe deine Angaben",
+        "message": "Einige Angaben sind ungültig. Überprüfe deine Informationen und versuche es erneut."
+      },
+      "generic": {
+        "title": "Konto konnte nicht erstellt werden",
+        "message": "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut."
+      }
+    }
+  },
+  "CitySelector": {
+    "label": "Stadt",
+    "placeholder": "Suche nach einer Stadt...",
+    "loading": "Städte werden gesucht",
+    "change": "Ändern",
+    "errors": {
+      "search": {
+        "title": "Stadtsuche fehlgeschlagen",
+        "message": "Städte konnten nicht geladen werden. Bitte versuche es erneut."
+      }
+    }
   }
-  
+
+
 }

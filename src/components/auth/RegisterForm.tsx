@@ -5,9 +5,11 @@ import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "@/i18n/navigation";
-
+import { useTranslations } from "next-intl";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 import { authService } from "../../features/auth/auth.service";
 import ColombiaLoader from "../../components/ui/loader/ColombiaLoader";
+import CitySelector from "../../components/ui/citySelector/CitySelector";
 
 import {
     Empanada,
@@ -18,90 +20,126 @@ import {
 
 export default function RegisterForm() {
     const router = useRouter();
-
+    const t = useTranslations("RegisterForm");
+    const { notify } = useNotification();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [cityId, setCityId] = useState("cologne");
-
+    const [cityId, setCityId] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+    ) => {
+    e.preventDefault();
 
-        setError("");
-        setSuccess("");
+    if (!name.trim()) {
+        notify({
+        type: "warning",
+        title: t("validation.nameRequired.title"),
+        message: t("validation.nameRequired.message"),
+        });
+        return;
+    }
 
-        if (!name.trim()) {
-            setError("Please enter your name.");
-            return;
-        }
+    const normalizedEmail = email.trim().toLowerCase();
 
-        if (!email.trim()) {
-            setError("Please enter your email.");
-            return;
-        }
+    if (!normalizedEmail) {
+        notify({
+        type: "warning",
+        title: t("validation.emailRequired.title"),
+        message: t("validation.emailRequired.message"),
+        });
+        return;
+    }
 
-        if (password.length < 8) {
-            setError("Password must contain at least 8 characters.");
-            return;
-        }
+    if (password.length < 8) {
+        notify({
+        type: "warning",
+        title: t("validation.passwordLength.title"),
+        message: t("validation.passwordLength.message"),
+        });
+        return;
+    }
 
-        if (password !== confirmPassword) {
-            setError("Passwords do not match.");
-            return;
-        }
+    if (password !== confirmPassword) {
+        notify({
+        type: "warning",
+        title: t("validation.passwordMismatch.title"),
+        message: t("validation.passwordMismatch.message"),
+        });
+        return;
+    }
 
-        if (!cityId) {
-            setError("Please select your city.");
-            return;
-        }
+    if (!cityId) {
+        notify({
+        type: "warning",
+        title: t("validation.cityRequired.title"),
+        message: t("validation.cityRequired.message"),
+        });
+        return;
+    }
 
-        try {
-            setLoading(true);
+    try {
+        setLoading(true);
 
-            await authService.register({
-                name: name.trim(),
-                email: email.trim(),
-                password,
-                cityId,
+        await authService.register({
+        name: name.trim(),
+        email: normalizedEmail,
+        password,
+        cityId,
+        });
+
+        setName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+
+        notify({
+        type: "success",
+        title: t("success.title"),
+        message: t("success.message"),
+        duration: 8000,
+        });
+    } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+        const code = err.response?.data?.code;
+
+        if (code === "EMAIL_ALREADY_EXISTS") {
+            notify({
+            type: "error",
+            title: t("errors.emailExists.title"),
+            message: t("errors.emailExists.message"),
             });
-
-            setSuccess(
-                "Account created successfully. Check your email to verify your account."
-            );
-
-            setName("");
-            setEmail("");
-            setPassword("");
-            setConfirmPassword("");
-        } catch (err) {
-            if (axios.isAxiosError(err)) {
-                const code = err.response?.data?.code;
-
-                if (code === "EMAIL_ALREADY_EXISTS") {
-                    setError("An account with this email already exists.");
-                } else if (code === "VALIDATION_ERROR") {
-                    setError(
-                        err.response?.data?.message ||
-                            "Please check your information."
-                    );
-                } else {
-                    setError(
-                        err.response?.data?.message ||
-                            "Something went wrong. Please try again."
-                    );
-                }
-            } else {
-                setError("Something went wrong. Please try again.");
-            }
-        } finally {
-            setLoading(false);
+        } else if (code === "VALIDATION_ERROR") {
+            notify({
+            type: "warning",
+            title: t("errors.validation.title"),
+            message: t("errors.validation.message"),
+            });
+        } else {
+            notify({
+            type: "error",
+            title: t("errors.generic.title"),
+            message: t("errors.generic.message"),
+            });
         }
+        } else {
+        notify({
+            type: "error",
+            title: t("errors.generic.title"),
+            message: t("errors.generic.message"),
+        });
+        }
+    } finally {
+        setLoading(false);
+    }
     };
+
+
 
     return (
         <main className="min-h-screen bg-[#F8F8F6] p-3 md:p-5 mt-25">
@@ -109,7 +147,6 @@ export default function RegisterForm() {
                 {/* =====================================================
                     LEFT — COMMUNITY / CTA
                 ====================================================== */}
-
                 <section className="relative hidden min-h-[700px] overflow-hidden md:block">
                     <Image
                         src="/register1.webp"
@@ -118,10 +155,8 @@ export default function RegisterForm() {
                         priority
                         className="object-cover"
                     />
-
                     {/* Dark cinematic overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/35 to-black/10" />
-
                     {/* =================================================
                         DECORATIVE COLOMBIA ELEMENTS
                     ================================================== */}
@@ -170,7 +205,6 @@ export default function RegisterForm() {
                     >
                         <Colibri className="h-14 w-14 drop-shadow-lg" />
                     </motion.div>
-
                     <motion.div
                         className="absolute bottom-24 right-12 text-amber-700"
                         animate={{
@@ -185,27 +219,22 @@ export default function RegisterForm() {
                     >
                         <CarnavalBarranquilla className="h-16 w-16 drop-shadow-lg" />
                     </motion.div>
-
                     {/* =================================================
                         CTA COPY
                     ================================================== */}
-
                     <div className="absolute bottom-0 left-0 right-0 p-10 text-white lg:p-12">
                         <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-white/70">
-                            Build with your community
+                            {t("eyebrow")}
                         </p>
-
                         <h2 className="max-w-xl text-5xl font-bold leading-[0.95] tracking-tight lg:text-6xl">
-                            Create.
+                            {t("headline.first")}
                             <br />
-                            Connect.
+                            {t("headline.second")}
                             <br />
-                            <span className="text-[#F2C94C]">Grow.</span>
+                            <span className="text-[#F2C94C]">{t("headline.third")}</span>
                         </h2>
-
                         <p className="mt-6 max-w-lg text-base leading-relaxed text-white/80 lg:text-lg">
-                            Create events, promote your business and discover
-                            new opportunities with your community in Europe.
+                            {t("description")}
                         </p>
 
                         <div className="mt-7 flex flex-wrap gap-3">
@@ -240,7 +269,7 @@ export default function RegisterForm() {
                         {/* Header */}
                         <div className="mb-8">
                             <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-gray-400">
-                                Join VECI
+                                {t("brand")}
                             </p>
 
                             <h1 className="text-3xl font-bold tracking-tight text-gray-950 md:text-4xl">
@@ -266,7 +295,7 @@ export default function RegisterForm() {
                                     htmlFor="name"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    Name
+                                    {t("name")}
                                 </label>
 
                                 <input
@@ -274,7 +303,7 @@ export default function RegisterForm() {
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    placeholder="Your name"
+                                    placeholder={t("namePlaceholder")}
                                     disabled={loading}
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-sm outline-none transition focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
                                 />
@@ -286,7 +315,7 @@ export default function RegisterForm() {
                                     htmlFor="email"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    Email
+                                    {t("email")}
                                 </label>
 
                                 <input
@@ -294,7 +323,7 @@ export default function RegisterForm() {
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="you@example.com"
+                                    placeholder={t("emailPlaceholder")}
                                     disabled={loading}
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-sm outline-none transition focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
                                 />
@@ -306,7 +335,7 @@ export default function RegisterForm() {
                                     htmlFor="password"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    Password
+                                    {t("password")}
                                 </label>
 
                                 <input
@@ -316,7 +345,7 @@ export default function RegisterForm() {
                                     onChange={(e) =>
                                         setPassword(e.target.value)
                                     }
-                                    placeholder="At least 8 characters"
+                                    placeholder={t("passwordPlaceholder")}
                                     disabled={loading}
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-sm outline-none transition focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
                                 />
@@ -328,7 +357,7 @@ export default function RegisterForm() {
                                     htmlFor="confirmPassword"
                                     className="mb-2 block text-sm font-medium text-gray-700"
                                 >
-                                    Confirm password
+                                    {t("confirmPassword")}
                                 </label>
 
                                 <input
@@ -338,7 +367,7 @@ export default function RegisterForm() {
                                     onChange={(e) =>
                                         setConfirmPassword(e.target.value)
                                     }
-                                    placeholder="Repeat your password"
+                                    placeholder={t("confirmPasswordPlaceholder")}
                                     disabled={loading}
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-sm outline-none transition focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
                                 />
@@ -346,26 +375,11 @@ export default function RegisterForm() {
 
                             {/* City */}
                             <div>
-                                <label
-                                    htmlFor="city"
-                                    className="mb-2 block text-sm font-medium text-gray-700"
-                                >
-                                    City
-                                </label>
-
-                                <select
-                                    id="city"
+                                <CitySelector
                                     value={cityId}
-                                    onChange={(e) =>
-                                        setCityId(e.target.value)
-                                    }
+                                    onChange={setCityId}
                                     disabled={loading}
-                                    className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-sm outline-none transition focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
-                                >
-                                    <option value="cologne">
-                                        Cologne
-                                    </option>
-                                </select>
+                                />
                             </div>
 
                             {/* Error */}
@@ -426,29 +440,27 @@ export default function RegisterForm() {
                                 disabled={loading}
                                 className="mt-2 w-full rounded-xl bg-black px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-60"
                             >
-                                {loading
-                                    ? "Creating your account..."
-                                    : "Create your account"}
+                                {loading ? t("submitting") : t("submit")}
                             </motion.button>
                         </form>
 
                         {/* Login CTA */}
                         <div className="mt-8 text-center">
                             <p className="text-sm text-gray-500">
-                                Already part of VECI?{" "}
+                                {t("alreadyRegistered")}
                                 <button
                                     type="button"
                                     onClick={() => router.push("/login")}
                                     className="font-semibold text-gray-950 transition hover:text-[#4C76F2]"
                                 >
-                                    Log in →
+                                    {t("login")}
                                 </button>
                             </p>
                         </div>
 
                         {/* Footer */}
                         <p className="mt-10 text-center text-xs text-gray-400">
-                            Made for our community.
+                            {t("community")}
                         </p>
                     </div>
                 </section>
@@ -467,7 +479,7 @@ export default function RegisterForm() {
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
                     >
                         <ColombiaLoader
-                            text="Creating your Veci account"
+                            text={t("loader")}
                         />
                     </motion.div>
                 )}

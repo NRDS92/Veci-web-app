@@ -9,7 +9,8 @@ import { useRouter } from "@/i18n/navigation";
 import { authService } from "../../features/auth/auth.service";
 import { useAuth } from "./AuthProvider";
 import ColombiaLoader from "../../components/ui/loader/ColombiaLoader";
-
+import { useTranslations } from "next-intl";
+import { useNotification } from "@/components/notifications/NotificationProvider";
 import {
     Empanada,
     Jaguar,
@@ -20,78 +21,111 @@ import {
 export default function LoginForm() {
     const router = useRouter();
     const { refreshUser } = useAuth();
-
+    const t = useTranslations("LoginForm");
+    const { notify } = useNotification();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+
     const handleSubmit = async (
-        event: React.FormEvent<HTMLFormElement>
+    event: React.FormEvent<HTMLFormElement>
     ) => {
-        event.preventDefault();
+    event.preventDefault();
 
-        setError("");
+    const normalizedEmail = email.trim().toLowerCase();
 
-        const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+        notify({
+        type: "warning",
+        title: t("validation.emailRequired.title"),
+        message: t("validation.emailRequired.message"),
+        });
+        return;
+    }
 
-        if (!normalizedEmail) {
-            setError("Email is required.");
-            return;
-        }
+    if (!password) {
+        notify({
+        type: "warning",
+        title: t("validation.passwordRequired.title"),
+        message: t("validation.passwordRequired.message"),
+        });
+        return;
+    }
 
-        if (!password) {
-            setError("Password is required.");
-            return;
-        }
+    try {
+        setLoading(true);
 
-        try {
-            setLoading(true);
+        const response = await authService.login({
+        email: normalizedEmail,
+        password,
+        });
 
-            const response = await authService.login({
-                email: normalizedEmail,
-                password,
+        const { token } = response.data.data;
+
+        sessionStorage.setItem("auth_token", token);
+
+        await refreshUser();
+
+        notify({
+        type: "success",
+        title: t("success.title"),
+        message: t("success.message"),
+        });
+
+        router.push("/");
+    } catch (error: unknown) {
+        console.error("Login error:", error);
+
+        if (axios.isAxiosError(error)) {
+        const errorCode = error.response?.data?.code;
+
+        switch (errorCode) {
+            case "INVALID_CREDENTIALS":
+            notify({
+                type: "error",
+                title: t("errors.invalidCredentials.title"),
+                message: t("errors.invalidCredentials.message"),
             });
+            break;
 
-            const { token } = response.data.data;
+            case "EMAIL_NOT_VERIFIED":
+            notify({
+                type: "warning",
+                title: t("errors.emailNotVerified.title"),
+                message: t("errors.emailNotVerified.message"),
+            });
+            break;
 
-            sessionStorage.setItem("auth_token", token);
+            case "GOOGLE_ACCOUNT":
+            notify({
+                type: "info",
+                title: t("errors.googleAccount.title"),
+                message: t("errors.googleAccount.message"),
+            });
+            break;
 
-            await refreshUser();
-
-            router.push("/");
-        } catch (error: unknown) {
-            console.error(error);
-            if (axios.isAxiosError(error)) {
-                const errorCode = error.response?.data?.code;
-                switch (errorCode) {
-                    case "INVALID_CREDENTIALS":
-                        setError("Invalid email or password.");
-                        break;
-                    case "EMAIL_NOT_VERIFIED":
-                        setError(
-                            "Please verify your email before logging in."
-                        );
-                        break;
-                    case "GOOGLE_ACCOUNT":
-                        setError(
-                            "This account was created with Google. Please sign in with Google."
-                        );
-                        break;
-                    default:
-                        setError(
-                            error.response?.data?.message ??
-                            "Unable to log in."
-                        );
-                }
-            } else {
-                setError("Unexpected error.");
-            }
-        } finally {
-            setLoading(false);
+            default:
+            notify({
+                type: "error",
+                title: t("errors.generic.title"),
+                message: t("errors.generic.message"),
+            });
         }
+        } else {
+        notify({
+            type: "error",
+            title: t("errors.generic.title"),
+            message: t("errors.generic.message"),
+        });
+        }
+    } finally {
+        setLoading(false);
+    }
     };
+
+
     return (
         <>
             {/* =========================
@@ -124,7 +158,7 @@ export default function LoginForm() {
                         >
                             <ColombiaLoader
                                 size="lg"
-                                text="Connecting you to Veci"
+                                text={t("loader")}
                             />
                         </motion.div>
                     </motion.div>
@@ -144,7 +178,6 @@ export default function LoginForm() {
                     ========================== */}
 
                     <section className="relative hidden min-h-[700px] overflow-hidden md:block">
-
                         <Image
                             src="/login1.webp"
                             alt="Latin American community in Europe"
@@ -152,7 +185,6 @@ export default function LoginForm() {
                             priority
                             className="object-cover"
                         />
-
                         {/* Dark gradient */}
                         <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/90 via-[#111827]/25 to-[#111827]/10" />
                         {/* Decorative icons */}
@@ -173,7 +205,6 @@ export default function LoginForm() {
                                 color="#F2C94C"
                             />
                         </motion.div>
-
                         <motion.div
                             className="absolute right-[8%] top-[32%] z-10"
                             animate={{
@@ -226,31 +257,25 @@ export default function LoginForm() {
                                 color="#F2C94C"
                             />
                         </motion.div>
-
                         {/* Bottom content */}
                         <div className="absolute bottom-10 left-8 right-8 z-20">
-
                             <div className="mb-5 flex items-center gap-3">
                                 <div className="h-px w-10 bg-[#F2C94C]" />
-
                                 <span className="text-xs font-semibold uppercase tracking-[0.25em] text-white/70">
                                     Colombia → Europe
                                 </span>
                             </div>
-
                             <h2 className="max-w-lg text-4xl font-bold leading-[1.05] tracking-tight text-white lg:text-5xl">
-                                Your people.
+                                {t("headline.first")}
                                 <br />
-                                Your culture.
+                                {t("headline.second")}
                                 <br />
                                 <span className="text-[#F2C94C]">
-                                    Your place.
+                                    {t("headline.third")}
                                 </span>
                             </h2>
-
                             <p className="mt-5 max-w-md text-base leading-relaxed text-white/75">
-                                Discover the people, places and experiences
-                                that make Latin America feel closer to home.
+                                {t("description")}
                             </p>
                         </div>
                     </section>
@@ -258,36 +283,26 @@ export default function LoginForm() {
                     {/* =========================
                         FORM PANEL
                     ========================== */}
-
                     <section className="flex items-center justify-center px-6 py-12 sm:px-10 lg:px-16">
-
                         <div className="w-full max-w-md">
-
                             {/* Mobile logo */}
                             <div className="mb-12 md:hidden">
                                 <span className="text-xl font-black tracking-[0.25em] text-[#111827]">
                                     VECI
                                 </span>
                             </div>
-
                             {/* Header */}
                             <div className="mb-10">
-
                                 <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#4C76F2]">
-                                    Welcome back
+                                    {t("welcome")}
                                 </p>
-
                                 <h1 className="text-4xl font-bold tracking-tight text-[#111827]">
-                                    Good to see you again.
+                                    {t("heading")}
                                 </h1>
-
                                 <p className="mt-3 max-w-sm leading-relaxed text-gray-500">
-                                    Log in and continue discovering your
-                                    community.
+                                    {t("subtitle")}
                                 </p>
-
                             </div>
-
                             {/* Form */}
                             <form
                                 onSubmit={handleSubmit}
@@ -300,9 +315,8 @@ export default function LoginForm() {
                                         htmlFor="email"
                                         className="mb-2 block text-sm font-medium text-[#111827]"
                                     >
-                                        Email
+                                        {t("email")}
                                     </label>
-
                                     <input
                                         id="email"
                                         type="email"
@@ -310,29 +324,26 @@ export default function LoginForm() {
                                         onChange={(event) =>
                                             setEmail(event.target.value)
                                         }
-                                        placeholder="you@example.com"
+                                        placeholder={t("emailPlaceholder")}
                                         autoComplete="email"
                                         disabled={loading}
                                         className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm outline-none transition placeholder:text-gray-400 focus:border-[#4C76F2] focus:bg-white focus:ring-4 focus:ring-[#4C76F2]/10 disabled:cursor-not-allowed disabled:opacity-60"
                                     />
                                 </div>
-
                                 {/* Password */}
                                 <div>
                                     <div className="mb-2 flex items-center justify-between">
-
                                         <label
                                             htmlFor="password"
                                             className="block text-sm font-medium text-[#111827]"
                                         >
-                                            Password
+                                            {t("password")}
                                         </label>
-
                                         <button
                                             type="button"
                                             className="text-xs font-medium text-[#4C76F2] hover:underline"
                                         >
-                                            Forgot password?
+                                            {t("forgotPassword")}
                                         </button>
 
                                     </div>
@@ -344,7 +355,7 @@ export default function LoginForm() {
                                         onChange={(event) =>
                                             setPassword(event.target.value)
                                         }
-                                        placeholder="Enter your password"
+                                        placeholder={t("passwordPlaceholder")}
                                         autoComplete="current-password"
                                         disabled={loading}
                                         className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm outline-none transition placeholder:text-gray-400 focus:border-[#4C76F2] focus:bg-white focus:ring-4 focus:ring-[#4C76F2]/10 disabled:cursor-not-allowed disabled:opacity-60"
@@ -384,7 +395,7 @@ export default function LoginForm() {
                                     whileTap={!loading ? { scale: 0.99 } : {}}
                                     className="h-12 w-full rounded-xl bg-[#111827] font-semibold text-white shadow-lg shadow-[#111827]/10 transition hover:bg-[#1F2937] disabled:cursor-not-allowed disabled:opacity-50"
                                 >
-                                    Log in
+                                    {t("submit")}
                                 </motion.button>
 
                             </form>
@@ -393,7 +404,7 @@ export default function LoginForm() {
                             <div className="mt-10 text-center">
 
                                 <p className="text-sm text-gray-500">
-                                    Don't have an account?
+                                    {t("noAccount")}
                                 </p>
 
                                 <button
@@ -402,7 +413,7 @@ export default function LoginForm() {
                                     disabled={loading}
                                     className="mt-2 text-sm font-semibold text-[#4C76F2] transition hover:text-[#365FD8] hover:underline disabled:opacity-50"
                                 >
-                                    Create your account →
+                                    {t("register")}
                                 </button>
 
                             </div>
@@ -410,7 +421,7 @@ export default function LoginForm() {
                             {/* Small brand statement */}
                             <div className="mt-12 flex items-center justify-center gap-2 text-xs text-gray-400">
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#F2C94C]" />
-                                <span>Made for our community</span>
+                                <span>{t("community")}</span>
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#4C76F2]" />
                             </div>
 
