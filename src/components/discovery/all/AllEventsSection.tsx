@@ -2,14 +2,24 @@
 
 import { useDiscover } from "../../../features/discover/useDiscover";
 import EventBento from "../../../components/events/EventBento";
-import type { DiscoverEvent } from "../../../features/discover/discover.types";
 
-export default function AllEventsSection() {
+import type {
+  DiscoverEvent,
+  DiscoverFilters,
+} from "../../../features/discover/discover.types";
+
+interface AllEventsSectionProps {
+  filters: DiscoverFilters;
+}
+export default function AllEventsSection({
+  filters,
+}: AllEventsSectionProps) {
     const {
         data,
         isLoading,
         error,
     } = useDiscover({
+        ...filters,
         type: "events",
         page: 1,
         limit: 6,

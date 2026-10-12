@@ -1,13 +1,14 @@
+"use client";
+
 import AllEventsSection from "./AllEventsSection";
 import AllBusinessSection from "./AllBusinessSection";
+import type { DiscoverFilters } from "../../../features/discover/discover.types";
 
-export default function AllDiscovery() {
-    return (
-        <section className="space-y-16 pb-20">
+interface AllDiscoveryProps {
+filters: DiscoverFilters;
+}
 
-            <AllEventsSection />
-            <AllBusinessSection />
-           
-        </section>
-    );
+export default function AllDiscovery({ filters }: AllDiscoveryProps) {
+return ( <section className="space-y-16 pb-20"> <AllEventsSection filters={filters} /> <AllBusinessSection filters={filters} /> </section>
+);
 }

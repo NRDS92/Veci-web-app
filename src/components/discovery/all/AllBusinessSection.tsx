@@ -1,15 +1,24 @@
 "use client";
 
 import { useDiscover } from "../../../features/discover/useDiscover";
-import type { DiscoverBusiness } from "../../../features/discover/discover.types";
 import BusinessBento from "../../../components/business/BusinessBento";
+import type {
+  DiscoverBusiness,
+  DiscoverFilters,
+} from "../../../features/discover/discover.types";
 
-export default function AllBusinessSection() {
+interface AllBusinessSectionProps {
+  filters: DiscoverFilters;
+}
+export default function AllBusinessSection({
+  filters,
+}: AllBusinessSectionProps) {
     const {
         data,
         isLoading,
         error,
     } = useDiscover({
+        ...filters,
         type: "business",
         page: 1,
         limit: 6,
