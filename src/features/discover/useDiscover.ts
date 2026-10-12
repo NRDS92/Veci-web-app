@@ -87,7 +87,6 @@ export function useDiscover(
         params.type,
         params.city,
         params.category,
-        params.excludeCategory,
         params.search,
         params.date,
         params.lat,

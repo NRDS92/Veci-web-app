@@ -1,43 +1,59 @@
 "use client";
 
 import { useState } from "react";
+
 import DiscoveryTabs from "./DiscoveryTabs";
 import AllDiscovery from "./all/AllDiscovery";
 import EventsDiscovery from "../events/EventsDiscovery";
 import BusinessDiscovery from "../business/BusinessDiscovery";
 
-export type DiscoveryType =
-    | "all"
-    | "events"
-    | "business";
+import type { DiscoverFilters } from "../../features/discover/discover.types";
+import type { LocationData } from "@/features/location/location.types";
+
+export type DiscoveryType = "all" | "events" | "business";
 
 export default function Discovery() {
     const [activeType, setActiveType] =
-        useState<DiscoveryType>("all");
+    useState<DiscoveryType>("all");
 
-    return (
-        <section className="w-full">
+    const [location, setLocation] =
+    useState<LocationData | null>(null);
 
-            <DiscoveryTabs
-                activeType={activeType}
-                onChange={setActiveType}
-            />
+    const [date, setDate] = useState("");
+    const [category, setCategory] = useState("all");
 
-            <div className="mx-auto max-w-7xl px-6">
+    const filters: DiscoverFilters = {
+    city: location?.city || undefined,
+    date: date || undefined,
+    category: category === "all" ? undefined : category,
+    };
 
-                {activeType === "all" && (
-                    <AllDiscovery />
-                )}
+    return ( 
+        <section className="w-full"> <DiscoveryTabs
+            activeType={activeType}
+            onChange={setActiveType}
+            location={location}
+            onLocationChange={setLocation}
+            date={date}
+            onDateChange={setDate}
+            category={category}
+            onCategoryChange={setCategory}
+        />
+        <div className="mx-auto max-w-7xl px-6">
+            {activeType === "all" && (
+            <AllDiscovery filters={filters} />
+            )}
 
-                {activeType === "events" && (
-                    <EventsDiscovery />
-                )}
+            {activeType === "events" && (
+            <EventsDiscovery filters={filters} />
+            )}
 
-                {activeType === "business" && (
-                    <BusinessDiscovery />
-                )}
-
-            </div>
+            {activeType === "business" && (
+            <BusinessDiscovery filters={filters} />
+            )}
+        </div>
         </section>
+
+
     );
 }

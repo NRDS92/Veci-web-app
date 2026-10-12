@@ -1,17 +1,25 @@
 "use client";
 
 import BusinessCard from "../../components/business/BusinessCard";
-import type {
-    DiscoverBusiness,
-} from "../../features/discover/discover.types";
 import { useDiscover } from "../../features/discover/useDiscover";
+import type {
+  DiscoverBusiness,
+  DiscoverFilters,
+} from "../../features/discover/discover.types";
 
-export default function BusinessDiscovery() {
+interface BusinessDiscoveryProps {
+  filters: DiscoverFilters;
+}
+
+export default function BusinessDiscovery({
+        filters,
+    }: BusinessDiscoveryProps) {
     const {
         data,
         isLoading,
         error,
     } = useDiscover({
+        ...filters,
         type: "business",
         page: 1,
         limit: 20,

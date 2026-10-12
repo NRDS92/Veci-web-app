@@ -7,7 +7,6 @@ export interface DiscoverQuery {
     type?: DiscoverType;
     city?: string;
     category?: string;
-    excludeCategory?: string;
     search?: string;
     date?: string;
     lat?: number;
@@ -128,4 +127,11 @@ export interface EventCardEvent {
     images?: string[];
     cityId?: string;
     dateStart?: string;
+}
+
+export interface DiscoverFilters {
+  city?: string;
+  category?: string;
+  date?: string;
+  search?: string;
 }
