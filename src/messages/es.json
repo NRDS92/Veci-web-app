@@ -60,15 +60,41 @@
       "goToSlide": "Ir al slide {number}"
   },
   "Privacy": {
-    "title": "Tu privacidad importa",
-    "description": "Utilizamos analítica para comprender cómo se utiliza Veci. Puedes aceptar, rechazar o personalizar esta opción.",
-    "accept": "Aceptar analítica",
+    "title": "Tus ajustes de privacidad",
+    "description": "Veci utiliza tecnologías de almacenamiento necesarias para el funcionamiento de la plataforma. Con tu consentimiento, utilizamos Google Analytics para analizar el uso del sitio web y mejorar nuestros servicios. Puedes cambiar tu decisión en cualquier momento.",
+    "accept": "Aceptar todo",
     "reject": "Rechazar",
-    "customize": "Personalizar",
-    "save": "Guardar preferencias",
+    "customize": "Personalizar ajustes",
+    "save": "Guardar selección",
+    "settings": "Ajustes de privacidad",
     "analytics": "Analítica",
-    "analyticsDescription": "Permite medir el uso de Veci mediante Google Analytics.",
-    "settings": "Privacidad y cookies"
+    "analyticsDescription": "Permite que Google Analytics recopile información sobre el uso de nuestro sitio web para ayudarnos a mejorar Veci.",
+    "dataPolicySummary": "Cómo utiliza Veci tus datos",
+    "accountData": "Cuenta: Veci utiliza los datos necesarios para gestionar la cuenta, autenticar al usuario y prestar las funciones solicitadas.",
+    "communityContent": "Comunidad: los negocios, eventos y perfiles pueden mostrar información pública según la configuración y las funciones de Veci.",
+    "analyticsPolicy": "Analítica: Google Analytics solo debe activarse después de que aceptes la opción de analítica. Puedes cambiar tu decisión desde los ajustes de privacidad.",
+    "readFullPolicy": "Leer la política de privacidad completa",
+    "page": {
+      "title": "Política de privacidad",
+      "introduction": "En esta página explicamos qué información utiliza Veci, para qué se utiliza y qué opciones tienes para gestionar tus datos.",
+      "dataTitle": "1. Información que utilizamos",
+      "dataDescription": "Veci utiliza la información necesaria para proporcionar las funciones de la plataforma, gestionar las cuentas y mostrar el contenido que los usuarios publican. Los datos concretos dependen de las funciones que utilices y de la información que decidas proporcionar.",
+      "accountTitle": "2. Datos de la cuenta",
+      "accountDescription": "Al crear una cuenta, puedes proporcionar información como tu nombre, correo electrónico, ciudad, país de origen, fotografía de perfil y biografía. Estos datos permiten gestionar tu cuenta y ofrecer las funciones disponibles.",
+      "communityTitle": "3. Contenido de la comunidad",
+      "communityDescription": "Los negocios, eventos y perfiles pueden mostrar información públicamente según las funciones y la configuración de Veci. Antes de publicar información, comprueba qué datos serán visibles para otros usuarios.",
+      "analyticsTitle": "4. Analítica y Google Analytics",
+      "analyticsDescription": "Veci utiliza Google Analytics para analizar el uso del sitio web únicamente cuando se ha otorgado el consentimiento correspondiente. Puedes cambiar tu decisión desde los ajustes de privacidad. La implementación debe respetar tu elección.",
+      "storageTitle": "5. Almacenamiento y conservación",
+      "storageDescription": "Veci utiliza almacenamiento local para recordar tu elección de consentimiento de analítica. La información de tu cuenta y otros datos se almacenan según las necesidades técnicas de la plataforma. Los plazos concretos de conservación deben definirse según cada categoría de datos.",
+      "rightsTitle": "6. Tus opciones y derechos",
+      "rightsDescription": "Puedes modificar tus preferencias de analítica desde los ajustes de privacidad. Según la legislación aplicable, también puedes tener derecho a solicitar acceso, rectificación, eliminación o limitación del tratamiento de tus datos.",
+      "deletionTitle": "7. Eliminación de la cuenta",
+      "deletionDescription": "Puedes solicitar la eliminación de tu cuenta desde la configuración del perfil si esta función está disponible. El alcance de la eliminación de eventos, negocios, imágenes y otros contenidos asociados depende del procedimiento de eliminación implementado por Veci.",
+      "contactTitle": "8. Contacto",
+      "contactDescription": "Para consultas relacionadas con la privacidad, utiliza los datos de contacto oficiales que Veci publique en esta página cuando estén disponibles.",
+      "backHome": "Volver al inicio"
+    }
   },
    "PublicEvents": {
     "discovery": {
