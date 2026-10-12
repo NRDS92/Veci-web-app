@@ -41,6 +41,12 @@ export const userService = {
         );
     },
 
+    deleteAccount() {
+        return api.delete<ApiResponse<{ success: boolean }>>(
+            "/auth/me"
+        );
+    },
+
     // ============================================================
     // FAVORITES
     // ============================================================
@@ -57,3 +63,4 @@ export const userService = {
         );
     },
 };
+

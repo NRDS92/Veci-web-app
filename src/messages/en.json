@@ -363,7 +363,88 @@
         "message": "Unable to load cities. Please try again."
       }
     }
+  },
+    "Profile": {
+    "page": {
+      "eyebrow": "Account",
+      "title": "Your profile",
+      "description": "Manage your personal information and Veci account."
+    },
+    "form": {
+      "title": "Personal information",
+      "description": "Keep your profile information up to date.",
+      "name": "Full name",
+      "email": "Email",
+      "emailHint": "Your email address cannot be changed here.",
+      "city": "Current city",
+      "selectCity": "Select your city",
+      "country": "Country of origin",
+      "selectCountry": "Select your country",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell the Veci community a little about yourself...",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "nameError": "Your name must contain between 1 and 100 characters.",
+      "cityError": "Select your city before saving.",
+      "bioError": "Your bio cannot exceed 500 characters.",
+      "validationTitle": "Check your information",
+      "successTitle": "Profile updated",
+      "successMessage": "Your personal information has been saved.",
+      "errorTitle": "Could not save profile",
+      "errorMessage": "Unable to update your profile. Please try again."
+    },
+    "cities": {
+      "cologne": "Cologne",
+      "berlin": "Berlin",
+      "hamburg": "Hamburg",
+      "munich": "Munich",
+      "frankfurt": "Frankfurt"
+    },
+    "countries": {
+      "CO": "Colombia",
+      "VE": "Venezuela",
+      "AR": "Argentina",
+      "BR": "Brazil",
+      "CL": "Chile",
+      "EC": "Ecuador",
+      "PE": "Peru",
+      "MX": "Mexico",
+      "BO": "Bolivia",
+      "PY": "Paraguay",
+      "UY": "Uruguay"
+    },
+    "delete": {
+      "sectionTitle": "Danger zone",
+      "sectionDescription": "Deleting your account is a serious action. You may lose access to your profile and account-related data. This action cannot be undone.",
+      "button": "Delete account",
+      "dialogTitle": "Delete your account?",
+      "dialogDescription": "This action is irreversible. Make sure you understand what happens to your profile and associated content before continuing.",
+      "confirmationLabel": "Type DELETE to confirm",
+      "confirmationErrorTitle": "Confirmation required",
+      "confirmationErrorMessage": "Type DELETE to confirm account deletion.",
+      "cancel": "Cancel",
+      "confirm": "Delete permanently",
+      "deleting": "Deleting...",
+      "successTitle": "Account deleted",
+      "successMessage": "Your account deletion request was completed.",
+      "errorTitle": "Could not delete account",
+      "errorMessage": "Unable to delete your account. Please try again."
+    },
+    "notifications": {
+      "imageInvalidTitle": "Invalid image",
+      "imageInvalidMessage": "Choose a JPG, PNG or WEBP image.",
+      "imageTooLargeTitle": "Image too large",
+      "imageTooLargeMessage": "The maximum image size is 5 MB.",
+      "imageSuccessTitle": "Profile photo updated",
+      "imageSuccessMessage": "Your new profile photo is ready.",
+      "imageErrorTitle": "Upload failed",
+      "imageErrorMessage": "Unable to upload your profile photo. Please try again."
+    }
   }
+  
+
+
+
 
 
 

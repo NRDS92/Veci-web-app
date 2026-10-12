@@ -354,17 +354,95 @@
     }
   },
   "CitySelector": {
-    "label": "Ciudad",
-    "placeholder": "Busca una ciudad...",
-    "loading": "Buscando ciudades",
-    "change": "Cambiar",
-    "errors": {
-      "search": {
-        "title": "Error al buscar ciudades",
-        "message": "No se pudieron cargar las ciudades. Inténtalo de nuevo."
+      "label": "Ciudad",
+      "placeholder": "Busca una ciudad...",
+      "loading": "Buscando ciudades",
+      "change": "Cambiar",
+      "errors": {
+        "search": {
+          "title": "Error al buscar ciudades",
+          "message": "No se pudieron cargar las ciudades. Inténtalo de nuevo."
+        }
       }
+  },
+  "Profile": {
+    "page": {
+      "eyebrow": "Cuenta",
+      "title": "Tu perfil",
+      "description": "Administra tu información personal y tu cuenta de Veci."
+    },
+    "form": {
+      "title": "Información personal",
+      "description": "Mantén tu perfil actualizado.",
+      "name": "Nombre completo",
+      "email": "Correo electrónico",
+      "emailHint": "No puedes cambiar tu correo electrónico aquí.",
+      "city": "Ciudad actual",
+      "selectCity": "Selecciona tu ciudad",
+      "country": "País de origen",
+      "selectCountry": "Selecciona tu país",
+      "bio": "Biografía",
+      "bioPlaceholder": "Cuéntale un poco sobre ti a la comunidad de Veci...",
+      "save": "Guardar cambios",
+      "saving": "Guardando...",
+      "nameError": "El nombre debe tener entre 1 y 100 caracteres.",
+      "cityError": "Selecciona tu ciudad antes de guardar.",
+      "bioError": "La biografía no puede superar los 500 caracteres.",
+      "validationTitle": "Revisa tus datos",
+      "successTitle": "Perfil actualizado",
+      "successMessage": "Tu información personal se ha guardado.",
+      "errorTitle": "No se pudo guardar el perfil",
+      "errorMessage": "No pudimos actualizar tu perfil. Inténtalo de nuevo."
+    },
+    "cities": {
+      "cologne": "Colonia",
+      "berlin": "Berlín",
+      "hamburg": "Hamburgo",
+      "munich": "Múnich",
+      "frankfurt": "Fráncfort"
+    },
+    "countries": {
+      "CO": "Colombia",
+      "VE": "Venezuela",
+      "AR": "Argentina",
+      "BR": "Brasil",
+      "CL": "Chile",
+      "EC": "Ecuador",
+      "PE": "Perú",
+      "MX": "México",
+      "BO": "Bolivia",
+      "PY": "Paraguay",
+      "UY": "Uruguay"
+    },
+    "delete": {
+      "sectionTitle": "Zona de peligro",
+      "sectionDescription": "Eliminar tu cuenta es una acción importante. Podrías perder el acceso a tu perfil y a los datos asociados a tu cuenta. Esta acción no se puede deshacer.",
+      "button": "Eliminar cuenta",
+      "dialogTitle": "¿Eliminar tu cuenta?",
+      "dialogDescription": "Esta acción es irreversible. Antes de continuar, asegúrate de comprender qué sucederá con tu perfil y el contenido asociado a tu cuenta.",
+      "confirmationLabel": "Escribe DELETE para confirmar",
+      "confirmationErrorTitle": "Confirmación necesaria",
+      "confirmationErrorMessage": "Escribe DELETE para confirmar la eliminación de tu cuenta.",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar definitivamente",
+      "deleting": "Eliminando...",
+      "successTitle": "Cuenta eliminada",
+      "successMessage": "La solicitud de eliminación de tu cuenta se ha completado.",
+      "errorTitle": "No se pudo eliminar la cuenta",
+      "errorMessage": "No pudimos eliminar tu cuenta. Inténtalo de nuevo."
+    },
+    "notifications": {
+      "imageInvalidTitle": "Imagen no válida",
+      "imageInvalidMessage": "Selecciona una imagen JPG, PNG o WEBP.",
+      "imageTooLargeTitle": "Imagen demasiado grande",
+      "imageTooLargeMessage": "El tamaño máximo de la imagen es de 5 MB.",
+      "imageSuccessTitle": "Foto de perfil actualizada",
+      "imageSuccessMessage": "Tu nueva foto de perfil está lista.",
+      "imageErrorTitle": "Error al subir la imagen",
+      "imageErrorMessage": "No pudimos subir tu foto de perfil. Inténtalo de nuevo."
     }
-}
+  }
+
 
 
 

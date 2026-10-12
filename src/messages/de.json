@@ -363,6 +363,83 @@
         "message": "Städte konnten nicht geladen werden. Bitte versuche es erneut."
       }
     }
+  },
+  "Profile": {
+    "page": {
+      "eyebrow": "Konto",
+      "title": "Dein Profil",
+      "description": "Verwalte deine persönlichen Daten und dein Veci-Konto."
+    },
+    "form": {
+      "title": "Persönliche Informationen",
+      "description": "Halte deine Profilinformationen aktuell.",
+      "name": "Vollständiger Name",
+      "email": "E-Mail-Adresse",
+      "emailHint": "Deine E-Mail-Adresse kann hier nicht geändert werden.",
+      "city": "Aktueller Wohnort",
+      "selectCity": "Wähle deine Stadt",
+      "country": "Herkunftsland",
+      "selectCountry": "Wähle dein Land",
+      "bio": "Biografie",
+      "bioPlaceholder": "Erzähle der Veci-Community etwas über dich...",
+      "save": "Änderungen speichern",
+      "saving": "Wird gespeichert...",
+      "nameError": "Dein Name muss zwischen 1 und 100 Zeichen lang sein.",
+      "cityError": "Wähle vor dem Speichern deine Stadt aus.",
+      "bioError": "Deine Biografie darf maximal 500 Zeichen enthalten.",
+      "validationTitle": "Bitte überprüfe deine Angaben",
+      "successTitle": "Profil aktualisiert",
+      "successMessage": "Deine persönlichen Informationen wurden gespeichert.",
+      "errorTitle": "Profil konnte nicht gespeichert werden",
+      "errorMessage": "Dein Profil konnte nicht aktualisiert werden. Bitte versuche es erneut."
+    },
+    "cities": {
+      "cologne": "Köln",
+      "berlin": "Berlin",
+      "hamburg": "Hamburg",
+      "munich": "München",
+      "frankfurt": "Frankfurt am Main"
+    },
+    "countries": {
+      "CO": "Kolumbien",
+      "VE": "Venezuela",
+      "AR": "Argentinien",
+      "BR": "Brasilien",
+      "CL": "Chile",
+      "EC": "Ecuador",
+      "PE": "Peru",
+      "MX": "Mexiko",
+      "BO": "Bolivien",
+      "PY": "Paraguay",
+      "UY": "Uruguay"
+    },
+    "delete": {
+      "sectionTitle": "Gefahrenzone",
+      "sectionDescription": "Das Löschen deines Kontos ist ein wichtiger Schritt. Du könntest den Zugriff auf dein Profil und zugehörige Daten verlieren. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "button": "Konto löschen",
+      "dialogTitle": "Möchtest du dein Konto löschen?",
+      "dialogDescription": "Diese Aktion ist unwiderruflich. Stelle sicher, dass du verstanden hast, was mit deinem Profil und den zugehörigen Inhalten geschieht.",
+      "confirmationLabel": "Gib DELETE zur Bestätigung ein",
+      "confirmationErrorTitle": "Bestätigung erforderlich",
+      "confirmationErrorMessage": "Gib DELETE ein, um das Löschen deines Kontos zu bestätigen.",
+      "cancel": "Abbrechen",
+      "confirm": "Endgültig löschen",
+      "deleting": "Wird gelöscht...",
+      "successTitle": "Konto gelöscht",
+      "successMessage": "Dein Konto wurde gelöscht.",
+      "errorTitle": "Konto konnte nicht gelöscht werden",
+      "errorMessage": "Dein Konto konnte nicht gelöscht werden. Bitte versuche es erneut."
+    },
+    "notifications": {
+      "imageInvalidTitle": "Ungültiges Bild",
+      "imageInvalidMessage": "Wähle ein JPG-, PNG- oder WEBP-Bild aus.",
+      "imageTooLargeTitle": "Bild zu groß",
+      "imageTooLargeMessage": "Das Bild darf maximal 5 MB groß sein.",
+      "imageSuccessTitle": "Profilbild aktualisiert",
+      "imageSuccessMessage": "Dein neues Profilbild ist jetzt verfügbar.",
+      "imageErrorTitle": "Upload fehlgeschlagen",
+      "imageErrorMessage": "Dein Profilbild konnte nicht hochgeladen werden. Bitte versuche es erneut."
+    }
   }
 
 
