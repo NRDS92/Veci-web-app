@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import GoogleAnalytics from "@/components/Analytics/GoogleAnalytics";
 
@@ -42,6 +42,7 @@ function isValidConsent(value: unknown): value is Consent {
 
 export default function ConsentManager() {
   const t = useTranslations("Privacy");
+  const locale = useLocale();
 
   const [consent, setConsent] = useState<Consent | null>(null);
   const [ready, setReady] = useState(false);
@@ -49,7 +50,7 @@ export default function ConsentManager() {
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
 
   useEffect(() => {
-    // Analytics is disabled unless valid consent is found.
+    // Analytics remains disabled until valid consent is found.
     setAnalyticsDisabled(true);
 
     try {
@@ -91,7 +92,7 @@ export default function ConsentManager() {
         JSON.stringify(nextConsent)
       );
     } catch {
-      // Keep the decision in memory.
+      // The preference remains in memory.
       // After reload, analytics defaults to disabled.
     }
   }
@@ -119,6 +120,25 @@ export default function ConsentManager() {
           >
             {t("description")}
           </p>
+
+          <details className="mt-3 text-sm text-gray-700">
+            <summary className="cursor-pointer font-medium underline underline-offset-4">
+              {t("dataPolicySummary")}
+            </summary>
+
+            <div className="mt-3 space-y-3 leading-6">
+              <p>{t("accountData")}</p>
+              <p>{t("communityContent")}</p>
+              <p>{t("analyticsPolicy")}</p>
+
+              <a
+                href={`/${locale}/privacy`}
+                className="inline-block font-medium text-blue-700 underline underline-offset-4"
+              >
+                {t("readFullPolicy")}
+              </a>
+            </div>
+          </details>
 
           {settingsOpen && (
             <label className="mt-4 flex items-start gap-3 rounded-lg bg-gray-50 p-3">

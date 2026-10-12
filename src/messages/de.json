@@ -58,15 +58,41 @@
       "goToSlide": "Zu Slide {number}"
   },
   "Privacy": {
-    "title": "Deine Privatsphäre ist wichtig",
-    "description": "Wir verwenden Analysen, um die Nutzung von Veci zu verstehen. Du kannst zustimmen, ablehnen oder deine Auswahl anpassen.",
-    "accept": "Analyse akzeptieren",
+    "title": "Deine Datenschutzeinstellungen",
+    "description": "Veci verwendet notwendige Speichertechnologien für den Betrieb der Plattform. Mit deiner Zustimmung verwenden wir Google Analytics, um die Nutzung unserer Website zu analysieren und zu verbessern. Du kannst deine Auswahl jederzeit in den Datenschutzeinstellungen ändern.",
+    "accept": "Alle akzeptieren",
     "reject": "Ablehnen",
     "customize": "Einstellungen anpassen",
-    "save": "Einstellungen speichern",
-    "analytics": "Analyse",
-    "analyticsDescription": "Ermöglicht uns, die Nutzung von Veci mit Google Analytics zu messen.",
-    "settings": "Datenschutz und Cookies"
+    "save": "Auswahl speichern",
+    "settings": "Datenschutzeinstellungen",
+    "analytics": "Analyse und Statistik",
+    "analyticsDescription": "Erlaubt Google Analytics, Informationen über die Nutzung unserer Website zu erfassen, damit wir Veci verbessern können.",
+    "dataPolicySummary": "Wie Veci deine Daten verwendet",
+    "accountData": "Konto: Veci verwendet die Informationen, die zur Verwaltung deines Kontos, zu deiner Authentifizierung und zur Bereitstellung der von dir angeforderten Funktionen erforderlich sind.",
+    "communityContent": "Community: Unternehmensprofile, Veranstaltungen und Profile können entsprechend den Einstellungen und Funktionen von Veci öffentlich sichtbare Informationen enthalten.",
+    "analyticsPolicy": "Analyse: Google Analytics sollte erst aktiviert werden, nachdem du der Analyse zugestimmt hast. Du kannst deine Auswahl jederzeit in den Datenschutzeinstellungen ändern.",
+    "readFullPolicy": "Vollständige Datenschutzerklärung lesen",
+    "page": {
+      "title": "Datenschutzerklärung",
+      "introduction": "Auf dieser Seite erklären wir, welche Informationen Veci verwendet, zu welchem Zweck sie verwendet werden und welche Möglichkeiten du hast, deine Daten zu verwalten.",
+      "dataTitle": "1. Informationen, die wir verwenden",
+      "dataDescription": "Veci verwendet die Informationen, die erforderlich sind, um die Funktionen der Plattform bereitzustellen, Konten zu verwalten und von Nutzern veröffentlichte Inhalte anzuzeigen. Welche Daten konkret verarbeitet werden, hängt davon ab, welche Funktionen du nutzt und welche Informationen du freiwillig angibst.",
+      "accountTitle": "2. Kontodaten",
+      "accountDescription": "Bei der Erstellung eines Kontos kannst du Angaben wie deinen Namen, deine E-Mail-Adresse, deine Stadt, dein Herkunftsland, dein Profilbild und deine Biografie bereitstellen. Diese Informationen helfen uns, dein Konto zu verwalten und die verfügbaren Funktionen bereitzustellen.",
+      "communityTitle": "3. Community-Inhalte",
+      "communityDescription": "Unternehmensprofile, Veranstaltungen und Nutzerprofile können abhängig von den Funktionen und Einstellungen von Veci öffentlich sichtbare Informationen enthalten. Prüfe vor der Veröffentlichung, welche Angaben für andere Nutzer sichtbar sein werden.",
+      "analyticsTitle": "4. Analyse und Google Analytics",
+      "analyticsDescription": "Veci verwendet Google Analytics zur Analyse der Website-Nutzung nur dann, wenn die erforderliche Einwilligung erteilt wurde. Du kannst deine Auswahl jederzeit in den Datenschutzeinstellungen ändern. Die technische Umsetzung muss deine Entscheidung berücksichtigen.",
+      "storageTitle": "5. Speicherung und Aufbewahrung",
+      "storageDescription": "Veci verwendet den lokalen Speicher, um deine Entscheidung zur Analyse-Einwilligung zu speichern. Kontoinformationen und andere Daten werden entsprechend den technischen Anforderungen der Plattform gespeichert. Konkrete Aufbewahrungsfristen müssen für jede Datenkategorie festgelegt werden.",
+      "rightsTitle": "6. Deine Wahlmöglichkeiten und Rechte",
+      "rightsDescription": "Du kannst deine Analyse-Einstellungen in den Datenschutzeinstellungen ändern. Je nach anwendbarem Recht hast du möglicherweise auch das Recht, Auskunft, Berichtigung oder Löschung deiner Daten oder eine Einschränkung ihrer Verarbeitung zu verlangen.",
+      "deletionTitle": "7. Kontolöschung",
+      "deletionDescription": "Du kannst die Löschung deines Kontos über deine Profileinstellungen beantragen, sofern diese Funktion verfügbar ist. Ob zugehörige Veranstaltungen, Unternehmen, Bilder und andere Inhalte ebenfalls gelöscht werden, hängt vom bei Veci implementierten Löschverfahren ab.",
+      "contactTitle": "8. Kontakt",
+      "contactDescription": "Bei Fragen zum Datenschutz verwende bitte die offiziellen Kontaktdaten, die Veci auf dieser Seite veröffentlicht, sobald diese verfügbar sind.",
+      "backHome": "Zurück zur Startseite"
+    }
   },
   
     "PublicEvents": {

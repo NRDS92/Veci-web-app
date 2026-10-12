@@ -59,15 +59,41 @@
       "goToSlide": "Go to slide {number}"
   },
   "Privacy": {
-    "title": "Your privacy matters",
-    "description": "We use analytics to understand how Veci is used. You can accept, reject or customize this option.",
-    "accept": "Accept analytics",
+    "title": "Your privacy settings",
+    "description": "Veci uses necessary storage technologies to operate the platform. With your consent, we use Google Analytics to analyze website usage and improve our services. You can change your choice at any time.",
+    "accept": "Accept all",
     "reject": "Reject",
-    "customize": "Customize",
-    "save": "Save preferences",
+    "customize": "Customize settings",
+    "save": "Save selection",
+    "settings": "Privacy settings",
     "analytics": "Analytics",
-    "analyticsDescription": "Allows us to measure usage of Veci through Google Analytics.",
-    "settings": "Privacy and cookies"
+    "analyticsDescription": "Allows Google Analytics to collect information about how our website is used so we can improve Veci.",
+    "dataPolicySummary": "How Veci uses your data",
+    "accountData": "Account: Veci uses the information needed to manage your account, authenticate you and provide the features you request.",
+    "communityContent": "Community: businesses, events and profiles may display public information according to Veci's settings and features.",
+    "analyticsPolicy": "Analytics: Google Analytics should only be enabled after you accept analytics. You can change your choice in the privacy settings.",
+    "readFullPolicy": "Read the full privacy policy",
+    "page": {
+        "title": "Privacy Policy",
+        "introduction": "This page explains what information Veci uses, why it is used, and what options you have to manage your data.",
+        "dataTitle": "1. Information We Use",
+        "dataDescription": "Veci uses the information necessary to provide platform features, manage accounts, and display content published by users. The specific data depends on the features you use and the information you choose to provide.",
+        "accountTitle": "2. Account Data",
+        "accountDescription": "When you create an account, you may provide information such as your name, email address, city, country of origin, profile picture, and bio. This information helps us manage your account and provide available features.",
+        "communityTitle": "3. Community Content",
+        "communityDescription": "Businesses, events, and profiles may display information publicly depending on Veci's features and settings. Before publishing information, check which details will be visible to other users.",
+        "analyticsTitle": "4. Analytics and Google Analytics",
+        "analyticsDescription": "Veci uses Google Analytics to analyze website usage only when the required consent has been given. You can change your choice in the privacy settings. The implementation must respect your choice.",
+        "storageTitle": "5. Storage and Data Retention",
+        "storageDescription": "Veci uses local storage to remember your analytics consent choice. Account information and other data are stored according to the platform's technical needs. Specific retention periods must be defined for each category of data.",
+        "rightsTitle": "6. Your Choices and Rights",
+        "rightsDescription": "You can change your analytics preferences in the privacy settings. Depending on applicable law, you may also have the right to request access to, correction or deletion of your data, or restriction of its processing.",
+        "deletionTitle": "7. Account Deletion",
+        "deletionDescription": "You can request account deletion through your profile settings if this feature is available. The deletion of associated events, businesses, images, and other content depends on the deletion procedure implemented by Veci.",
+        "contactTitle": "8. Contact",
+        "contactDescription": "For privacy-related questions, use the official contact details that Veci publishes on this page when they become available.",
+        "backHome": "Back to home"
+      }
   },
   "PublicEvents": {
     "discovery": {
