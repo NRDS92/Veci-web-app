@@ -1,13 +1,11 @@
-import {
+import type {
     GeoapifyAutocompleteResponse,
     GeoapifyFeature,
 } from "./geoapify.types";
 
-import {
-    LocationProvider,
-} from "./location.provider";
-
-import {
+import type { LocationProvider } from "./location.provider";
+import type {
+    CountryOption,
     LocationData,
 } from "./location.types";
 
@@ -39,54 +37,87 @@ const mapFeatureToLocation = (
         placeId: properties.place_id,
         city,
         country: properties.country,
-        countryCode:
-            properties.country_code.toUpperCase(),
+        countryCode: properties.country_code.toUpperCase(),
         state: properties.state,
-        formattedAddress:
-            properties.formatted,
+        formattedAddress: properties.formatted,
         latitude: properties.lat,
         longitude: properties.lon,
     };
 };
 
-export const geoapifyProvider: LocationProvider = {
-    async search(
-        query: string
-    ): Promise<LocationData[]> {
-        if (!GEOAPIFY_API_KEY) {
-            throw new Error(
-                "Geoapify API key is not configured."
-            );
-        }
-
-        const params = new URLSearchParams({
-            text: query,
-            format: "geojson",
-            limit: "6",
-            apiKey: GEOAPIFY_API_KEY,
-        });
-
-        const response = await fetch(
-            `${AUTOCOMPLETE_URL}?${params.toString()}`
+const mapFeaturesToLocations = (
+    features: GeoapifyFeature[]
+): LocationData[] =>
+    features
+        .map(mapFeatureToLocation)
+        .filter(
+            (location): location is LocationData =>
+                location !== null
         );
 
-        if (!response.ok) {
-            throw new Error(
-                "Geoapify location search failed."
-            );
-        }
+const fetchAutocompleteFeatures = async (
+    query: string,
+    type?: "city" | "country"
+): Promise<GeoapifyFeature[]> => {
+    if (!GEOAPIFY_API_KEY) {
+        throw new Error("Geoapify API key is not configured.");
+    }
 
-        const data =
-            (await response.json()) as GeoapifyAutocompleteResponse;
+    const params = new URLSearchParams({
+        text: query,
+        format: "geojson",
+        limit: "6",
+        apiKey: GEOAPIFY_API_KEY,
+    });
 
-        return data.features
-            .map(mapFeatureToLocation)
+    if (type) {
+        params.set("type", type);
+    }
+
+    const response = await fetch(
+        `${AUTOCOMPLETE_URL}?${params.toString()}`
+    );
+
+    if (!response.ok) {
+        throw new Error("Geoapify location search failed.");
+    }
+
+    const data =
+        (await response.json()) as GeoapifyAutocompleteResponse;
+
+    return data.features;
+};
+
+export const geoapifyProvider: LocationProvider = {
+    async search(query: string): Promise<LocationData[]> {
+        const features =
+            await fetchAutocompleteFeatures(query);
+
+        return mapFeaturesToLocations(features);
+    },
+
+    async searchCities(query: string): Promise<LocationData[]> {
+        const features =
+            await fetchAutocompleteFeatures(query, "city");
+
+        return mapFeaturesToLocations(features);
+    },
+
+    async searchCountries(query: string): Promise<CountryOption[]> {
+        const features =
+            await fetchAutocompleteFeatures(query, "country");
+
+        return features
             .filter(
-                (
-                    location
-                ): location is LocationData =>
-                    location !== null
-            );
+                (feature) =>
+                    Boolean(feature.properties.country) &&
+                    Boolean(feature.properties.country_code)
+            )
+            .map((feature) => ({
+                placeId: feature.properties.place_id,
+                name: feature.properties.country,
+                code: feature.properties.country_code.toUpperCase(),
+            }));
     },
 
     async reverseGeocode(
@@ -94,9 +125,7 @@ export const geoapifyProvider: LocationProvider = {
         longitude: number
     ): Promise<LocationData | null> {
         if (!GEOAPIFY_API_KEY) {
-            throw new Error(
-                "Geoapify API key is not configured."
-            );
+            throw new Error("Geoapify API key is not configured.");
         }
 
         const params = new URLSearchParams({
@@ -111,23 +140,18 @@ export const geoapifyProvider: LocationProvider = {
         );
 
         if (!response.ok) {
-            throw new Error(
-                "Geoapify reverse geocoding failed."
-            );
+            throw new Error("Geoapify reverse geocoding failed.");
         }
 
         const data =
             (await response.json()) as GeoapifyAutocompleteResponse;
 
-        const firstFeature =
-            data.features[0];
+        const firstFeature = data.features[0];
 
         if (!firstFeature) {
             return null;
         }
 
-        return mapFeatureToLocation(
-            firstFeature
-        );
+        return mapFeatureToLocation(firstFeature);
     },
 };

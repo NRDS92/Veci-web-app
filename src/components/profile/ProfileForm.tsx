@@ -3,11 +3,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import {
   Editar,
-  SiluetaColombia,
 } from "@mteherandev/colombia-icons-react";
 
 import {
@@ -22,38 +21,30 @@ import {
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useNotification } from "@/components/notifications/NotificationProvider";
 import { userService } from "@/features/users/user.service";
+import type { LocationData } from "@/features/location/location.types";
+import { locationService } from "@/features/location/location.service";
+import type { CountryOption } from "@/features/location/location.types";
 
-const CITIES = [
-  { value: "Cologne", key: "cologne" },
-  { value: "Berlin", key: "berlin" },
-  { value: "Hamburg", key: "hamburg" },
-  { value: "Munich", key: "munich" },
-  { value: "Frankfurt", key: "frankfurt" },
-] as const;
 
-const COUNTRIES = [
-  { value: "CO", label: "Colombia" },
-  { value: "VE", label: "Venezuela" },
-  { value: "AR", label: "Argentina" },
-  { value: "BR", label: "Brazil" },
-  { value: "CL", label: "Chile" },
-  { value: "EC", label: "Ecuador" },
-  { value: "PE", label: "Peru" },
-  { value: "MX", label: "Mexico" },
-  { value: "BO", label: "Bolivia" },
-  { value: "PY", label: "Paraguay" },
-  { value: "UY", label: "Uruguay" },
-] as const;
 
 export default function ProfileForm() {
   const { user, refreshUser, logout } = useAuth();
   const { notify } = useNotification();
   const t = useTranslations("Profile");
+  const locale = useLocale();
   const router = useRouter();
 
   const [name, setName] = useState("");
   const [cityId, setCityId] = useState("");
+  const [cityQuery, setCityQuery] = useState("");
+  const [cityResults, setCityResults] = useState<LocationData[]>([]);
+  const [cityLoading, setCityLoading] = useState(false);
+  const [citySelected, setCitySelected] = useState(false);
   const [originCountry, setOriginCountry] = useState("");
+  const [countryQuery, setCountryQuery] = useState("");
+  const [countryResults, setCountryResults] = useState<CountryOption[]>([]);
+  const [countryLoading, setCountryLoading] = useState(false);
+  const [countrySelected, setCountrySelected] = useState(false);
   const [bio, setBio] = useState("");
 
   const [saving, setSaving] = useState(false);
@@ -66,10 +57,95 @@ export default function ProfileForm() {
 
     setName(user.name ?? "");
     setCityId(user.cityId ?? "");
-    setOriginCountry(user.originCountry ?? "");
+    setCityQuery(user.cityId ?? "");
+    setCitySelected(Boolean(user.cityId));
+    const savedCountryCode = user.originCountry?.toUpperCase() ?? "";
+    setOriginCountry(savedCountryCode);
+    setCountryQuery(
+      savedCountryCode
+        ? new Intl.DisplayNames([locale], { type: "region" }).of(savedCountryCode) ?? savedCountryCode
+        : ""
+    );
+    setCountrySelected(Boolean(savedCountryCode));
     setBio(user.bio ?? "");
-  }, [user]);
+  }, [user, locale]);
 
+  useEffect(() => {
+    const query = cityQuery.trim();
+
+    if (citySelected || query.length < 3) {
+      setCityResults([]);
+      setCityLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const timeoutId = window.setTimeout(async () => {
+      setCityLoading(true);
+
+      try {
+        const results = await locationService.searchCities(query);
+
+        if (!cancelled) {
+          setCityResults(results);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error("City search failed:", error);
+          setCityResults([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setCityLoading(false);
+        }
+      }
+    }, 300);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [cityQuery, citySelected]);
+
+
+  useEffect(() => {
+    const query = countryQuery.trim();
+
+    if (countrySelected || query.length < 2) {
+      setCountryResults([]);
+      setCountryLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const timeoutId = window.setTimeout(async () => {
+      setCountryLoading(true);
+
+      try {
+        const results = await locationService.searchCountries(query);
+
+        if (!cancelled) {
+          setCountryResults(results);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Country search failed:", error);
+          setCountryResults([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setCountryLoading(false);
+        }
+      }
+    }, 300);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [countryQuery, countrySelected]);
   if (!user) return null;
 
   const handleSave = async () => {
@@ -198,7 +274,7 @@ export default function ProfileForm() {
     }
   };
 
-  const isColombian = originCountry.toUpperCase() === "CO";
+  const locationLabel = locale === "es" ? "Ubicación" : locale === "de" ? "Standort" : "Location";
 
   return (
     <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
@@ -260,74 +336,149 @@ export default function ProfileForm() {
             {t("form.emailHint")}
           </p>
         </div>
+        <fieldset className="space-y-4">
+          <legend className="mb-3 text-sm font-semibold text-gray-900">
+            {locationLabel}
+          </legend>
 
-        {/* City */}
-        <div>
-          <label
-            htmlFor="profile-city"
-            className="mb-2 block text-sm font-medium text-gray-700"
-          >
-            {t("form.city")}
-          </label>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {/* Ciudad actual: búsqueda dinámica de ciudades */}
+            <div>
+              <label
+                htmlFor="profile-city"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                {t("form.city")}
+              </label>
 
-          <div className="relative">
-            <MapPin
-              size={18}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-            />
+              <div className="relative">
+                <MapPin
+                  size={18}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                />
 
-            <select
-              id="profile-city"
-              value={cityId}
-              onChange={(event) => setCityId(event.target.value)}
-              disabled={saving || deleting}
-              className="w-full appearance-none rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:opacity-60"
-            >
-              <option value="">{t("form.selectCity")}</option>
+                <input
+                  id="profile-city"
+                  type="text"
+                  value={cityQuery}
+                  onChange={(event) => {
+                    setCityQuery(event.target.value);
+                    setCityId("");
+                    setCitySelected(false);
+                  }}
+                  disabled={saving || deleting}
+                  placeholder={t("form.selectCity")}
+                  autoComplete="off"
+                  aria-autocomplete="list"
+                  aria-expanded={cityResults.length > 0}
+                  className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-12 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:opacity-60"
+                />
 
-              {CITIES.map((city) => (
-                <option key={city.value} value={city.value}>
-                  {t(`cities.${city.key}`)}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+                {cityLoading && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <Loader2 size={18} className="animate-spin text-gray-400" />
+                  </div>
+                )}
 
-        {/* Country */}
-        <div>
-          <label
-            htmlFor="profile-country"
-            className="mb-2 block text-sm font-medium text-gray-700"
-          >
-            {t("form.country")}
-          </label>
-
-          <div className="flex items-center gap-3">
-            {isColombian && (
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-yellow-50">
-                <SiluetaColombia width={27} height={27} />
+                {!citySelected && cityResults.length > 0 && (
+                  <ul
+                    role="listbox"
+                    className="absolute left-0 right-0 z-20 mt-2 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg"
+                  >
+                    {cityResults.map((city) => (
+                      <li key={city.placeId} role="option" aria-selected="false">
+                        <button
+                          type="button"
+                          disabled={saving || deleting}
+                          onClick={() => {
+                            setCityId(city.city);
+                            setCityQuery(city.city);
+                            setCitySelected(true);
+                            setCityResults([]);
+                          }}
+                          className="w-full px-4 py-3 text-left transition hover:bg-gray-50 disabled:opacity-50"
+                        >
+                          <span className="block font-medium text-gray-900">
+                            {city.city}
+                          </span>
+                          <span className="block text-sm text-gray-500">
+                            {[city.state, city.country].filter(Boolean).join(", ")}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
-            )}
 
-            <select
-              id="profile-country"
-              value={originCountry}
-              onChange={(event) => setOriginCountry(event.target.value)}
-              disabled={saving || deleting}
-              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:opacity-60"
-            >
-              <option value="">{t("form.selectCountry")}</option>
+              {!citySelected && cityQuery.trim().length > 0 && cityQuery.trim().length < 3 && (
+                <p className="mt-2 text-xs text-gray-500">
+                  Escribe al menos 3 caracteres para buscar.
+                </p>
+              )}
+            </div>
 
-              {COUNTRIES.map((country) => (
-                <option key={country.value} value={country.value}>
-                  {t(`countries.${country.value}`)}
-                </option>
-              ))}
-            </select>
+            {/* País de origen: búsqueda dinámica de países */}
+            <div>
+              <label
+                htmlFor="profile-country"
+                className="mb-2 block text-sm font-medium text-gray-700"
+              >
+                {t("form.country")}
+              </label>
+
+              <div className="relative">
+                <input
+                  id="profile-country"
+                  type="text"
+                  value={countryQuery}
+                  onChange={(event) => {
+                    setCountryQuery(event.target.value);
+                    setOriginCountry("");
+                    setCountrySelected(false);
+                  }}
+                  disabled={saving || deleting}
+                  placeholder={t("form.selectCountry")}
+                  autoComplete="off"
+                  aria-autocomplete="list"
+                  aria-expanded={countryResults.length > 0}
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 pr-12 text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:opacity-60"
+                />
+
+                {countryLoading && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <Loader2 size={18} className="animate-spin text-gray-400" />
+                  </div>
+                )}
+
+                {!countrySelected && countryResults.length > 0 && (
+                  <ul
+                    role="listbox"
+                    className="absolute left-0 right-0 z-20 mt-2 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg"
+                  >
+                    {countryResults.map((country) => (
+                      <li key={country.placeId} role="option" aria-selected="false">
+                        <button
+                          type="button"
+                          disabled={saving || deleting}
+                          onClick={() => {
+                            setOriginCountry(country.code);
+                            setCountryQuery(country.name);
+                            setCountrySelected(true);
+                            setCountryResults([]);
+                          }}
+                          className="w-full px-4 py-3 text-left text-gray-900 transition hover:bg-gray-50 disabled:opacity-50"
+                        >
+                          {country.name}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-
+        </fieldset>
         {/* Bio */}
         <div>
           <div className="mb-2 flex items-center justify-between">
@@ -502,3 +653,6 @@ export default function ProfileForm() {
     </section>
   );
 }
+
+
+
