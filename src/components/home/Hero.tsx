@@ -169,7 +169,7 @@ export default function Hero({
     const slide = slides[currentSlide];
 
     return (
-        <section className="relative isolate mt-30 overflow-hidden rounded-none md:rounded-b-2xl">
+        <section className="relative isolate mt-24 overflow-hidden rounded-none md:rounded-b-2xl">
 
             {/* Background */}
             <div
@@ -184,7 +184,7 @@ export default function Hero({
             {/* Gradient */}
             <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
             {/* Content */}
-            <div className="mx-auto flex h-[420px] max-w-7xl items-center px-6 md:h-[450px] md:px-10 lg:h-[480px] lg:px-16">
+            <div className="mx-auto flex h-80 max-w-7xl items-center px-6 md:h-[450px] md:px-10 lg:h-80 lg:px-16">
                 <div className="flex w-full items-center justify-between gap-10">
                     {/* Main content */}
                     <div
@@ -203,38 +203,6 @@ export default function Hero({
                             lg:h-[350px]
                         "
                     >
-
-                        {/* Location */}
-                        <div className="h-[42px]">
-                            <button
-                                type="button"
-                                className="
-                                    inline-flex
-                                    items-center
-                                    gap-2
-                                    rounded-full
-                                    border
-                                    border-white/30
-                                    bg-black/20
-                                    px-4
-                                    py-2
-                                    text-sm
-                                    font-medium
-                                    backdrop-blur-sm
-                                    transition
-                                    hover:bg-white/15
-                                "
-                            >
-                                <MapPin
-                                    size={17}
-                                    strokeWidth={2.2}
-                                />
-
-                                <span>
-                                    {city}, {country}
-                                </span>
-                            </button>
-                        </div>
 
                         {/* Heading */}
                         <div className="mt-4 flex h-[125px] items-start">

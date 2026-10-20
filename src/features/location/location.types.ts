@@ -8,3 +8,9 @@ export interface LocationData {
     latitude: number;
     longitude: number;
 }
+
+export interface CountryOption {
+  placeId: string;
+  name: string;
+  code: string;
+}

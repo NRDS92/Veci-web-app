@@ -175,7 +175,7 @@ export default function Navbar() {
                 <div
                     className="
                         flex
-                        h-20
+                        h-16
                         items-center
                         justify-between
                         px-6
