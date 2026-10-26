@@ -24,7 +24,6 @@ export default function AllEventsSection({
         page: 1,
         limit: 6,
     });
-    console.log("📦 DISCOVER EVENTS RESPONSE:", data);
     if (isLoading) {
         return (
             <section>
@@ -33,7 +32,6 @@ export default function AllEventsSection({
                         Eventos cerca de ti
                     </h2>
                 </div>
-
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {[1, 2, 3].map((item) => (
                         <div

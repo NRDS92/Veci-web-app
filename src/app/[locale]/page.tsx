@@ -17,9 +17,6 @@ export default function Home() {
                     country="Alemania"
                     />
                 <Discovery />
-                <Problem />
-                <HowItWorks />
-
             </main>
         </>
     );

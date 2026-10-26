@@ -5,7 +5,10 @@ import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "@/i18n/navigation";
-
+import {
+  GoogleLogin,
+  type CredentialResponse,
+} from "@react-oauth/google";
 import { authService } from "../../features/auth/auth.service";
 import { useAuth } from "./AuthProvider";
 import ColombiaLoader from "../../components/ui/loader/ColombiaLoader";
@@ -27,6 +30,85 @@ export default function LoginForm() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    
+const handleGoogleSuccess = async (
+  credentialResponse: CredentialResponse
+) => {
+  const idToken = credentialResponse.credential;
+
+  if (!idToken) {
+    notify({
+      type: "error",
+      title: "Google login failed",
+      message: "Google did not return a credential.",
+    });
+    return;
+  }
+
+    try {
+        setLoading(true);
+        setError("");
+
+        const response = await authService.googleLogin(idToken);
+        const { token } = response.data.data;
+
+        sessionStorage.setItem("auth_token", token);
+
+        await refreshUser();
+
+        notify({
+        type: "success",
+        title: t("success.title"),
+        message: t("success.message"),
+        });
+
+        router.push("/");
+    } catch (error: unknown) {
+        console.error("Google login error:", error);
+
+        if (axios.isAxiosError(error)) {
+        const errorCode = error.response?.data?.code;
+
+        if (errorCode === "EMAIL_ACCOUNT_EXISTS") {
+            notify({
+            type: "info",
+            title: "Account already exists",
+            message:
+                "Please sign in with your email and password.",
+            });
+        } else if (errorCode === "EMAIL_NOT_VERIFIED") {
+            notify({
+            type: "warning",
+            title: t("errors.emailNotVerified.title"),
+            message: t("errors.emailNotVerified.message"),
+            });
+        } else {
+            notify({
+            type: "error",
+            title: t("errors.generic.title"),
+            message: t("errors.generic.message"),
+            });
+        }
+        } else {
+        notify({
+            type: "error",
+            title: t("errors.generic.title"),
+            message: t("errors.generic.message"),
+        });
+        }
+    } finally {
+        setLoading(false);
+    }
+    };
+
+    const handleGoogleError = () => {
+    notify({
+        type: "error",
+        title: "Google login failed",
+        message: "Please try again.",
+    });
+    };
 
 
     const handleSubmit = async (
@@ -424,14 +506,39 @@ export default function LoginForm() {
                                 <span>{t("community")}</span>
                                 <span className="h-1.5 w-1.5 rounded-full bg-[#4C76F2]" />
                             </div>
+                            <div className="mt-6">
+                    <div className="mb-5 flex items-center gap-4">
+                        <div className="h-px flex-1 bg-gray-200" />
+                        <span className="text-xs text-gray-400">
+                        O CONTINÚA CON
+                        </span>
+                        <div className="h-px flex-1 bg-gray-200" />
+                    </div>
+                    <div className="flex justify-center">
+                        <GoogleLogin
+                        onSuccess={handleGoogleSuccess}
+                        onError={handleGoogleError}
+                        theme="outline"
+                        size="large"
+                        text="continue_with"
+                        shape="rectangular"
+                        width="350"
+                        />
+                    </div>
+                </div>
 
                         </div>
+                        
 
                     </section>
 
+                
+                    
                 </div>
-
+                
+                
             </main>
+            
         </>
     );
 }
