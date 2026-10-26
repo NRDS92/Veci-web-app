@@ -108,31 +108,35 @@ export default function RegisterForm() {
         if (axios.isAxiosError(err)) {
         const code = err.response?.data?.code;
 
-        if (code === "EMAIL_ALREADY_EXISTS") {
+        if (
+            code === "EMAIL_ALREADY_REGISTERED" ||
+            code === "EMAIL_ALREADY_EXISTS" ||
+            code === "USER_EXISTS"
+        ) {
             notify({
-            type: "error",
-            title: t("errors.emailExists.title"),
-            message: t("errors.emailExists.message"),
+                type: "error",
+                title: t("errors.emailExists.title"),
+                message: t("errors.emailExists.message"),
             });
         } else if (code === "VALIDATION_ERROR") {
             notify({
-            type: "warning",
-            title: t("errors.validation.title"),
-            message: t("errors.validation.message"),
+                type: "warning",
+                title: t("errors.validation.title"),
+                message: t("errors.validation.message"),
             });
         } else {
             notify({
-            type: "error",
-            title: t("errors.generic.title"),
-            message: t("errors.generic.message"),
+                type: "error",
+                title: t("errors.generic.title"),
+                message: t("errors.generic.message"),
             });
         }
         } else {
-        notify({
-            type: "error",
-            title: t("errors.generic.title"),
-            message: t("errors.generic.message"),
-        });
+            notify({
+                type: "error",
+                title: t("errors.generic.title"),
+                message: t("errors.generic.message"),
+            });
         }
     } finally {
         setLoading(false);

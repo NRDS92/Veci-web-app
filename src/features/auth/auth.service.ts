@@ -39,6 +39,9 @@ export const authService = {
       data
     );
   },
+  googleLogin: async (idToken: string) => {
+    return api.post("/auth/google", { idToken });
+  },
 
   resetPassword(
     data: ResetPasswordRequest

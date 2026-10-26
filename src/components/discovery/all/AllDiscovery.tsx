@@ -9,6 +9,10 @@ filters: DiscoverFilters;
 }
 
 export default function AllDiscovery({ filters }: AllDiscoveryProps) {
-return ( <section className="space-y-16 pb-20"> <AllEventsSection filters={filters} /> <AllBusinessSection filters={filters} /> </section>
+return ( 
+    <section className="space-y-16 pb-20"> 
+        <AllEventsSection filters={filters} /> 
+        <AllBusinessSection filters={filters} /> 
+    </section>
 );
 }

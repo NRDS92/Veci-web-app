@@ -1,5 +1,10 @@
 import LoginForm from "@/components/auth/LoginForm";
+import GoogleAuthProvider from "@/components/auth/GoogleAuthProvider";
 
 export default function LoginPage() {
-    return <LoginForm />;
+  return (
+    <GoogleAuthProvider>
+      <LoginForm />
+    </GoogleAuthProvider>
+  );
 }

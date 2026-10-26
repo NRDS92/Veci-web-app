@@ -172,53 +172,50 @@ export default function ColombiaLoader({
                 </div>
 
                 {/* Moving Colombian icons */}
-                <AnimatePresence mode="wait">
+                <AnimatePresence>
                     {icons.map(({ Component, color }, index) => (
                         <motion.div
-                            key={index}
-                            className="absolute left-1/2 top-1/2"
-                            initial={{
-                                x: -20,
-                                y: -20,
-                                opacity: 0,
-                                scale: 0.5,
-                            }}
-                            animate={{
-                                x: [
-                                    -config.width / 2 + 15,
-                                    -config.width / 4,
-                                    0,
-                                    config.width / 4,
-                                    config.width / 2 - 15,
-                                ],
-                                y: [
-                                    index % 2 === 0 ? -22 : 22,
-                                    index % 2 === 0 ? -15 : 15,
-                                    0,
-                                    index % 2 === 0 ? 15 : -15,
-                                    index % 2 === 0 ? 22 : -22,
-                                ],
-                                opacity: [0, 0.5, 1, 0.5, 0],
-                                scale: [0.6, 0.9, 1, 0.9, 0.6],
-                            }}
-                            transition={{
-                                duration: 3.2,
-                                delay: index * 0.53,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                            }}
-                            style={{
-                                marginLeft: -config.icon / 2,
-                                marginTop: -config.icon / 2,
-                            }}
+                        key={index}
+                        className="absolute left-1/2 top-1/2"
+                        initial={{
+                            x: -20,
+                            y: -20,
+                            opacity: 0,
+                            scale: 0.5,
+                        }}
+                        animate={{
+                            x: [
+                            -config.width / 2 + 15,
+                            -config.width / 4,
+                            0,
+                            config.width / 4,
+                            config.width / 2 - 15,
+                            ],
+                            y: [
+                            index % 2 === 0 ? -22 : 22,
+                            index % 2 === 0 ? -15 : 15,
+                            0,
+                            index % 2 === 0 ? 15 : -15,
+                            index % 2 === 0 ? 22 : -22,
+                            ],
+                            opacity: [0, 0.5, 1, 0.5, 0],
+                            scale: [0.6, 0.9, 1, 0.9, 0.6],
+                        }}
+                        transition={{
+                            duration: 3.2,
+                            delay: index * 0.53,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                        }}
+                        style={{
+                            marginLeft: -config.icon / 2,
+                            marginTop: -config.icon / 2,
+                        }}
                         >
-                            <Component
-                                size={config.icon}
-                                color={color}
-                            />
+                        <Component size={config.icon} color={color} />
                         </motion.div>
                     ))}
-                </AnimatePresence>
+                    </AnimatePresence>
 
                 {/* Small connection nodes */}
                 {[0, 1].map((index) => (
