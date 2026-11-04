@@ -17,7 +17,7 @@ import {
   Save,
   Trash2,
 } from "lucide-react";
-
+import type { AuthUser } from "@/features/auth/types";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useNotification } from "@/components/notifications/NotificationProvider";
 import { userService } from "@/features/users/user.service";
@@ -28,24 +28,40 @@ import type { CountryOption } from "@/features/location/location.types";
 
 
 export default function ProfileForm() {
-  const { user, refreshUser, logout } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading || !user) {
+    return null;
+  }
+
+  return <ProfileFormFields user={user} />;
+}
+
+function ProfileFormFields({ user }: { user: AuthUser }) {
+  const { refreshUser, logout } = useAuth();
   const { notify } = useNotification();
   const t = useTranslations("Profile");
   const locale = useLocale();
   const router = useRouter();
 
-  const [name, setName] = useState("");
-  const [cityId, setCityId] = useState("");
-  const [cityQuery, setCityQuery] = useState("");
+  const savedCountryCode = user.originCountry?.toUpperCase() ?? "";
+
+  const [name, setName] = useState(user.name ?? "");
+  const [cityId, setCityId] = useState(user.cityId ?? "");
+  const [cityQuery, setCityQuery] = useState(user.cityId ?? "");
   const [cityResults, setCityResults] = useState<LocationData[]>([]);
   const [cityLoading, setCityLoading] = useState(false);
-  const [citySelected, setCitySelected] = useState(false);
-  const [originCountry, setOriginCountry] = useState("");
-  const [countryQuery, setCountryQuery] = useState("");
+  const [citySelected, setCitySelected] = useState(Boolean(user.cityId));
+  const [originCountry, setOriginCountry] = useState(savedCountryCode);
+  const [countryQuery, setCountryQuery] = useState(
+    savedCountryCode
+      ? new Intl.DisplayNames([locale], { type: "region" }).of(savedCountryCode) ?? savedCountryCode
+      : ""
+  );
   const [countryResults, setCountryResults] = useState<CountryOption[]>([]);
   const [countryLoading, setCountryLoading] = useState(false);
-  const [countrySelected, setCountrySelected] = useState(false);
-  const [bio, setBio] = useState("");
+  const [countrySelected, setCountrySelected] = useState(Boolean(savedCountryCode));
+  const [bio, setBio] = useState(user.bio ?? "");
 
   const [saving, setSaving] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -53,40 +69,15 @@ export default function ProfileForm() {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
-
-    setName(user.name ?? "");
-    setCityId(user.cityId ?? "");
-    setCityQuery(user.cityId ?? "");
-    setCitySelected(Boolean(user.cityId));
-    const savedCountryCode = user.originCountry?.toUpperCase() ?? "";
-    setOriginCountry(savedCountryCode);
-    setCountryQuery(
-      savedCountryCode
-        ? new Intl.DisplayNames([locale], { type: "region" }).of(savedCountryCode) ?? savedCountryCode
-        : ""
-    );
-    setCountrySelected(Boolean(savedCountryCode));
-    setBio(user.bio ?? "");
-  }, [user, locale]);
-
-  useEffect(() => {
     const query = cityQuery.trim();
-
     if (citySelected || query.length < 3) {
-      setCityResults([]);
-      setCityLoading(false);
       return;
     }
-
     let cancelled = false;
-
     const timeoutId = window.setTimeout(async () => {
       setCityLoading(true);
-
       try {
         const results = await locationService.searchCities(query);
-
         if (!cancelled) {
           setCityResults(results);
         }
@@ -111,21 +102,14 @@ export default function ProfileForm() {
 
   useEffect(() => {
     const query = countryQuery.trim();
-
     if (countrySelected || query.length < 2) {
-      setCountryResults([]);
-      setCountryLoading(false);
       return;
     }
-
     let cancelled = false;
-
     const timeoutId = window.setTimeout(async () => {
       setCountryLoading(true);
-
       try {
         const results = await locationService.searchCountries(query);
-
         if (!cancelled) {
           setCountryResults(results);
         }
@@ -146,8 +130,6 @@ export default function ProfileForm() {
       window.clearTimeout(timeoutId);
     };
   }, [countryQuery, countrySelected]);
-  if (!user) return null;
-
   const handleSave = async () => {
     const normalizedName = name.trim();
     const normalizedCity = cityId.trim();

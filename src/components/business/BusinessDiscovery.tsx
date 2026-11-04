@@ -34,27 +34,19 @@ export default function BusinessDiscovery({
     if (isLoading) {
         return (
             <div className="space-y-4">
-
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                     <div className="h-[420px] animate-pulse rounded-3xl bg-gray-200 md:col-span-2" />
-
                     <div className="h-[280px] animate-pulse rounded-3xl bg-gray-200" />
-
                     <div className="h-[280px] animate-pulse rounded-3xl bg-gray-200" />
                 </div>
-
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                     <div className="h-[280px] animate-pulse rounded-3xl bg-gray-200" />
-
                     <div className="h-[420px] animate-pulse rounded-3xl bg-gray-200 md:col-span-2" />
-
                     <div className="h-[280px] animate-pulse rounded-3xl bg-gray-200" />
                 </div>
-
             </div>
         );
     }
-
     if (error) {
         return (
             <div className="py-12 text-center">
@@ -64,7 +56,6 @@ export default function BusinessDiscovery({
             </div>
         );
     }
-
     if (businesses.length === 0) {
         return (
             <div className="py-12 text-center">
@@ -74,7 +65,6 @@ export default function BusinessDiscovery({
             </div>
         );
     }
-
     return (
     <div
         className="

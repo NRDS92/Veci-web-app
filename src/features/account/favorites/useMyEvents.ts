@@ -12,12 +12,62 @@ export const useMyEvents = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchEvents = useCallback(async () => {
+    // ======================================================
+    // LOAD EVENTS
+    // Responsible only for fetching data.
+    // ======================================================
+
+    const loadEvents = useCallback(async (): Promise<MyEvent[]> => {
+        return accountService.getMyEvents();
+    }, []);
+
+    // ======================================================
+    // INITIAL DATA FETCH
+    // ======================================================
+
+    useEffect(() => {
+        let active = true;
+
+        loadEvents()
+            .then((data) => {
+                if (!active) return;
+
+                setEvents(data);
+                setError(null);
+            })
+            .catch((err: unknown) => {
+                if (!active) return;
+
+                setError(
+                    getAccountErrorMessage(
+                        err,
+                        "Failed to load events."
+                    )
+                );
+            })
+            .finally(() => {
+                if (!active) return;
+
+                setLoading(false);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [loadEvents]);
+
+    // ======================================================
+    // REFETCH
+    // Allows consumers to manually reload events.
+    // ======================================================
+
+    const refetch = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
 
-            const data = await accountService.getMyEvents();
+            const data = await loadEvents();
+
             setEvents(data);
         } catch (err: unknown) {
             setError(
@@ -29,17 +79,12 @@ export const useMyEvents = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
-
-    useEffect(() => {
-        void fetchEvents();
-    }, [fetchEvents]);
+    }, [loadEvents]);
 
     return {
         events,
         loading,
         error,
-        refetch: fetchEvents,
+        refetch,
     };
 };
-

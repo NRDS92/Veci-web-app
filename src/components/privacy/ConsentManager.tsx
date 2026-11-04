@@ -48,28 +48,37 @@ export default function ConsentManager() {
   const [ready, setReady] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const [initialConsent, setInitialConsent] = useState<Consent | null>(null);
 
   useEffect(() => {
-    // Analytics remains disabled until valid consent is found.
     setAnalyticsDisabled(true);
 
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+    const restoreConsent = async () => {
+      let restoredConsent: Consent | null = null;
 
-      if (stored !== null) {
-        const parsed: unknown = JSON.parse(stored);
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
 
-        if (isValidConsent(parsed)) {
-          setAnalyticsDisabled(!parsed.analytics);
-          setConsent(parsed);
-          setAnalyticsEnabled(parsed.analytics);
+        if (stored !== null) {
+          const parsed: unknown = JSON.parse(stored);
+
+          if (isValidConsent(parsed)) {
+            restoredConsent = parsed;
+            setAnalyticsDisabled(!parsed.analytics);
+          }
         }
+      } catch {
+        setAnalyticsDisabled(true);
       }
-    } catch {
-      setAnalyticsDisabled(true);
-    } finally {
+
+      await Promise.resolve();
+
+      setConsent(restoredConsent);
+      setAnalyticsEnabled(restoredConsent?.analytics ?? false);
       setReady(true);
-    }
+    };
+
+    void restoreConsent();
   }, []);
 
   function saveConsent(analytics: boolean) {

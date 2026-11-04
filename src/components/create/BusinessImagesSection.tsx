@@ -1,3 +1,4 @@
+
 "use client";
 
 import ImageUpload from "@/components/upload/ImageUpload";
@@ -155,12 +156,15 @@ export default function BusinessImagesSection({
                             disabled={loading}
                             maxImages={8}
                             variant="headless"
-                            renderTrigger={(open, uploading) => (
-                                <button
-                                    type="button"
-                                    onClick={open}
-                                    disabled={loading || uploading}
-                                    className="flex aspect-square w-full flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 text-gray-400 transition hover:border-[#FF7A00] hover:bg-orange-50 hover:text-[#FF7A00] disabled:cursor-not-allowed disabled:opacity-50"
+                            renderTrigger={(inputId, uploading, disabled) => (
+                                <label
+                                    htmlFor={inputId}
+                                    aria-disabled={disabled}
+                                    className={`flex aspect-square w-full flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 text-gray-400 transition hover:border-[#FF7A00] hover:bg-orange-50 hover:text-[#FF7A00] ${
+                                        disabled
+                                            ? "pointer-events-none cursor-not-allowed opacity-50"
+                                            : "cursor-pointer"
+                                    }`}
                                 >
                                     {uploading ? (
                                         <>
@@ -181,7 +185,7 @@ export default function BusinessImagesSection({
                                             </span>
                                         </>
                                     )}
-                                </button>
+                                </label>
                             )}
                         />
                     )}
