@@ -1,11 +1,14 @@
+
 "use client";
 
 import {
     ChangeEvent,
     ReactNode,
+    useId,
     useRef,
     useState,
 } from "react";
+
 import { uploadService } from "@/features/upload/upload.service";
 
 interface MultipleImageUploadProps {
@@ -26,10 +29,12 @@ interface MultipleImageUploadProps {
 
     /**
      * Custom trigger used with the headless variant.
+     * Receives the input ID to associate with a label.
      */
     renderTrigger?: (
-        open: () => void,
-        uploading: boolean
+        inputId: string,
+        uploading: boolean,
+        disabled: boolean
     ) => ReactNode;
 }
 
@@ -41,22 +46,11 @@ export default function MultipleImageUpload({
     variant = "default",
     renderTrigger,
 }: MultipleImageUploadProps) {
+    const inputId = useId();
     const inputRef = useRef<HTMLInputElement>(null);
 
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
-    // ======================================================
-    // OPEN FILE PICKER
-    // ======================================================
-
-    const openFilePicker = () => {
-        if (disabled || uploading) {
-            return;
-        }
-
-        inputRef.current?.click();
-    };
 
     // ======================================================
     // HANDLE FILES
@@ -84,6 +78,7 @@ export default function MultipleImageUpload({
                 `You can upload a maximum of ${maxImages} images.`
             );
 
+            event.target.value = "";
             return;
         }
 
@@ -108,6 +103,7 @@ export default function MultipleImageUpload({
                 "Images must be JPG, PNG or WebP and smaller than 5 MB."
             );
 
+            event.target.value = "";
             return;
         }
 
@@ -162,6 +158,7 @@ export default function MultipleImageUpload({
 
     const fileInput = (
         <input
+            id={inputId}
             ref={inputRef}
             type="file"
             accept="image/jpeg,image/png,image/webp"
@@ -180,8 +177,9 @@ export default function MultipleImageUpload({
         return (
             <>
                 {renderTrigger?.(
-                    openFilePicker,
-                    uploading
+                    inputId,
+                    uploading,
+                    disabled || uploading
                 )}
 
                 {fileInput}
@@ -233,14 +231,14 @@ export default function MultipleImageUpload({
             )}
 
             {value.length < maxImages && (
-                <button
-                    type="button"
-                    onClick={openFilePicker}
-                    disabled={
-                        disabled ||
-                        uploading
-                    }
-                    className="flex min-h-40 w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 px-6 text-center transition hover:border-[#FF7A00] hover:bg-orange-50 disabled:cursor-not-allowed disabled:opacity-50"
+                <label
+                    htmlFor={inputId}
+                    aria-disabled={disabled || uploading}
+                    className={`flex min-h-40 w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 px-6 text-center transition hover:border-[#FF7A00] hover:bg-orange-50 ${
+                        disabled || uploading
+                            ? "pointer-events-none cursor-not-allowed opacity-50"
+                            : "cursor-pointer"
+                    }`}
                 >
                     {uploading ? (
                         <>
@@ -265,7 +263,7 @@ export default function MultipleImageUpload({
                             </span>
                         </>
                     )}
-                </button>
+                </label>
             )}
 
             {fileInput}

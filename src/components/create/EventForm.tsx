@@ -2,7 +2,6 @@
 
 import {
     FormEvent,
-    useEffect,
     useState,
 } from "react";
 
@@ -151,177 +150,157 @@ export default function EventForm() {
                 );
             }
         };
-    useEffect(() => {
-        if (
-            eventType ===
-            "official"
-        ) {
-            fetchMyBusinesses();
-            return;
-        }
-        setBusinesses([]);
-        setSelectedBusinessId("");
-    }, [eventType]);
-    /*
-     * IMAGE MANAGEMENT
-     */
-    const handleImageChange = (
-        index: number,
-        value: string
-    ) => {
-        if (
-            index < 0 ||
-            index >= MAX_EVENT_IMAGES
-        ) {
-            return;
-        }
-        setImages(
-            (current) => {
-                const next = [
-                    ...current,
-                ];
-                next[index] =
-                    value;
-                return next;
+
+        /*
+        * IMAGE MANAGEMENT
+        */
+        const handleImageChange = (
+            index: number,
+            value: string
+        ) => {
+            if (
+                index < 0 ||
+                index >= MAX_EVENT_IMAGES
+            ) {
+                return;
             }
-        );
-    };
+            setImages(
+                (current) => {
+                    const next = [
+                        ...current,
+                    ];
+                    next[index] =
+                        value;
+                    return next;
+                }
+            );
+        };
+        const removeImage = (
+            index: number
+        ) => {
 
-
-    const removeImage = (
-        index: number
-    ) => {
-
-        if (
-            index < 0 ||
-            index >= MAX_EVENT_IMAGES
-        ) {
-            return;
-        }
-
-        setImages(
-            (current) => {
-
-                const next = [
-                    ...current,
-                ];
-
-                next[index] =
-                    null;
-
-                return next;
-
+            if (
+                index < 0 ||
+                index >= MAX_EVENT_IMAGES
+            ) {
+                return;
             }
-        );
 
-    };
+            setImages(
+                (current) => {
+
+                    const next = [
+                        ...current,
+                    ];
+
+                    next[index] =
+                        null;
+
+                    return next;
+
+                }
+            );
+
+        };
+        /*
+        * GOOD TO KNOW
+        */
+        const addGoodToKnow = () => {
+
+            const value =
+                goodToKnowInput.trim();
+
+            if (!value) {
+                return;
+            }
+
+            setGoodToKnow(
+                (current) => [
+                    ...current,
+                    value,
+                ]
+            );
+
+            setGoodToKnowInput("");
+
+        };
+        const removeGoodToKnow = (
+            index: number
+        ) => {
+
+            setGoodToKnow(
+                (current) =>
+                    current.filter(
+                        (_, itemIndex) =>
+                            itemIndex !== index
+                    )
+            );
+
+        };
+        /*
+        * LINKS
+        */
+        const addLink = () => {
+
+            const label =
+                linkLabel.trim();
+
+            const url =
+                linkUrl.trim();
 
 
-    /*
-     * GOOD TO KNOW
-     */
-
-    const addGoodToKnow = () => {
-
-        const value =
-            goodToKnowInput.trim();
-
-        if (!value) {
-            return;
-        }
-
-        setGoodToKnow(
-            (current) => [
-                ...current,
-                value,
-            ]
-        );
-
-        setGoodToKnowInput("");
-
-    };
+            if (
+                !label ||
+                !url
+            ) {
+                return;
+            }
 
 
-    const removeGoodToKnow = (
-        index: number
-    ) => {
+            if (
+                links.length >= 10
+            ) {
 
-        setGoodToKnow(
-            (current) =>
-                current.filter(
-                    (_, itemIndex) =>
-                        itemIndex !== index
+                setError(
+                    "You can add a maximum of 10 links."
+                );
+
+                return;
+            }
+
+
+            if (
+                !url.startsWith(
+                    "https://"
                 )
-        );
+            ) {
 
-    };
+                setError(
+                    "Links must start with https://"
+                );
 
-
-    /*
-     * LINKS
-     */
-
-    const addLink = () => {
-
-        const label =
-            linkLabel.trim();
-
-        const url =
-            linkUrl.trim();
+                return;
+            }
 
 
-        if (
-            !label ||
-            !url
-        ) {
-            return;
-        }
-
-
-        if (
-            links.length >= 10
-        ) {
-
-            setError(
-                "You can add a maximum of 10 links."
+            setLinks(
+                (current) => [
+                    ...current,
+                    {
+                        label,
+                        url,
+                    },
+                ]
             );
 
-            return;
-        }
 
+            setLinkLabel("");
 
-        if (
-            !url.startsWith(
-                "https://"
-            )
-        ) {
+            setLinkUrl("");
 
-            setError(
-                "Links must start with https://"
-            );
+            setError(null);
 
-            return;
-        }
-
-
-        setLinks(
-            (current) => [
-                ...current,
-                {
-                    label,
-                    url,
-                },
-            ]
-        );
-
-
-        setLinkLabel("");
-
-        setLinkUrl("");
-
-        setError(null);
-
-    };
+        };
 
 
     const removeLink = (
@@ -977,11 +956,11 @@ export default function EventForm() {
 
                     <button
                         type="button"
-                        onClick={() =>
-                            setEventType(
-                                "community"
-                            )
-                        }
+                        onClick={() => {
+                            setEventType("community");
+                            setBusinesses([]);
+                            setSelectedBusinessId("");
+                        }}
                         className={`rounded-xl border p-4 text-left ${
                             eventType ===
                             "community"
@@ -1006,20 +985,16 @@ export default function EventForm() {
 
                     <button
                         type="button"
-                        onClick={() =>
-                            setEventType(
-                                "official"
-                            )
-                        }
+                        onClick={() => {
+                            setEventType("official");
+                            void fetchMyBusinesses();
+                        }}
                         className={`rounded-xl border p-4 text-left ${
-                            eventType ===
-                            "official"
+                            eventType === "official"
                                 ? "border-[#FF7A00] bg-orange-50"
                                 : "border-gray-200"
                         }`}
-                        disabled={
-                            loading
-                        }
+                        disabled={loading || loadingBusinesses}
                     >
 
                         <p className="font-semibold">
@@ -1071,7 +1046,7 @@ export default function EventForm() {
                         <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
 
                             <p className="font-medium text-gray-900">
-                                You don't have any business yet.
+                                You don&apos;t have any business yet.
                             </p>
 
                             <p className="mt-1 text-sm text-gray-500">

@@ -45,7 +45,7 @@ export default function MyBusinesses() {
                 <i className="fa-solid fa-triangle-exclamation mb-3 text-2xl text-red-500" />
 
                 <h2 className="font-semibold text-gray-900">
-                    Couldn't load your businesses
+                    Couldn&apos;t load your businesses
                 </h2>
 
                 <p className="mt-2 text-sm text-gray-600">
@@ -75,7 +75,7 @@ export default function MyBusinesses() {
                 </h2>
 
                 <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
-                    You haven't registered a business yet. Add your
+                    You haven&apos;t registered a business yet. Add your registered a business yet. Add your
                     business to help the Latin community discover you.
                 </p>
 

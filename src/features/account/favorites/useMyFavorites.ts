@@ -12,12 +12,62 @@ export const useMyFavorites = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const fetchFavorites = useCallback(async () => {
+    // ======================================================
+    // LOAD FAVORITES
+    // Responsible only for fetching data.
+    // ======================================================
+
+    const loadFavorites = useCallback(async (): Promise<FavoriteEvent[]> => {
+        return await accountService.getMyFavorites();
+    }, []);
+
+    // ======================================================
+    // INITIAL DATA FETCH
+    // ======================================================
+
+    useEffect(() => {
+        let active = true;
+
+        loadFavorites()
+            .then((data) => {
+                if (!active) return;
+
+                setFavorites(data);
+                setError(null);
+            })
+            .catch((err: unknown) => {
+                if (!active) return;
+
+                setError(
+                    getAccountErrorMessage(
+                        err,
+                        "Failed to load favorites."
+                    )
+                );
+            })
+            .finally(() => {
+                if (!active) return;
+
+                setLoading(false);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [loadFavorites]);
+
+    // ======================================================
+    // REFETCH
+    // Allows consumers to manually reload favorites.
+    // ======================================================
+
+    const refetch = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
 
-            const data = await accountService.getMyFavorites();
+            const data = await loadFavorites();
+
             setFavorites(data);
         } catch (err: unknown) {
             setError(
@@ -29,17 +79,12 @@ export const useMyFavorites = () => {
         } finally {
             setLoading(false);
         }
-    }, []);
-
-    useEffect(() => {
-        void fetchFavorites();
-    }, [fetchFavorites]);
+    }, [loadFavorites]);
 
     return {
         favorites,
         loading,
         error,
-        refetch: fetchFavorites,
+        refetch,
     };
 };
-

@@ -42,7 +42,7 @@ export default function MyFavorites() {
                 <i className="fa-solid fa-triangle-exclamation mb-3 text-2xl text-red-500" />
 
                 <h2 className="font-semibold text-gray-900">
-                    Couldn't load your favorites
+                    Couldn&apos;t load your favorites
                 </h2>
 
                 <p className="mt-2 text-sm text-gray-600">
@@ -72,8 +72,8 @@ export default function MyFavorites() {
                 </h2>
 
                 <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
-                    You haven't saved any events yet. Explore the
-                    community and save the events you don't want to miss.
+                    You haven&apos;t saved any events yet. Explore the
+                    community and save the events you don&apos;t want to miss.
                 </p>
 
                 <Link

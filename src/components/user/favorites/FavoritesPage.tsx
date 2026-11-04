@@ -10,6 +10,35 @@ import EventCard from "@/components/events/EventCard";
 import { userService } from "@/features/users/user.service";
 import type { EventCardEvent } from "@/features/discover/discover.types";
 
+const getFavoritesErrorMessage = (error: unknown): string => {
+    if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error
+    ) {
+        const response = error.response;
+
+        if (
+            typeof response === "object" &&
+            response !== null &&
+            "data" in response
+        ) {
+            const data = response.data;
+
+            if (
+                typeof data === "object" &&
+                data !== null &&
+                "message" in data &&
+                typeof data.message === "string"
+            ) {
+                return data.message;
+            }
+        }
+    }
+
+    return "Unable to load your favorites.";
+};
+
 export default function FavoritesPage() {
     const { user } = useAuth();
 
@@ -39,16 +68,10 @@ export default function FavoritesPage() {
                 setFavorites(
                     response.data.data
                 );
-            } catch (error: any) {
-                console.error(
-                    "FAVORITES ERROR:",
-                    error
-                );
+            } catch (error: unknown) {
+                console.error("FAVORITES ERROR:", error);
 
-                setError(
-                    error?.response?.data?.message ||
-                        "Unable to load your favorites."
-                );
+                setError(getFavoritesErrorMessage(error));
             } finally {
                 setLoading(false);
             }

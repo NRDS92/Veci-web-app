@@ -1,6 +1,6 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitForElementToBeRemoved, } from "@testing-library/react";
 import type { AxiosError } from "axios";
 
 import LoginForm from "../components/auth/LoginForm";
@@ -92,6 +92,17 @@ vi.mock("../features/auth/auth.service", () => ({
   authService: {
     login: navigationMocks.login,
   },
+}));
+
+vi.mock("@react-oauth/google", () => ({
+  GoogleLogin: () => (
+    <button type="button">Continuar con Google</button>
+  ),
+  GoogleOAuthProvider: ({
+    children,
+  }: {
+    children: React.ReactNode;
+  }) => <>{children}</>,
 }));
 
 const loginMock = navigationMocks.login;
@@ -190,7 +201,6 @@ describe("LoginForm", () => {
 
   it("shows a warning when the email is empty", async () => {
     renderLogin();
-
     fireEvent.click(
       screen.getByRole("button", { name: "Anmelden" })
     );
@@ -270,4 +280,28 @@ describe("LoginForm", () => {
     expect(navigationMocks.refreshUser).toHaveBeenCalledOnce();
     expect(navigationMocks.push).toHaveBeenCalledWith("/");
   });
+});
+
+it("hides the loading indicator after login succeeds", async () => {
+  navigationMocks.login.mockResolvedValue({
+    data: {
+      data: {
+        token: "test-token",
+      },
+    },
+  });
+
+  renderLogin();
+  fillLoginForm("user@example.com", "correct-password");
+
+  fireEvent.click(
+    screen.getByRole("button", { name: /anmelden/i })
+  );
+
+  await waitForElementToBeRemoved(() =>
+    screen.queryByText("Du wirst mit Veci verbunden")
+  );
+
+  expect(navigationMocks.login).toHaveBeenCalledTimes(1);
+  expect(sessionStorage.getItem("auth_token")).toBe("test-token");
 });
