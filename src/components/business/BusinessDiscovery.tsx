@@ -33,7 +33,7 @@ export default function BusinessDiscovery({
 
     if (isLoading) {
         return (
-            <div className="space-y-4">
+            <div className="space-y-4 mb-32">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
                     <div className="h-[420px] animate-pulse rounded-3xl bg-gray-200 md:col-span-2" />
                     <div className="h-[280px] animate-pulse rounded-3xl bg-gray-200" />
@@ -74,6 +74,7 @@ export default function BusinessDiscovery({
             md:grid-cols-4
             md:auto-rows-[280px]
             md:grid-flow-dense
+            mb-56
         "
     >
         {businesses.map((business, index) => {
