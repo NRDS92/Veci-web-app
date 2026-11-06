@@ -12,11 +12,12 @@ export default function Home() {
             <VeciBackground />
 
             <main className="relative z-10">
+                
+                <Discovery />
                 <Hero
                     city="Köln"
                     country="Alemania"
                     />
-                <Discovery />
             </main>
         </>
     );

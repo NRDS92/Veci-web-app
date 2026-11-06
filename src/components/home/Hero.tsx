@@ -169,7 +169,7 @@ export default function Hero({
     const slide = slides[currentSlide];
 
     return (
-        <section className="relative isolate mt-24 overflow-hidden rounded-none md:rounded-b-2xl">
+        <section className="relative isolate mt-24 mb-10 overflow-hidden rounded-none md:rounded-b-2xl">
 
             {/* Background */}
             <div

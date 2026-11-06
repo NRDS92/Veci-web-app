@@ -33,7 +33,7 @@ export default function Discovery() {
         <section
             id="discovery"
             aria-label="Descubrir eventos y negocios"
-            className="w-full min-w-0"
+            className="w-full min-w-0 mt-24"
             >
             <DiscoveryTabs
                 activeType={activeType}
