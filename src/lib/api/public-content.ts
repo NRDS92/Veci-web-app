@@ -1,3 +1,12 @@
+
+import type { PublicBusiness } from "@veci/contracts";
+
+export type { PublicBusiness };
+
+// ==================================================
+// PUBLIC EVENT
+// ==================================================
+
 export interface PublicEvent {
     id: string;
     slug: string;
@@ -11,9 +20,7 @@ export interface PublicEvent {
         | "meetup"
         | "concert"
         | string;
-    eventType:
-        | "official"
-        | "community";
+    eventType: "official" | "community";
     cityId: string;
     address: string;
     dateStart: string;
@@ -21,261 +28,13 @@ export interface PublicEvent {
     images: string[];
 }
 
+// ==================================================
+// API RESPONSE TYPES
+// ==================================================
+
 interface PublicEventsResponse {
     success: boolean;
     data: PublicEvent[];
-}
-
-export interface PublicBusiness {
-
-    // ==================================================
-    // IDENTITY
-    // ==================================================
-
-    id: string;
-
-    slug: string;
-
-    name: string;
-
-    description?: string;
-
-
-    // ==================================================
-    // CLASSIFICATION
-    // ==================================================
-
-    category: string;
-
-    subCategory?: string;
-
-
-    // ==================================================
-    // LOCATION
-    // ==================================================
-
-    cityId: string;
-
-    country?: string;
-
-    address?: string;
-
-    coordinates?: {
-        lat: number;
-        lng: number;
-    };
-
-
-    // ==================================================
-    // IMAGES
-    // ==================================================
-
-    image?: string;
-
-    coverImage?: string;
-
-    gallery: string[];
-
-
-    // ==================================================
-    // CONTACT
-    // ==================================================
-
-    website?: string;
-
-    instagram?: string;
-
-    whatsapp?: string;
-
-
-    // ==================================================
-    // PROFILE
-    // ==================================================
-
-    profile: {
-
-        headline?: string;
-
-        services: string[];
-
-        specialties: string[];
-
-        languages: string[];
-
-        serviceArea: string[];
-
-        availability?: {
-
-            type:
-                | "appointment"
-                | "walk_in"
-                | "online"
-                | "flexible";
-
-            description?: string;
-        };
-
-        openingHours?: {
-
-            monday: {
-                isOpen: boolean;
-
-                intervals: {
-                    open: string;
-                    close: string;
-                }[];
-            };
-
-            tuesday: {
-                isOpen: boolean;
-
-                intervals: {
-                    open: string;
-                    close: string;
-                }[];
-            };
-
-            wednesday: {
-                isOpen: boolean;
-
-                intervals: {
-                    open: string;
-                    close: string;
-                }[];
-            };
-
-            thursday: {
-                isOpen: boolean;
-
-                intervals: {
-                    open: string;
-                    close: string;
-                }[];
-            };
-
-            friday: {
-                isOpen: boolean;
-
-                intervals: {
-                    open: string;
-                    close: string;
-                }[];
-            };
-
-            saturday: {
-                isOpen: boolean;
-
-                intervals: {
-                    open: string;
-                    close: string;
-                }[];
-            };
-
-            sunday: {
-                isOpen: boolean;
-
-                intervals: {
-                    open: string;
-                    close: string;
-                }[];
-            };
-        };
-
-        pricing?: {
-
-            type:
-                | "fixed"
-                | "hourly"
-                | "starting_at"
-                | "range";
-
-            currency: "EUR";
-
-            amount?: number;
-
-            minAmount?: number;
-
-            maxAmount?: number;
-
-            description?: string;
-        };
-    };
-
-
-    // ==================================================
-    // DOCUMENTS
-    // ==================================================
-
-    documents: {
-
-        type:
-            | "menu"
-            | "catalog"
-            | "portfolio"
-            | "brochure";
-
-        url: string;
-
-        name?: string;
-
-    }[];
-
-
-    // ==================================================
-    // DISCOVERY
-    // ==================================================
-
-    priceRange?:
-        | "$"
-        | "$$"
-        | "$$$";
-
-    tags: string[];
-
-    languages: string[];
-
-
-    // ==================================================
-    // COMMUNITY
-    // ==================================================
-
-    isLatinoOwned: boolean;
-
-    countryOfOrigin?: string;
-
-
-    // ==================================================
-    // RATING
-    // ==================================================
-
-    rating: {
-
-        average: number;
-
-        count: number;
-    };
-
-
-    // ==================================================
-    // SOCIAL
-    // ==================================================
-
-    likesCount: number;
-
-    followersCount: number;
-
-    eventsCount: number;
-
-
-    // ==================================================
-    // VERIFICATION
-    // ==================================================
-
-    verificationStatus:
-        | "unverified"
-        | "pending"
-        | "verified"
-        | "rejected";
 }
 
 interface PublicBusinessesResponse {
@@ -323,8 +82,16 @@ interface PublicBusinessContentResponse {
     data: PublicBusinessContent;
 }
 
+// ==================================================
+// CONFIGURATION
+// ==================================================
+
 const API_URL =
     "https://veci-api-pm1e.onrender.com/api/v1";
+
+// ==================================================
+// PUBLIC EVENTS
+// ==================================================
 
 export interface GetPublicEventsOptions {
     cityId?: string;
@@ -336,22 +103,14 @@ export interface GetPublicEventsOptions {
 export async function getPublicEvents(
     options: GetPublicEventsOptions = {}
 ): Promise<PublicEvent[]> {
-
-    const params =
-        new URLSearchParams();
+    const params = new URLSearchParams();
 
     if (options.cityId) {
-        params.set(
-            "cityId",
-            options.cityId
-        );
+        params.set("cityId", options.cityId);
     }
 
     if (options.category) {
-        params.set(
-            "category",
-            options.category
-        );
+        params.set("category", options.category);
     }
 
     if (options.excludeEntityId) {
@@ -362,44 +121,30 @@ export async function getPublicEvents(
     }
 
     if (options.limit) {
-        params.set(
-            "limit",
-            options.limit.toString()
-        );
+        params.set("limit", options.limit.toString());
     }
-    const query =
-        params.toString();
+
+    const query = params.toString();
+
     const url =
-        `${API_URL}/public/events${
-            query
-                ? `?${query}`
-                : ""
-        }`;
-    const response =
-        await fetch(
-            url,
-            {
-                next: {
-                    revalidate: 60,
-                },
-            }
-        );
+        `${API_URL}/public/events${query ? `?${query}` : ""}`;
+
+    const response = await fetch(url, {
+        next: {
+            revalidate: 60,
+        },
+    });
 
     if (!response.ok) {
-
-        const errorBody =
-            await response.text();
+        const errorBody = await response.text();
 
         console.error(
             "❌ PUBLIC EVENTS API ERROR",
             {
                 url,
-                status:
-                    response.status,
-                statusText:
-                    response.statusText,
-                body:
-                    errorBody,
+                status: response.status,
+                statusText: response.statusText,
+                body: errorBody,
             }
         );
 
@@ -408,9 +153,8 @@ export async function getPublicEvents(
         );
     }
 
-    const data:
-        PublicEventsResponse =
-            await response.json();
+    const data: PublicEventsResponse =
+        await response.json();
 
     if (!data.success) {
         throw new Error(
@@ -420,6 +164,10 @@ export async function getPublicEvents(
 
     return data.data;
 }
+
+// ==================================================
+// PUBLIC BUSINESSES
+// ==================================================
 
 export interface GetPublicBusinessesOptions {
     cityId?: string;
@@ -431,22 +179,14 @@ export interface GetPublicBusinessesOptions {
 export async function getPublicBusinesses(
     options: GetPublicBusinessesOptions = {}
 ): Promise<PublicBusiness[]> {
-
-    const params =
-        new URLSearchParams();
+    const params = new URLSearchParams();
 
     if (options.cityId) {
-        params.set(
-            "cityId",
-            options.cityId
-        );
+        params.set("cityId", options.cityId);
     }
 
     if (options.category) {
-        params.set(
-            "category",
-            options.category
-        );
+        params.set("category", options.category);
     }
 
     if (options.excludeEntityId) {
@@ -457,52 +197,35 @@ export async function getPublicBusinesses(
     }
 
     if (options.limit) {
-        params.set(
-            "limit",
-            options.limit.toString()
-        );
+        params.set("limit", options.limit.toString());
     }
 
-    const query =
-        params.toString();
+    const query = params.toString();
 
     const url =
-        `${API_URL}/public/businesses${
-            query
-                ? `?${query}`
-                : ""
-        }`;
+        `${API_URL}/public/businesses${query ? `?${query}` : ""}`;
 
     console.log(
         "🔥 PUBLIC BUSINESSES API:",
         url
     );
 
-    const response =
-        await fetch(
-            url,
-            {
-                next: {
-                    revalidate: 60,
-                },
-            }
-        );
+    const response = await fetch(url, {
+        next: {
+            revalidate: 60,
+        },
+    });
 
     if (!response.ok) {
-
-        const errorBody =
-            await response.text();
+        const errorBody = await response.text();
 
         console.error(
             "❌ PUBLIC BUSINESSES API ERROR",
             {
                 url,
-                status:
-                    response.status,
-                statusText:
-                    response.statusText,
-                body:
-                    errorBody,
+                status: response.status,
+                statusText: response.statusText,
+                body: errorBody,
             }
         );
 
@@ -511,9 +234,8 @@ export async function getPublicBusinesses(
         );
     }
 
-    const data:
-        PublicBusinessesResponse =
-            await response.json();
+    const data: PublicBusinessesResponse =
+        await response.json();
 
     if (!data.success) {
         throw new Error(
@@ -524,10 +246,13 @@ export async function getPublicBusinesses(
     return data.data;
 }
 
+// ==================================================
+// PUBLIC BUSINESS BY SLUG
+// ==================================================
+
 export async function getPublicBusinessBySlug(
     slug: string
 ): Promise<PublicBusiness | null> {
-
     const url =
         `${API_URL}/public/content/${encodeURIComponent(slug)}`;
 
@@ -536,37 +261,26 @@ export async function getPublicBusinessBySlug(
         url
     );
 
-    const response =
-        await fetch(
-            url,
-            {
-                next: {
-                    revalidate: 60,
-                },
-            }
-        );
+    const response = await fetch(url, {
+        next: {
+            revalidate: 60,
+        },
+    });
 
-    if (
-        response.status === 404
-    ) {
+    if (response.status === 404) {
         return null;
     }
 
     if (!response.ok) {
-
-        const errorBody =
-            await response.text();
+        const errorBody = await response.text();
 
         console.error(
             "❌ PUBLIC BUSINESS BY SLUG API ERROR",
             {
                 url,
-                status:
-                    response.status,
-                statusText:
-                    response.statusText,
-                body:
-                    errorBody,
+                status: response.status,
+                statusText: response.statusText,
+                body: errorBody,
             }
         );
 
@@ -575,9 +289,8 @@ export async function getPublicBusinessBySlug(
         );
     }
 
-    const data:
-        PublicBusinessResponse =
-            await response.json();
+    const data: PublicBusinessResponse =
+        await response.json();
 
     if (!data.success) {
         throw new Error(
@@ -588,10 +301,13 @@ export async function getPublicBusinessBySlug(
     return data.data.entity;
 }
 
+// ==================================================
+// PUBLIC BUSINESS CONTENT (SEO)
+// ==================================================
+
 export async function getPublicBusinessContentBySlug(
     slug: string
 ): Promise<PublicBusinessContent | null> {
-
     const url =
         `${API_URL}/public/content/${encodeURIComponent(slug)}`;
 
@@ -600,37 +316,26 @@ export async function getPublicBusinessContentBySlug(
         url
     );
 
-    const response =
-        await fetch(
-            url,
-            {
-                next: {
-                    revalidate: 60,
-                },
-            }
-        );
+    const response = await fetch(url, {
+        next: {
+            revalidate: 60,
+        },
+    });
 
-    if (
-        response.status === 404
-    ) {
+    if (response.status === 404) {
         return null;
     }
 
     if (!response.ok) {
-
-        const errorBody =
-            await response.text();
+        const errorBody = await response.text();
 
         console.error(
             "❌ PUBLIC BUSINESS SEO API ERROR",
             {
                 url,
-                status:
-                    response.status,
-                statusText:
-                    response.statusText,
-                body:
-                    errorBody,
+                status: response.status,
+                statusText: response.statusText,
+                body: errorBody,
             }
         );
 
@@ -639,9 +344,8 @@ export async function getPublicBusinessContentBySlug(
         );
     }
 
-    const data:
-        PublicBusinessContentResponse =
-            await response.json();
+    const data: PublicBusinessContentResponse =
+        await response.json();
 
     if (!data.success) {
         throw new Error(

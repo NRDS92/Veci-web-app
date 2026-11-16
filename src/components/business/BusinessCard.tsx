@@ -14,6 +14,8 @@ export default function BusinessCard({
 }: BusinessCardProps) {
 
     const image =
+        business.coverImage ||
+        business.image ||
         business.images?.cover ||
         business.images?.profile;
 
