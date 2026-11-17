@@ -1,5 +1,5 @@
 
-import type { PublicBusiness } from "@veci/contracts";
+import type { PublicBusiness } from "@ndrs92/contracts";
 
 export type { PublicBusiness };
 
