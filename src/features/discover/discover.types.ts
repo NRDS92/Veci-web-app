@@ -66,6 +66,12 @@ export interface DiscoverBusiness {
     description?: string;
     category?: string;
     subCategory?: string;
+    // IMAGES — API public contract
+    image?: string;
+    coverImage?: string;
+    gallery?: string[];
+
+    // Legacy compatibility
     images?: {
         profile?: string;
         cover?: string;

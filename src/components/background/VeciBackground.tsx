@@ -151,36 +151,37 @@ export default function VeciBackground() {
     fill="#2563EB"
   />
 </motion.svg>
-      {/* ROUTES */}
 
-      <motion.svg
-        style={{ y: routesY }}
-        className="absolute inset-0 h-full w-full"
-        preserveAspectRatio="none"
-      >
-        {routes.map(([from, to]) => {
-          const start = city(from);
-          const end = city(to);
+    {/* ROUTES */}
+    <motion.svg
+      style={{ y: routesY }}
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      className="absolute inset-0 h-full w-full"
+    >
+      {routes.map(([from, to]) => {
+        const start = city(from);
+        const end = city(to);
+        const cx = (start.x + end.x) / 2;
+        const cy = Math.min(start.y, end.y) - 6;
 
-          const cx = (start.x + end.x) / 2;
-          const cy = Math.min(start.y, end.y) - 6;
+        return (
+          <path
+            key={`${from}-${to}`}
+            d={`
+              M ${start.x} ${start.y}
+              Q ${cx} ${cy}
+              ${end.x} ${end.y}
+            `}
+            fill="none"
+            stroke="#2563EB"
+            strokeWidth="1"
+            opacity="0.12"
+          />
+        );
+      })}
+    </motion.svg>
 
-          return (
-            <path
-              key={`${from}-${to}`}
-              d={`
-                M ${start.x}% ${start.y}%
-                Q ${cx}% ${cy}%
-                ${end.x}% ${end.y}%
-              `}
-              fill="none"
-              stroke="#2563EB"
-              strokeWidth="1"
-              opacity="0.12"
-            />
-          );
-        })}
-      </motion.svg>
 
       {/* CITIES */}
 
