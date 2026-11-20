@@ -1,7 +1,8 @@
 
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import BusinessEngagementStats from "./BusinessEngagementStats";
 
 import { useMyBusinesses } from "../../../features/account/favorites/useMyBusinesses";
 
@@ -199,6 +200,8 @@ export default function MyBusinesses() {
                                     {business.eventsCount ?? 0} events
                                 </span>
                             </div>
+
+                            <BusinessEngagementStats businessId={business._id} />
 
                             <div className="grid grid-cols-2 gap-2 pt-1">
                                 <Link

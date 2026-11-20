@@ -15,17 +15,15 @@ export default function BusinessCard({
 
     const image =
         business.coverImage ||
-        business.image ||
-        business.images?.cover ||
-        business.images?.profile;
+        business.image;
 
     const rating = business.rating?.average;
 
     const reviewsCount = business.rating?.count;
 
     const location =
-        business.location?.cityId ||
-        business.location?.address;
+        business.cityId ||
+        business.address;
 
     return (
         <Link

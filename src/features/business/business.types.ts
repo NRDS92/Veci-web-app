@@ -1,3 +1,7 @@
+import type { CreateBusinessRequest, OwnerBusiness, UpdateBusinessRequest } from "@ndrs92/contracts";
+
+export type { CreateBusinessRequest, UpdateBusinessRequest } from "@ndrs92/contracts";
+
 // ======================================================
 // PROVIDER TYPE
 // ======================================================
@@ -226,84 +230,9 @@ export interface BusinessCommunity {
 // CREATE BUSINESS
 // ======================================================
 
-export interface CreateBusinessRequest {
-
-    // --------------------------------------------------
-    // Identity
-    // --------------------------------------------------
-
-    name: string;
-    description?: string;
-
-
-    // --------------------------------------------------
-    // Classification
-    // --------------------------------------------------
-
-    providerType: ProviderType;
-
-    category: BusinessCategory;
-
-    subCategory?: BusinessSubCategory;
-
-
-    // --------------------------------------------------
-    // Profile
-    // --------------------------------------------------
-
-    profile: BusinessProfile;
-
-
-    // --------------------------------------------------
-    // Media
-    // --------------------------------------------------
-
-    images: BusinessImages;
-
-
-    // --------------------------------------------------
-    // Documents
-    // --------------------------------------------------
-
-    documents: BusinessDocument[];
-
-
-    // --------------------------------------------------
-    // Location
-    // --------------------------------------------------
-
-    location: BusinessLocation;
-
-
-    // --------------------------------------------------
-    // Contact
-    // --------------------------------------------------
-
-    contact: BusinessContact;
-
-
-    // --------------------------------------------------
-    // Community
-    // --------------------------------------------------
-
-    community: BusinessCommunity;
-
-
-    // --------------------------------------------------
-    // Discovery
-    // --------------------------------------------------
-
-    tags: string[];
-}
-
-
 // ======================================================
 // UPDATE BUSINESS
 // ======================================================
-
-export type UpdateBusinessRequest =
-    Partial<CreateBusinessRequest>;
-
 
 // ======================================================
 // BUSINESS RESPONSE
@@ -404,19 +333,4 @@ export interface Business {
 // MY BUSINESS
 // ======================================================
 
-export interface MyBusiness {
-
-    _id: string;
-
-    name: string;
-
-    slug?: string;
-
-    providerType?: ProviderType;
-
-    category?: BusinessCategory;
-
-    subCategory?: BusinessSubCategory;
-
-    images?: BusinessImages;
-}
+export type MyBusiness = OwnerBusiness;

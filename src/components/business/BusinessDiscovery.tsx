@@ -86,7 +86,7 @@ export default function BusinessDiscovery({
 
             return (
                 <div
-                    key={business._id}
+                    key={business.id}
                     className={
                         isFeatured
                             ? "md:col-span-2"

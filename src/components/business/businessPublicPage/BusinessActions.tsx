@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import BusinessFollowControl from "./BusinessFollowControl";
+import { businessService } from "@/features/business/business.service";
 
 interface BusinessDocument {
     type:
@@ -13,6 +15,9 @@ interface BusinessDocument {
 }
 
 interface BusinessActionsProps {
+    businessId?: string;
+    email?: string;
+    phone?: string;
     website?: string;
     instagram?: string;
     whatsapp?: string;
@@ -28,6 +33,9 @@ const actionClassName =
     "inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-800 transition hover:bg-gray-50";
 
 export default function BusinessActions({
+    businessId,
+    email,
+    phone,
     website,
     instagram,
     whatsapp,
@@ -41,6 +49,35 @@ export default function BusinessActions({
 
     const [localLikes, setLocalLikes] =
         useState(likesCount);
+    const trackedBusinessId = useRef<string | null>(null);
+
+    useEffect(() => {
+        if (!businessId || trackedBusinessId.current === businessId) return;
+        trackedBusinessId.current = businessId;
+        void businessService.trackBusinessBehavior(businessId, { event: "business_view" }).catch(() => {
+            // Tracking is best-effort and must not interfere with the public page.
+        });
+    }, [businessId]);
+
+    const trackMenuAttempt = (documentUrl: string) => {
+        if (!businessId) return;
+        void businessService.trackBusinessBehavior(businessId, {
+            event: "menu_download",
+            documentUrl,
+        }).catch(() => {
+            // The direct document link remains usable if analytics is unavailable.
+        });
+    };
+
+    const trimmedEmail = email?.trim();
+    const emailHref = trimmedEmail && !/[\r\n]/.test(trimmedEmail)
+        ? `mailto:${encodeURIComponent(trimmedEmail).replace(/%40/gi, "@")}`
+        : undefined;
+    const trimmedPhone = phone?.trim();
+    const safePhone = trimmedPhone?.replace(/[^\d+*#,;]/g, "");
+    const phoneHref = safePhone && /\d/.test(safePhone)
+        ? `tel:${safePhone}`
+        : undefined;
 
     const handleCopyLink = async () => {
         try {
@@ -107,6 +144,7 @@ export default function BusinessActions({
 
     return (
         <div className="mt-8 flex flex-wrap gap-3">
+            {businessId && <BusinessFollowControl businessId={businessId} />}
             {/* =================================================
                 SHARE
             ================================================= */}
@@ -196,6 +234,20 @@ export default function BusinessActions({
                 </a>
             )}
 
+            {emailHref && trimmedEmail && (
+                <a href={emailHref} aria-label={`Email ${trimmedEmail}`} className={actionClassName}>
+                    <i aria-hidden="true" className="fa-regular fa-envelope text-sm" />
+                    <span>{trimmedEmail}</span>
+                </a>
+            )}
+
+            {phoneHref && trimmedPhone && (
+                <a href={phoneHref} aria-label={`Call ${trimmedPhone}`} className={actionClassName}>
+                    <i aria-hidden="true" className="fa-solid fa-phone text-sm" />
+                    <span>{trimmedPhone}</span>
+                </a>
+            )}
+
             {/* =================================================
                 ATTACHMENTS
             ================================================= */}
@@ -239,6 +291,7 @@ export default function BusinessActions({
                                     <a
                                         key={`${document.url}-${index}`}
                                         href={document.url}
+                                        onClick={document.type === "menu" ? () => trackMenuAttempt(document.url) : undefined}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="

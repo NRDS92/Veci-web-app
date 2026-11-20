@@ -1,16 +1,18 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useNotification } from "@/components/notifications/NotificationProvider";
 import { getApiError } from "@/lib/api/apiError";
 import LocationSelector from "@/components/location/LocationSelector";
 import { businessService } from "@/features/business/business.service";
+import { buildCreateBusinessRequest, buildUpdateBusinessRequest, isValidBusinessName } from "@/features/business/business-form.helpers";
+import { CreateBusinessRequestSchema, UpdateBusinessRequestSchema, type CreateBusinessRequest } from "@ndrs92/contracts";
+import type { OwnerBusiness } from "@ndrs92/contracts";
 import {
     BusinessCategory,
     BusinessSubCategory,
     BusinessPricingType,
-    CreateBusinessRequest,
     BusinessOpeningHours,
 } from "@/features/business/business.types";
 import { LocationData } from "@/features/location/location.types";
@@ -191,64 +193,80 @@ const subCategories: {
 ];
 
 
-export default function BusinessForm() {
+interface BusinessFormProps {
+    initialBusiness?: OwnerBusiness;
+}
+
+export default function BusinessForm({ initialBusiness }: BusinessFormProps) {
     
     const router = useRouter();
     const { notify } = useNotification();
     // ==================================================
     // IDENTITY
     // ==================================================
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [name, setName] = useState(initialBusiness?.name ?? "");
+    const [description, setDescription] = useState(initialBusiness?.description ?? "");
     // ==================================================
     // CLASSIFICATION
     // ==================================================
     const [category, setCategory] =
-        useState<BusinessCategory>("food");
+        useState<BusinessCategory>(initialBusiness?.category ?? "food");
     const [subCategory, setSubCategory] =
-        useState<BusinessSubCategory | "">("");
+        useState<BusinessSubCategory | "">(initialBusiness?.subCategory ?? "");
     // ==================================================
     // IMAGES
     // ==================================================
-    const [profileImage, setProfileImage] = useState("");
-    const [coverImage, setCoverImage] = useState("");
+    const [profileImage, setProfileImage] = useState(initialBusiness?.images.profile ?? "");
+    const [coverImage, setCoverImage] = useState(initialBusiness?.images.cover ?? "");
     const [galleryImages, setGalleryImages] =
-        useState<string[]>([]);
+        useState<string[]>(initialBusiness?.images.gallery ?? []);
     // ==================================================
     // LOCATION
     // ==================================================
     const [location, setLocation] =
-        useState<LocationData | null>(null);
+        useState<LocationData | null>(initialBusiness ? {
+            placeId: "",
+            city: initialBusiness.location.cityId,
+            country: initialBusiness.location.country ?? "",
+            countryCode: "",
+            formattedAddress: initialBusiness.location.address ?? "",
+            latitude: initialBusiness.location.coordinates?.lat ?? 0,
+            longitude: initialBusiness.location.coordinates?.lng ?? 0,
+        } : null);
     // ==================================================
     // CONTACT
     // ==================================================
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-    const [website, setWebsite] = useState("");
-    const [instagram, setInstagram] = useState("");
-    const [whatsapp, setWhatsapp] = useState("");
+    const [email, setEmail] = useState(initialBusiness?.contact.email ?? "");
+    const [phone, setPhone] = useState(initialBusiness?.contact.phone ?? "");
+    const [website, setWebsite] = useState(initialBusiness?.contact.website ?? "");
+    const [instagram, setInstagram] = useState(initialBusiness?.contact.instagram ?? "");
+    const [whatsapp, setWhatsapp] = useState(initialBusiness?.contact.whatsapp ?? "");
     // ==================================================
     // DOCUMENTS
     // ==================================================
-    const [documents, setDocuments] = useState<BusinessDocument[]>([]);
+    const [documents, setDocuments] = useState<BusinessDocument[]>(initialBusiness?.documents.map((document) => ({
+        type: document.type,
+        url: document.url,
+        name: document.name ?? "",
+    })) ?? []);
     // ==================================================
     // PRICING
     // ==================================================
     const [pricingType, setPricingType] =
-        useState<BusinessPricingType>("starting_at");
+        useState<BusinessPricingType>(initialBusiness?.profile.pricing?.type ?? "starting_at");
     const [priceAmount, setPriceAmount] =
-        useState("");
+        useState(initialBusiness?.profile.pricing?.amount?.toString() ?? "");
     const [priceMinAmount, setPriceMinAmount] =
-        useState("");
+        useState(initialBusiness?.profile.pricing?.minAmount?.toString() ?? "");
     const [priceMaxAmount, setPriceMaxAmount] =
-        useState("");
+        useState(initialBusiness?.profile.pricing?.maxAmount?.toString() ?? "");
     const [priceDescription, setPriceDescription] =
-        useState("");
+        useState(initialBusiness?.profile.pricing?.description ?? "");
     // ==================================================
     // SCHEDULE
     // ==================================================
     const [openingHours, setOpeningHours] =
-    useState<BusinessOpeningHours>({
+    useState<BusinessOpeningHours>(initialBusiness?.profile.openingHours ?? {
         monday: {
             isOpen: false,
             intervals: [],
@@ -282,23 +300,23 @@ export default function BusinessForm() {
     // COMMUNITY
     // ==================================================
     const [isLatinoOwned, setIsLatinoOwned] =
-        useState(true);
+        useState(initialBusiness?.community.isLatinoOwned ?? true);
     const [countryOfOrigin, setCountryOfOrigin] =
-        useState("");
+        useState(initialBusiness?.community.countryOfOrigin ?? "");
     // ==================================================
     // TAGS
     // ==================================================
     const [tagsInput, setTagsInput] =
         useState("");
     const [tags, setTags] =
-        useState<string[]>([]);
+        useState<string[]>(initialBusiness?.tags ?? []);
     // ==================================================
     // LANGUAGES
     // ==================================================
     const [languagesInput, setLanguagesInput] =
         useState("");
     const [languages, setLanguages] =
-        useState<string[]>([]);
+        useState<string[]>(initialBusiness?.profile.languages ?? []);
     // =================================================
     // UI
     // ==================================================
@@ -374,45 +392,6 @@ export default function BusinessForm() {
     // ==================================================
     // PRICING
     // ==================================================
-    const buildPricing = () => {
-        const description =
-            priceDescription.trim() || undefined;
-
-        if (pricingType === "range") {
-            if (
-                !priceMinAmount &&
-                !priceMaxAmount &&
-                !description
-            ) {
-                return undefined;
-            }
-
-            return {
-                type: pricingType,
-                currency: "EUR" as const,
-                minAmount: priceMinAmount
-                    ? Number(priceMinAmount)
-                    : undefined,
-                maxAmount: priceMaxAmount
-                    ? Number(priceMaxAmount)
-                    : undefined,
-                description,
-            };
-        }
-
-        if (!priceAmount && !description) {
-            return undefined;
-        }
-
-        return {
-            type: pricingType,
-            currency: "EUR" as const,
-            amount: priceAmount
-                ? Number(priceAmount)
-                : undefined,
-            description,
-        };
-    };
     // ==================================================
     // SUBMIT
     // ==================================================
@@ -424,9 +403,9 @@ export default function BusinessForm() {
         // ------------------------------------------------
         // Basic validation
         // ------------------------------------------------
-        if (!name.trim()) {
+        if (!isValidBusinessName(name)) {
             setError(
-                "Please enter the business name."
+                "Business name must contain at least 2 characters."
             );
             return;
         }
@@ -447,106 +426,36 @@ export default function BusinessForm() {
             // ==================================================
             // NEW BUSINESS API CONTRACT
             // ==================================================
-            const payload: CreateBusinessRequest = {
-                // ------------------------------------------------
-                // Identity
-                // ------------------------------------------------
-                name: name.trim(),
-                description:
-                    description.trim() ||
-                    undefined,
-                // ------------------------------------------------
-                // Classification
-                // ------------------------------------------------
-                providerType: "business",
-                category,
-                subCategory:
-                    subCategory ||
-                    undefined,
-                // ------------------------------------------------
-                // Profile
-                // ------------------------------------------------
-                profile: {
-                    languages,
-                    services: [],
-                    specialties: [],
-                    serviceArea: [],
-                    openingHours,
-                },
-                // ------------------------------------------------
-                // Images
-                // ------------------------------------------------
-                images: {
-                    profile: profileImage,
-                    cover:
-                        coverImage ||
-                        undefined,
-                    gallery: galleryImages,
-                },
-                // ------------------------------------------------
-                // Documents
-                // ------------------------------------------------
-                documents: documents.map((document) => ({
-                    type: document.type,
-                    url: document.url,
-                    name: document.name,
-                })),
-                // -----------------------------------------------
-                // Location
-                // ------------------------------------------------
-                location: {
-                    address:
-                        location.formattedAddress,
-                    cityId:
-                        location.city,
-                    country:
-                        location.country,
-                    latitude:
-                        location.latitude,
-                    longitude:
-                        location.longitude,
-                },
-                // ------------------------------------------------
-                // Contact
-                // ------------------------------------------------
-                contact: {
-                    email:
-                        email.trim() ||
-                        undefined,
-                    phone:
-                        phone.trim() ||
-                        undefined,
-                    website:
-                        website.trim() ||
-                        undefined,
-                    instagram:
-                        instagram.trim() ||
-                        undefined,
-                    whatsapp:
-                        whatsapp.trim() ||
-                        undefined,
-                },
-                // ------------------------------------------------
-                // Community
-                // ------------------------------------------------
-                community: {
-                    isLatinoOwned,
-                    countryOfOrigin:
-                        countryOfOrigin.trim() ||
-                        undefined,
-                },
-                // ------------------------------------------------
-                // Discovery
-                // ------------------------------------------------
-                tags,
-            };
-            // ==================================================
-            // CREATE
-            // ==================================================
-            const response =
-                await businessService.createBusiness(
-                    payload
-                );
+            const payload: CreateBusinessRequest = buildCreateBusinessRequest({
+                name, description, category, subCategory, languages, openingHours,
+                pricing: { type: pricingType, amount: priceAmount, minAmount: priceMinAmount, maxAmount: priceMaxAmount, description: priceDescription },
+                profileImage, coverImage, galleryImages, documents, location,
+                email, phone, website, instagram, whatsapp, isLatinoOwned,
+                countryOfOrigin, tags,
+            });
+            if (initialBusiness) {
+                const updatePayload = buildUpdateBusinessRequest(payload, initialBusiness);
+                const validation = UpdateBusinessRequestSchema.safeParse(updatePayload);
+                if (!validation.success) {
+                    setError(validation.error.issues[0]?.message ?? "Please check the business details.");
+                    return;
+                }
+                await businessService.updateBusiness(initialBusiness._id, validation.data);
+                notify({
+                    type: "success",
+                    title: "Business updated",
+                    message: "Your business has been updated successfully.",
+                });
+                router.push("/user/myBusiness");
+                return;
+            }
+
+            const validation = CreateBusinessRequestSchema.safeParse(payload);
+            if (!validation.success) {
+                setError(validation.error.issues[0]?.message ?? "Please check the business details.");
+                return;
+            }
+            const response = await businessService.createBusiness(validation.data);
             // ==================================================
             // DEBUG
             // ==================================================
@@ -779,8 +688,8 @@ export default function BusinessForm() {
             >
 
                 {loading
-                    ? "Creating business..."
-                    : "Create Business"}
+                    ? initialBusiness ? "Saving business..." : "Creating business..."
+                    : initialBusiness ? "Save Changes" : "Create Business"}
 
             </button>
 

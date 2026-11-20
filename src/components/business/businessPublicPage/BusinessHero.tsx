@@ -4,6 +4,7 @@ interface BusinessHeroProps {
     subCategory?: string;
     image?: string;
     coverImage?: string;
+    verified?: boolean;
 }
 
 export default function BusinessHero({
@@ -12,6 +13,7 @@ export default function BusinessHero({
     subCategory,
     image,
     coverImage,
+    verified = false,
 }: BusinessHeroProps) {
     return (
         <section>
@@ -126,6 +128,15 @@ export default function BusinessHero({
                     "
                 >
                     {name}
+                    {verified && (
+                        <span
+                            aria-label="Verified business"
+                            className="ml-3 inline-flex translate-y-[-0.2rem] items-center gap-1 rounded-full bg-green-50 px-3 py-1 align-middle text-sm font-semibold text-green-700"
+                        >
+                            <i aria-hidden="true" className="fa-solid fa-circle-check" />
+                            Verified
+                        </span>
+                    )}
                 </h1>
 
                 {subCategory && (

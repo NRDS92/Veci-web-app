@@ -11,6 +11,7 @@ import BusinessLocation from "@/components/business/businessPublicPage/BusinessL
 import BusinessAvailabilityCard from "@/components/business/businessPublicPage/BusinessAvailabilityCard";
 import BusinessCommunity from "@/components/business/businessPublicPage/BusinessCommunity";
 import BusinessInformation from "@/components/business/businessPublicPage/BusinessInformation";
+import BusinessPricing from "@/components/business/businessPublicPage/BusinessPricing";
 
 interface BusinessPageProps {
     params: Promise<{
@@ -186,15 +187,15 @@ export default async function BusinessPage(
 
     const sameAs: string[] = [];
 
-    if (entity.website) {
+    if (entity.contact.website) {
         sameAs.push(
-            entity.website
+            entity.contact.website
         );
     }
 
-    if (entity.instagram) {
+    if (entity.contact.instagram) {
         sameAs.push(
-            entity.instagram
+            entity.contact.instagram
         );
     }
 
@@ -327,15 +328,19 @@ export default async function BusinessPage(
                     coverImage={
                         entity.coverImage
                     }
+                    verified={entity.verification.status === "verified"}
                 />
                 {/* =================================================
                     ACTIONS
                 ================================================= */}
 
                 <BusinessActions
-                    website={entity.website}
-                    instagram={entity.instagram}
-                    whatsapp={entity.whatsapp}
+                    businessId={entity.id}
+                    email={entity.contact.email}
+                    phone={entity.contact.phone}
+                    website={entity.contact.website}
+                    instagram={entity.contact.instagram}
+                    whatsapp={entity.contact.whatsapp}
                     documents={entity.documents}
                     likesCount={entity.likesCount}
                 />
@@ -358,8 +363,8 @@ export default async function BusinessPage(
                         <BusinessOverview
                             description={entity.description}
                             headline={entity.profile?.headline}
-                            isLatinoOwned={entity.isLatinoOwned}
-                            countryOfOrigin={entity.countryOfOrigin}
+                            isLatinoOwned={entity.community.isLatinoOwned}
+                            countryOfOrigin={entity.community.countryOfOrigin}
                         />
                         <BusinessDetails
                             services={entity.profile?.services}
@@ -390,6 +395,7 @@ export default async function BusinessPage(
                             lg:self-start
                         "
                     >
+                        <BusinessPricing pricing={entity.profile.pricing} />
                         <BusinessAvailabilityCard
                                 openingHours={
                                     entity.profile?.openingHours
