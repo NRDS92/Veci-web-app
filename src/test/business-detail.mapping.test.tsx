@@ -1,13 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "@testing-library/react";
+import type { ComponentProps } from "react";
 import type { PublicBusiness } from "@ndrs92/contracts";
+import type BusinessActions from "@/components/business/businessPublicPage/BusinessActions";
+import type BusinessHero from "@/components/business/businessPublicPage/BusinessHero";
+import type BusinessOverview from "@/components/business/businessPublicPage/BusinessOverview";
 import { publicBusinessFixture } from "./fixtures/business";
 
 const mocks = vi.hoisted(() => ({
     getContent: vi.fn(),
-    actions: vi.fn<(props: any) => null>(() => null),
-    overview: vi.fn<(props: any) => null>(() => null),
-    hero: vi.fn<(props: any) => null>(() => null),
+    actions: vi.fn<(props: ComponentProps<typeof BusinessActions>) => null>(() => null),
+    overview: vi.fn<(props: ComponentProps<typeof BusinessOverview>) => null>(() => null),
+    hero: vi.fn<(props: ComponentProps<typeof BusinessHero>) => null>(() => null),
     details: vi.fn(() => null),
     media: vi.fn(() => null),
     location: vi.fn(() => null),

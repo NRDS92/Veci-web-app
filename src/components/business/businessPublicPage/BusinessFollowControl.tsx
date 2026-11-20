@@ -1,64 +1,112 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
+import type { AuthUser } from "@/features/auth/types";
 import { businessService } from "@/features/business/business.service";
 
 interface BusinessFollowControlProps {
     businessId: string;
 }
 
+type FollowRequest =
+    | { businessId: string; user: AuthUser; state: "success"; isFollowing: boolean }
+    | { businessId: string; user: AuthUser; state: "error" };
+
+interface PendingFollow {
+    businessId: string;
+    user: AuthUser;
+}
+
+interface FollowActionError {
+    businessId: string;
+    user: AuthUser;
+    message: string;
+}
+
 export default function BusinessFollowControl({ businessId }: BusinessFollowControlProps) {
     const router = useRouter();
-    const { loading: authLoading, isAuthenticated } = useAuth();
-    const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
-    const [statusLoading, setStatusLoading] = useState(false);
-    const [pending, setPending] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const { user, loading: authLoading, isAuthenticated } = useAuth();
+    const [request, setRequest] = useState<FollowRequest | null>(null);
+    const [pendingFollow, setPendingFollow] = useState<PendingFollow | null>(null);
+    const [actionError, setActionError] = useState<FollowActionError | null>(null);
+    const requestSequence = useRef(0);
 
-    const loadStatus = useCallback(async () => {
-        setStatusLoading(true);
-        setError(null);
+    const loadStatus = useCallback(async (forUser: AuthUser, sequence: number) => {
         try {
             const status = await businessService.getBusinessFollowStatus(businessId);
-            setIsFollowing(status.isFollowing);
+            if (requestSequence.current === sequence) {
+                setRequest({ businessId, user: forUser, state: "success", isFollowing: status.isFollowing });
+            }
         } catch {
-            setError("Couldn't load follow status. Try again.");
-        } finally {
-            setStatusLoading(false);
+            if (requestSequence.current === sequence) {
+                setRequest({ businessId, user: forUser, state: "error" });
+            }
         }
     }, [businessId]);
 
     useEffect(() => {
-        if (authLoading) return;
-        if (!isAuthenticated) {
-            setIsFollowing(false);
-            setStatusLoading(false);
-            setError(null);
-            return;
-        }
-        void loadStatus();
-    }, [authLoading, isAuthenticated, loadStatus]);
+        if (authLoading || !isAuthenticated || !user) return;
+
+        const sequence = ++requestSequence.current;
+        void loadStatus(user, sequence);
+        return () => {
+            if (requestSequence.current === sequence) requestSequence.current += 1;
+        };
+    }, [authLoading, isAuthenticated, loadStatus, user]);
+
+    const requestMatchesContext = request?.businessId === businessId && request.user === user;
+    const isFollowing = !isAuthenticated
+        ? false
+        : requestMatchesContext && request.state === "success"
+          ? request.isFollowing
+          : null;
+    const statusError = isAuthenticated && requestMatchesContext && request.state === "error";
+    const statusLoading = authLoading || (isAuthenticated && !statusError && isFollowing === null);
+    const pending = pendingFollow?.businessId === businessId
+        && pendingFollow.user === user;
+    const visibleActionError = actionError?.businessId === businessId && actionError.user === user
+        ? actionError.message
+        : null;
+
+    const retryStatus = () => {
+        if (!user) return;
+        setRequest(null);
+        setActionError(null);
+        const sequence = ++requestSequence.current;
+        void loadStatus(user, sequence);
+    };
 
     const handleFollow = async () => {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || !user) {
             router.push("/login");
             return;
         }
         if (pending || statusLoading || isFollowing === null) return;
 
-        setPending(true);
-        setError(null);
+        const sequence = ++requestSequence.current;
+        setPendingFollow({ businessId, user });
+        setActionError(null);
         try {
             const status = isFollowing
                 ? await businessService.unfollowBusiness(businessId)
                 : await businessService.followBusiness(businessId);
-            setIsFollowing(status.isFollowing);
+            if (requestSequence.current === sequence) {
+                setRequest({ businessId, user, state: "success", isFollowing: status.isFollowing });
+            }
         } catch {
-            setError("Couldn't update your follow status. Please try again.");
+            if (requestSequence.current === sequence) {
+                setActionError({
+                    businessId,
+                    user,
+                    message: "Couldn't update your follow status. Please try again.",
+                });
+            }
         } finally {
-            setPending(false);
+            setPendingFollow((current) =>
+                current?.businessId === businessId && current.user === user ? null : current,
+            );
         }
     };
 
@@ -77,14 +125,13 @@ export default function BusinessFollowControl({ businessId }: BusinessFollowCont
 
     return (
         <div className="flex flex-col items-start gap-1">
-            {isAuthenticated && error && isFollowing === null ? (
+            {statusError ? (
                 <button
                     type="button"
-                    onClick={() => void loadStatus()}
-                    disabled={statusLoading}
-                    className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-5 py-2.5 text-sm font-medium text-orange-800 hover:bg-orange-100 disabled:opacity-60"
+                    onClick={retryStatus}
+                    className="inline-flex items-center gap-2 rounded-full border border-orange-200 bg-orange-50 px-5 py-2.5 text-sm font-medium text-orange-800 hover:bg-orange-100"
                 >
-                    {statusLoading ? "Loading…" : "Retry follow status"}
+                    Retry follow status
                 </button>
             ) : (
                 <button
@@ -98,12 +145,8 @@ export default function BusinessFollowControl({ businessId }: BusinessFollowCont
                     {label}
                 </button>
             )}
-            {error && !(isAuthenticated && isFollowing === null) && (
-                <p role="alert" className="text-xs text-red-700">{error}</p>
-            )}
-            {error && isAuthenticated && isFollowing === null && (
-                <p role="alert" className="text-xs text-red-700">{error}</p>
-            )}
+            {visibleActionError && <p role="alert" className="text-xs text-red-700">{visibleActionError}</p>}
+            {statusError && <p role="alert" className="text-xs text-red-700">Couldn&apos;t load follow status. Try again.</p>}
         </div>
     );
 }

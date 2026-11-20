@@ -38,7 +38,7 @@ const statsFixture = {
 describe("Business Engagement UI", () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        mocks.auth.mockReturnValue({ loading: false, isAuthenticated: false });
+        mocks.auth.mockReturnValue({ loading: false, isAuthenticated: false, user: null });
         mocks.trackBusinessBehavior.mockResolvedValue({});
         mocks.getBusinessFollowStatus.mockResolvedValue({ businessId: "business-123", isFollowing: false });
         mocks.followBusiness.mockResolvedValue({ businessId: "business-123", isFollowing: true });
@@ -89,7 +89,7 @@ describe("Business Engagement UI", () => {
     });
 
     it("loads status and changes follow state from the server response", async () => {
-        mocks.auth.mockReturnValue({ loading: false, isAuthenticated: true });
+        mocks.auth.mockReturnValue({ loading: false, isAuthenticated: true, user: { id: "user-1" } });
         render(<BusinessActions businessId="business-123" />);
 
         const followButton = await screen.findByRole("button", { name: "Follow business" });
@@ -100,7 +100,7 @@ describe("Business Engagement UI", () => {
     });
 
     it("unfollows from the loaded server state", async () => {
-        mocks.auth.mockReturnValue({ loading: false, isAuthenticated: true });
+        mocks.auth.mockReturnValue({ loading: false, isAuthenticated: true, user: { id: "user-1" } });
         mocks.getBusinessFollowStatus.mockResolvedValue({ businessId: "business-123", isFollowing: true });
         render(<BusinessActions businessId="business-123" />);
 
@@ -110,7 +110,7 @@ describe("Business Engagement UI", () => {
     });
 
     it("disables repeated follow submissions while the request is pending", async () => {
-        mocks.auth.mockReturnValue({ loading: false, isAuthenticated: true });
+        mocks.auth.mockReturnValue({ loading: false, isAuthenticated: true, user: { id: "user-1" } });
         let resolveFollow: ((value: { businessId: string; isFollowing: boolean }) => void) | undefined;
         mocks.followBusiness.mockImplementation(() => new Promise((resolve) => { resolveFollow = resolve; }));
         render(<BusinessActions businessId="business-123" />);

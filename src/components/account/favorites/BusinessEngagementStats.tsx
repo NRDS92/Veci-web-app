@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { OwnerBusinessStats } from "@ndrs92/contracts";
 import { businessService } from "@/features/business/business.service";
 
@@ -8,26 +8,50 @@ interface BusinessEngagementStatsProps {
     businessId: string;
 }
 
-export default function BusinessEngagementStats({ businessId }: BusinessEngagementStatsProps) {
-    const [stats, setStats] = useState<OwnerBusinessStats | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+type StatsRequest =
+    | { businessId: string; state: "success"; stats: OwnerBusinessStats }
+    | { businessId: string; state: "error" }
+    | { businessId: string; state: "loading" };
 
-    const loadStats = useCallback(async () => {
-        setLoading(true);
-        setError(false);
-        try {
-            setStats(await businessService.getOwnerBusinessStats(businessId));
-        } catch {
-            setError(true);
-        } finally {
-            setLoading(false);
-        }
-    }, [businessId]);
+export default function BusinessEngagementStats({ businessId }: BusinessEngagementStatsProps) {
+    const [request, setRequest] = useState<StatsRequest | null>(null);
+    const requestSequence = useRef(0);
 
     useEffect(() => {
-        void loadStats();
-    }, [loadStats]);
+        let active = true;
+        const sequence = ++requestSequence.current;
+        void businessService.getOwnerBusinessStats(businessId).then((stats) => {
+            if (active && requestSequence.current === sequence) {
+                setRequest({ businessId, state: "success", stats });
+            }
+        }).catch(() => {
+            if (active && requestSequence.current === sequence) {
+                setRequest({ businessId, state: "error" });
+            }
+        });
+        return () => {
+            active = false;
+        };
+    }, [businessId]);
+
+    const currentRequest = request?.businessId === businessId ? request : null;
+    const loading = currentRequest === null || currentRequest.state === "loading";
+    const error = currentRequest?.state === "error";
+    const stats = currentRequest?.state === "success" ? currentRequest.stats : null;
+
+    const retry = () => {
+        setRequest({ businessId, state: "loading" });
+        const sequence = ++requestSequence.current;
+        void businessService.getOwnerBusinessStats(businessId).then((stats) => {
+            if (requestSequence.current === sequence) {
+                setRequest({ businessId, state: "success", stats });
+            }
+        }).catch(() => {
+            if (requestSequence.current === sequence) {
+                setRequest({ businessId, state: "error" });
+            }
+        });
+    };
 
     return (
         <section aria-label="Business engagement statistics" className="rounded-xl bg-gray-50 p-3">
@@ -41,7 +65,7 @@ export default function BusinessEngagementStats({ businessId }: BusinessEngageme
             ) : error ? (
                 <div className="mt-2 flex items-center justify-between gap-2">
                     <p role="alert" className="text-sm text-red-700">Stats unavailable.</p>
-                    <button type="button" onClick={() => void loadStats()} className="text-sm font-semibold text-orange-700 underline">
+                    <button type="button" onClick={retry} className="text-sm font-semibold text-orange-700 underline">
                         Retry
                     </button>
                 </div>
