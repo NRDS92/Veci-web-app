@@ -1,10 +1,18 @@
 import api from "@/lib/api";
+import {
+    BusinessFollowStatusResponseSchema,
+    OwnerBusinessStatsResponseSchema,
+    TrackBusinessBehaviorRequestSchema,
+    UpdateBusinessRequestSchema,
+    type CreateBusinessRequest,
+    type OwnerBusinessResponse,
+    type TrackBusinessBehaviorRequest,
+    type UpdateBusinessRequest,
+} from "@ndrs92/contracts";
 
 import { ApiResponse } from "@/features/auth/types";
 
 import {
-    Business,
-    CreateBusinessRequest,
     MyBusiness,
 } from "./business.types";
 
@@ -18,7 +26,7 @@ export const businessService = {
     async createBusiness(
         data: CreateBusinessRequest
     ) {
-        return api.post<ApiResponse<Business>>(
+        return api.post<OwnerBusinessResponse>(
             "/business",
             data
         );
@@ -43,8 +51,45 @@ export const businessService = {
     async getBusinessById(
         id: string
     ) {
-        return api.get<ApiResponse<Business>>(
+        return api.get<OwnerBusinessResponse>(
             `/business/${id}`
         );
+    },
+
+    async updateBusiness(
+        id: string,
+        payload: UpdateBusinessRequest
+    ) {
+        const validatedPayload = UpdateBusinessRequestSchema.parse(payload);
+
+        return api.put<OwnerBusinessResponse>(
+            `/business/${id}`,
+            validatedPayload
+        );
+    },
+
+    async getBusinessFollowStatus(id: string) {
+        const response = await api.get(`/business/${id}/follow-status`);
+        return BusinessFollowStatusResponseSchema.parse(response.data).data;
+    },
+
+    async followBusiness(id: string) {
+        const response = await api.post(`/business/${id}/follow`);
+        return BusinessFollowStatusResponseSchema.parse(response.data).data;
+    },
+
+    async unfollowBusiness(id: string) {
+        const response = await api.delete(`/business/${id}/follow`);
+        return BusinessFollowStatusResponseSchema.parse(response.data).data;
+    },
+
+    async trackBusinessBehavior(id: string, payload: TrackBusinessBehaviorRequest) {
+        const validatedPayload = TrackBusinessBehaviorRequestSchema.parse(payload);
+        return api.post(`/business/${id}/behavior`, validatedPayload);
+    },
+
+    async getOwnerBusinessStats(id: string) {
+        const response = await api.get(`/business/${id}/stats`);
+        return OwnerBusinessStatsResponseSchema.parse(response.data).data;
     },
 };

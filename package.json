@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@mteherandev/colombia-icons-react": "^0.27.0",
-    "@ndrs92/contracts": "0.1.0",
+    "@ndrs92/contracts": "^0.3.0",
     "@react-oauth/google": "^0.13.5",
     "axios": "^1.18.1",
     "clsx": "^2.1.1",

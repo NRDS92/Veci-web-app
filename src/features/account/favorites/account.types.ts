@@ -1,4 +1,6 @@
 
+import type { OwnerBusiness } from "@ndrs92/contracts";
+
 export interface ApiResponse<T> {
     success: boolean;
     data: T;
@@ -31,42 +33,7 @@ export interface MyEvent {
     };
 }
 
-export interface MyBusiness {
-    _id: string;
-    name: string;
-    slug: string;
-    description?: string;
-    providerType: "business" | "community";
-    category:
-        | "food"
-        | "entertainment"
-        | "services"
-        | "shopping"
-        | "education"
-        | "health";
-    subCategory?: string;
-    images: {
-        profile: string;
-        cover?: string;
-        gallery: string[];
-    };
-    location: {
-        address: string;
-        cityId: string;
-        country: string;
-        coordinates: {
-            lat: number;
-            lng: number;
-        };
-    };
-    rating: {
-        average: number;
-        count: number;
-    };
-    eventsCount: number;
-    followersCount: number;
-    status: "active" | "blocked";
-}
+export type MyBusiness = OwnerBusiness;
 
 export interface FavoriteCreator {
     _id: string;

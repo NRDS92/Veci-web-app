@@ -1,5 +1,5 @@
 
-import type { PublicBusiness } from "@ndrs92/contracts";
+import { PublicBusinessSchema, type PublicBusiness } from "@ndrs92/contracts";
 
 export type { PublicBusiness };
 
@@ -243,7 +243,7 @@ export async function getPublicBusinesses(
         );
     }
 
-    return data.data;
+    return data.data.map((business) => PublicBusinessSchema.parse(business));
 }
 
 // ==================================================
@@ -298,7 +298,7 @@ export async function getPublicBusinessBySlug(
         );
     }
 
-    return data.data.entity;
+    return PublicBusinessSchema.parse(data.data.entity);
 }
 
 // ==================================================
@@ -353,5 +353,8 @@ export async function getPublicBusinessContentBySlug(
         );
     }
 
-    return data.data;
+    return {
+        ...data.data,
+        entity: PublicBusinessSchema.parse(data.data.entity),
+    };
 }

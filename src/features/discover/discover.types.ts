@@ -1,3 +1,5 @@
+import type { PublicBusiness } from "@ndrs92/contracts";
+
 export type DiscoverType =
     | "all"
     | "events"
@@ -58,48 +60,9 @@ export interface DiscoverEvent {
    BUSINESS
 ========================================================= */
 
-export interface DiscoverBusiness {
-    _id: string;
+export type DiscoverBusiness = PublicBusiness & {
     type: "business";
-    name: string;
-    slug?: string;
-    description?: string;
-    category?: string;
-    subCategory?: string;
-    // IMAGES — API public contract
-    image?: string;
-    coverImage?: string;
-    gallery?: string[];
-
-    // Legacy compatibility
-    images?: {
-        profile?: string;
-        cover?: string;
-    };
-    location?: {
-        coordinates?: {
-            lat?: number;
-            lng?: number;
-        };
-        address?: string;
-        cityId?: string;
-        country?: string;
-    };
-    rating?: {
-        average?: number;
-        count?: number;
-    };
-    website?: string;
-    instagram?: string;
-    whatsapp?: string;
-    priceRange?: string;
-    status?: string;
-    isFeatured?: boolean;
-    isLatinoOwned?: boolean;
-    followersCount?: number;
-    eventsCount?: number;
-    likesCount?: number;
-}
+};
 
 /* =========================================================
    ITEM
