@@ -1,13 +1,19 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
 import { ownerBusinessFixture } from "./fixtures/business";
 
 const mocks = vi.hoisted(() => ({
     useMyBusinesses: vi.fn(),
+    getOwnerBusinessStats: vi.fn(),
 }));
 
 vi.mock("@/features/account/favorites/useMyBusinesses", () => ({
     useMyBusinesses: mocks.useMyBusinesses,
+}));
+vi.mock("@/features/business/business.service", () => ({
+    businessService: {
+        getOwnerBusinessStats: mocks.getOwnerBusinessStats,
+    },
 }));
 vi.mock("@/i18n/navigation", () => ({
     Link: ({ href, children, ...props }: React.ComponentProps<"a">) => (
@@ -18,6 +24,8 @@ vi.mock("@/i18n/navigation", () => ({
 import MyBusinesses from "@/components/account/favorites/MyBusinesses";
 
 describe("MyBusinesses OwnerBusiness rendering", () => {
+    afterEach(() => cleanup());
+
     beforeEach(() => {
         mocks.useMyBusinesses.mockReturnValue({
             businesses: [ownerBusinessFixture],
@@ -25,9 +33,17 @@ describe("MyBusinesses OwnerBusiness rendering", () => {
             error: null,
             refetch: vi.fn(),
         });
+        mocks.getOwnerBusinessStats.mockResolvedValue({
+            businessId: ownerBusinessFixture._id,
+            followersCount: 2,
+            eventsCount: 3,
+            businessViews: 11,
+            menuDownloadAttempts: 1,
+            periodDays: 90,
+        });
     });
 
-    it("renders an owner business when optional location fields are absent", () => {
+    it("renders an owner business when optional location fields are absent", async () => {
         render(<MyBusinesses />);
 
         expect(screen.getByText("Café Sol")).toBeInTheDocument();
@@ -40,5 +56,7 @@ describe("MyBusinesses OwnerBusiness rendering", () => {
             "href",
             "/business/edit/business-123",
         );
+        expect(await screen.findByText("Last 90 days")).toBeInTheDocument();
+        expect(mocks.getOwnerBusinessStats).toHaveBeenCalledWith(ownerBusinessFixture._id);
     });
 });
