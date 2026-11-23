@@ -325,7 +325,7 @@ export default function Navbar() {
                         </Link>
                         {/* COMUNIDAD */}
                         <Link
-                            href="/community"
+                            href="/communities"
                             className={`
                                 group
                                 relative
@@ -1018,7 +1018,7 @@ export default function Navbar() {
                             </Link>
 
                             <Link
-                                href="/community"
+                                href="/communities"
                                 className={`
                                     group
                                     flex
