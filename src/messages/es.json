@@ -13,6 +13,50 @@
     "loggedInAs": "Sesión iniciada como",
     "toggleMenu": "Abrir menú"
   },
+  "CommunityCreation": {
+    "card": {
+      "title": "Crear una comunidad",
+      "description": "Crea un espacio donde las personas puedan conectar, compartir intereses y organizar actividades.",
+      "cta": "Crear comunidad"
+    },
+    "page": {
+      "title": "Crear una comunidad",
+      "description": "Crea un espacio donde las personas puedan conectar, compartir intereses y organizar actividades."
+    },
+    "sections": { "details": "Detalles de la comunidad", "images": "Imágenes", "contact": "Información de contacto" },
+    "fields": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "country": "País",
+      "interests": "Intereses",
+      "interestsPlaceholder": "Cultura, comida, deportes",
+      "interestsHelp": "Separa los intereses con comas o saltos de línea.",
+      "membershipPolicy": "Política de membresía",
+      "open": "Abierta — cualquiera puede unirse",
+      "approval": "Con aprobación — las solicitudes requieren aprobación",
+      "profileImage": "Imagen de perfil (opcional)",
+      "coverImage": "Imagen de portada (opcional)",
+      "gallery": "Galería (opcional)",
+      "website": "Sitio web (opcional)",
+      "instagram": "Instagram (opcional)",
+      "whatsapp": "WhatsApp (opcional)",
+      "email": "Correo electrónico (opcional)"
+    },
+    "actions": { "submit": "Enviar comunidad para revisión", "submitting": "Enviando..." },
+    "errors": {
+      "invalidForm": "Revisa los campos obligatorios y confirma que los datos de contacto sean válidos.",
+      "login": "Inicia sesión de nuevo",
+      "unauthorized": "Tu sesión expiró. Inicia sesión de nuevo para enviar la comunidad."
+    },
+    "success": {
+      "title": "Comunidad creada",
+      "pending": "Tu comunidad está pendiente de moderación por VECI. No aparecerá públicamente hasta que sea aprobada.",
+      "received": "Recibimos tu comunidad. Todavía no aparece públicamente.",
+      "reference": "ID de referencia: {id}",
+      "home": "Volver a Veci",
+      "back": "Crear otra"
+    }
+  },
 
   "hero": {
       "slide1": {

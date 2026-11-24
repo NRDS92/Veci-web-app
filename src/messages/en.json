@@ -13,6 +13,50 @@
     "loggedInAs": "Logged in as",
     "toggleMenu": "Open menu"
   },
+  "CommunityCreation": {
+    "card": {
+      "title": "Create a Community",
+      "description": "Create a space where people can connect, share interests and organize activities.",
+      "cta": "Create Community"
+    },
+    "page": {
+      "title": "Create a Community",
+      "description": "Create a space where people can connect, share interests and organize activities."
+    },
+    "sections": { "details": "Community details", "images": "Images", "contact": "Contact information" },
+    "fields": {
+      "name": "Name",
+      "description": "Description",
+      "country": "Country",
+      "interests": "Interests",
+      "interestsPlaceholder": "Culture, food, sports",
+      "interestsHelp": "Separate interests with commas or new lines.",
+      "membershipPolicy": "Membership policy",
+      "open": "Open — anyone can join",
+      "approval": "Approval — membership requests need approval",
+      "profileImage": "Profile image (optional)",
+      "coverImage": "Cover image (optional)",
+      "gallery": "Gallery (optional)",
+      "website": "Website (optional)",
+      "instagram": "Instagram (optional)",
+      "whatsapp": "WhatsApp (optional)",
+      "email": "Email (optional)"
+    },
+    "actions": { "submit": "Submit Community for review", "submitting": "Submitting..." },
+    "errors": {
+      "invalidForm": "Check the required fields and make sure contact details are valid.",
+      "login": "Log in again",
+      "unauthorized": "Your session has expired. Log in again to submit your Community."
+    },
+    "success": {
+      "title": "Community created",
+      "pending": "Your Community is pending moderation by VECI. It will not be publicly listed until it is approved.",
+      "received": "Your Community was received. It is not publicly listed yet.",
+      "reference": "Reference ID: {id}",
+      "home": "Back to Veci",
+      "back": "Create another"
+    }
+  },
   "hero": {
       "slide1": {
           "title": "Your community",

@@ -1,8 +1,10 @@
 import {Link} from "../../../i18n/navigation";
+import { useTranslations } from "next-intl";
 
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 export default function CreatePage() {
+    const t = useTranslations("CommunityCreation");
     return (
         <ProtectedRoute>
             <main className="min-h-screen bg-gray-50 px-6 pb-20 pt-32">
@@ -18,7 +20,7 @@ export default function CreatePage() {
                         </p>
                     </div>
 
-                    <div className="grid gap-6 md:grid-cols-2">
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                         <Link
                             href="/create/event"
                             className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:border-[#FF7A00] hover:shadow-md"
@@ -61,6 +63,27 @@ export default function CreatePage() {
 
                             <span className="mt-6 inline-block text-sm font-semibold text-[#FF7A00]">
                                 Add Business →
+                            </span>
+                        </Link>
+
+                        <Link
+                            href="/create/community"
+                            className="group rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:border-[#FF7A00] hover:shadow-md"
+                        >
+                            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl bg-orange-50 text-2xl">
+                                🤝
+                            </div>
+
+                            <h2 className="text-xl font-semibold text-gray-900">
+                                {t("card.title")}
+                            </h2>
+
+                            <p className="mt-2 text-sm leading-6 text-gray-600">
+                                {t("card.description")}
+                            </p>
+
+                            <span className="mt-6 inline-block text-sm font-semibold text-[#FF7A00]">
+                                {t("card.cta")} →
                             </span>
                         </Link>
                     </div>
