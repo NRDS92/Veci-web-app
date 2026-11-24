@@ -13,6 +13,50 @@
     "loggedInAs": "Angemeldet als",
     "toggleMenu": "Menü öffnen"
   },
+  "CommunityCreation": {
+    "card": {
+      "title": "Community erstellen",
+      "description": "Erstelle einen Ort, an dem Menschen sich verbinden, Interessen teilen und Aktivitäten organisieren können.",
+      "cta": "Community erstellen"
+    },
+    "page": {
+      "title": "Community erstellen",
+      "description": "Erstelle einen Ort, an dem Menschen sich verbinden, Interessen teilen und Aktivitäten organisieren können."
+    },
+    "sections": { "details": "Community-Details", "images": "Bilder", "contact": "Kontaktinformationen" },
+    "fields": {
+      "name": "Name",
+      "description": "Beschreibung",
+      "country": "Land",
+      "interests": "Interessen",
+      "interestsPlaceholder": "Kultur, Essen, Sport",
+      "interestsHelp": "Trenne Interessen mit Kommas oder Zeilenumbrüchen.",
+      "membershipPolicy": "Mitgliedschaftsrichtlinie",
+      "open": "Offen — alle können beitreten",
+      "approval": "Mit Genehmigung — Anfragen müssen bestätigt werden",
+      "profileImage": "Profilbild (optional)",
+      "coverImage": "Titelbild (optional)",
+      "gallery": "Galerie (optional)",
+      "website": "Website (optional)",
+      "instagram": "Instagram (optional)",
+      "whatsapp": "WhatsApp (optional)",
+      "email": "E-Mail (optional)"
+    },
+    "actions": { "submit": "Community zur Prüfung einreichen", "submitting": "Wird eingereicht..." },
+    "errors": {
+      "invalidForm": "Prüfe die Pflichtfelder und die Gültigkeit der Kontaktdaten.",
+      "login": "Erneut anmelden",
+      "unauthorized": "Deine Sitzung ist abgelaufen. Melde dich erneut an, um die Community einzureichen."
+    },
+    "success": {
+      "title": "Community erstellt",
+      "pending": "Deine Community wartet auf die Moderation durch VECI. Sie wird erst nach der Genehmigung öffentlich angezeigt.",
+      "received": "Deine Community wurde übermittelt. Sie ist noch nicht öffentlich sichtbar.",
+      "reference": "Referenz-ID: {id}",
+      "home": "Zurück zu Veci",
+      "back": "Weitere erstellen"
+    }
+  },
   "hero": {
       "slide1": {
           "title": "Deine Community",
