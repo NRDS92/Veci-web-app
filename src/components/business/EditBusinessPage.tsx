@@ -39,17 +39,6 @@ export default function EditBusinessPage() {
                 }
 
                 const business = parsed.data.data;
-                const { location } = business;
-                if (
-                    !location.address?.trim() ||
-                    !location.country?.trim() ||
-                    !location.coordinates ||
-                    !Number.isFinite(location.coordinates.lat) ||
-                    !Number.isFinite(location.coordinates.lng)
-                ) {
-                    throw new Error("This business is missing a complete location. Editing is disabled to protect its saved data.");
-                }
-
                 if (active) setState({ status: "ready", business });
             } catch (error) {
                 const apiError = getApiError(error);
