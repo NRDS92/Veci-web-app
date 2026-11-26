@@ -6,7 +6,7 @@ import { useNotification } from "@/components/notifications/NotificationProvider
 import { getApiError } from "@/lib/api/apiError";
 import LocationSelector from "@/components/location/LocationSelector";
 import { businessService } from "@/features/business/business.service";
-import { buildCreateBusinessRequest, buildUpdateBusinessRequest, isValidBusinessName } from "@/features/business/business-form.helpers";
+import { buildCreateBusinessRequest, buildUpdateBusinessRequest, getEditableBusinessLocation, isCompleteBusinessLocation, isValidBusinessName } from "@/features/business/business-form.helpers";
 import { CreateBusinessRequestSchema, UpdateBusinessRequestSchema, type CreateBusinessRequest } from "@ndrs92/contracts";
 import type { OwnerBusiness } from "@ndrs92/contracts";
 import {
@@ -15,7 +15,7 @@ import {
     BusinessPricingType,
     BusinessOpeningHours,
 } from "@/features/business/business.types";
-import { LocationData } from "@/features/location/location.types";
+import type { LocationSelectionData } from "@/features/location/location.types";
 import DocumentUpload, {
     type DocumentUploadValue,
 } from "../../components/upload/DocumentUpload";
@@ -224,15 +224,8 @@ export default function BusinessForm({ initialBusiness }: BusinessFormProps) {
     // LOCATION
     // ==================================================
     const [location, setLocation] =
-        useState<LocationData | null>(initialBusiness ? {
-            placeId: "",
-            city: initialBusiness.location.cityId,
-            country: initialBusiness.location.country ?? "",
-            countryCode: "",
-            formattedAddress: initialBusiness.location.address ?? "",
-            latitude: initialBusiness.location.coordinates?.lat ?? 0,
-            longitude: initialBusiness.location.coordinates?.lng ?? 0,
-        } : null);
+        useState<LocationSelectionData | null>(initialBusiness ? getEditableBusinessLocation(initialBusiness) : null);
+    const [locationChanged, setLocationChanged] = useState(false);
     // ==================================================
     // CONTACT
     // ==================================================
@@ -415,26 +408,28 @@ export default function BusinessForm({ initialBusiness }: BusinessFormProps) {
             );
             return;
         }
-        if (!location) {
+        if (!initialBusiness && !isCompleteBusinessLocation(location)) {
             setError(
                 "Please select a business location."
             );
             return;
         }
+        if (initialBusiness && locationChanged && !isCompleteBusinessLocation(location)) {
+            setError("Please select a complete location with address, city, country and coordinates.");
+            return;
+        }
         try {
             setLoading(true);
-            // ==================================================
-            // NEW BUSINESS API CONTRACT
-            // ==================================================
-            const payload: CreateBusinessRequest = buildCreateBusinessRequest({
+            const formValues = {
                 name, description, category, subCategory, languages, openingHours,
                 pricing: { type: pricingType, amount: priceAmount, minAmount: priceMinAmount, maxAmount: priceMaxAmount, description: priceDescription },
-                profileImage, coverImage, galleryImages, documents, location,
+                profileImage, coverImage, galleryImages, documents,
                 email, phone, website, instagram, whatsapp, isLatinoOwned,
                 countryOfOrigin, tags,
-            });
+            };
             if (initialBusiness) {
-                const updatePayload = buildUpdateBusinessRequest(payload, initialBusiness);
+                const changedLocation = locationChanged && isCompleteBusinessLocation(location) ? location : undefined;
+                const updatePayload = buildUpdateBusinessRequest(formValues, initialBusiness, changedLocation);
                 const validation = UpdateBusinessRequestSchema.safeParse(updatePayload);
                 if (!validation.success) {
                     setError(validation.error.issues[0]?.message ?? "Please check the business details.");
@@ -450,6 +445,14 @@ export default function BusinessForm({ initialBusiness }: BusinessFormProps) {
                 return;
             }
 
+            if (!isCompleteBusinessLocation(location)) {
+                setError("Please select a complete location with address, city, country and coordinates.");
+                return;
+            }
+            const payload: CreateBusinessRequest = buildCreateBusinessRequest({
+                ...formValues,
+                location,
+            });
             const validation = CreateBusinessRequestSchema.safeParse(payload);
             if (!validation.success) {
                 setError(validation.error.issues[0]?.message ?? "Please check the business details.");
@@ -614,7 +617,10 @@ export default function BusinessForm({ initialBusiness }: BusinessFormProps) {
                 </div>
                 <LocationSelector
                     value={location}
-                    onChange={setLocation}
+                    onChange={(nextLocation) => {
+                        setLocation(nextLocation);
+                        setLocationChanged(true);
+                    }}
                     disabled={loading}
                 />
 

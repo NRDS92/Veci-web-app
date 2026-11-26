@@ -8,6 +8,7 @@ useState,
 
 import type {
 LocationData,
+LocationSelectionData,
 } from "@/features/location/location.types";
 
 import {
@@ -17,7 +18,7 @@ locationService,
 import LocationMapClient from "@/components/location/LocationMapClient";
 
 interface LocationSelectorProps {
-value: LocationData | null;
+value: LocationSelectionData | null;
 onChange: (location: LocationData | null) => void;
 disabled?: boolean;
 compact?: boolean;
@@ -37,6 +38,13 @@ const [loading, setLoading] = useState(false);
 const [error, setError] = useState<string | null>(null);
 
 const searchRequestId = useRef(0);
+const coordinates = value &&
+  typeof value.latitude === "number" &&
+  Number.isFinite(value.latitude) &&
+  typeof value.longitude === "number" &&
+  Number.isFinite(value.longitude)
+    ? [value.longitude, value.latitude] as [number, number]
+    : null;
 
 const handleSearch = async (
 event: ChangeEvent<HTMLInputElement>
@@ -68,6 +76,9 @@ try {
   }
 
   setResults(locations);
+  if (locations.length === 0) {
+    setError("No complete location found. Add the city and country to your search.");
+  }
 } catch (error) {
   if (requestId !== searchRequestId.current) {
     return;
@@ -213,13 +224,10 @@ return (
       </div>
 
       {/* MAP */}
-      {showMap && (
+      {showMap && coordinates && value && (
         <div className="overflow-hidden rounded-xl border border-gray-200">
           <LocationMapClient
-            coordinates={[
-              value.longitude,
-              value.latitude,
-            ]}
+            coordinates={coordinates}
             address={value.formattedAddress}
             title={value.city}
           />

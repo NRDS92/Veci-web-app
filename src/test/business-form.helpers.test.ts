@@ -4,8 +4,11 @@ import {
     buildBusinessPricing,
     buildCreateBusinessRequest,
     buildUpdateBusinessRequest,
+    getEditableBusinessLocation,
+    isCompleteBusinessLocation,
     isValidBusinessName,
 } from "@/features/business/business-form.helpers";
+import { ownerBusinessFixture } from "@/test/fixtures/business";
 
 const openingHours = {
     monday: { isOpen: true, intervals: [{ open: "09:00", close: "17:00" }] },
@@ -98,8 +101,10 @@ describe("Business create form helpers", () => {
                 availability: { type: "appointment", description: "Call first" },
             },
         } as OwnerBusiness;
-        const request = buildUpdateBusinessRequest(buildCreateBusinessRequest(formValues), ownerBusiness);
+        const { location: selectedLocation, ...businessFields } = formValues;
+        const request = buildUpdateBusinessRequest(businessFields, ownerBusiness);
 
+        expect(selectedLocation.formattedAddress).toBe("Example Str. 1");
         expect(request.profile).toMatchObject({
             headline: "Locally owned",
             services: ["catering"],
@@ -111,8 +116,63 @@ describe("Business create form helpers", () => {
         expect(request).toMatchObject({
             images: { profile: formValues.profileImage, cover: formValues.coverImage, gallery: formValues.galleryImages },
             documents: formValues.documents,
-            location: { address: "Example Str. 1", cityId: "berlin", latitude: 52.52, longitude: 13.405 },
+        });
+        expect(request).not.toHaveProperty("location");
+        expect(UpdateBusinessRequestSchema.safeParse(request).success).toBe(true);
+    });
+
+    it("serializes a changed street address with its city, country, and real coordinates", () => {
+        const ownerBusiness: OwnerBusiness = ownerBusinessFixture;
+        const { location, ...businessFields } = formValues;
+        const request = buildUpdateBusinessRequest(businessFields, ownerBusiness, {
+            ...location,
+            city: "Köln",
+            formattedAddress: "Gotenring 16, 50679 Köln, Germany",
+            latitude: 50.9348,
+            longitude: 6.9762,
+        });
+
+        expect(request.location).toEqual({
+            address: "Gotenring 16, 50679 Köln, Germany",
+            cityId: "Köln",
+            country: "Germany",
+            latitude: 50.9348,
+            longitude: 6.9762,
         });
         expect(UpdateBusinessRequestSchema.safeParse(request).success).toBe(true);
+    });
+
+    it("initializes legacy OwnerBusiness locations without fabricating coordinates or place IDs", () => {
+        const ownerBusiness = {
+            _id: "business-legacy",
+            location: { cityId: "Köln", address: "Gotenring 16", country: "Germany" },
+        } as OwnerBusiness;
+        const location = getEditableBusinessLocation(ownerBusiness);
+
+        expect(location).toEqual({
+            city: "Köln",
+            country: "Germany",
+            formattedAddress: "Gotenring 16",
+        });
+        expect(isCompleteBusinessLocation(location)).toBe(false);
+        expect(location).not.toHaveProperty("latitude");
+        expect(location).not.toHaveProperty("longitude");
+    });
+
+    it("rejects an intentionally changed location that lacks coordinates", () => {
+        const incomplete = {
+            city: "Köln",
+            country: "Germany",
+            formattedAddress: "Gotenring 16, Köln",
+        };
+
+        expect(isCompleteBusinessLocation(incomplete)).toBe(false);
+        expect(UpdateBusinessRequestSchema.safeParse({
+            location: {
+                address: incomplete.formattedAddress,
+                cityId: incomplete.city,
+                country: incomplete.country,
+            },
+        }).success).toBe(false);
     });
 });

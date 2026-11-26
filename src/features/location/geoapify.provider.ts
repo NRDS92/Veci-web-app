@@ -18,30 +18,49 @@ const AUTOCOMPLETE_URL =
 const REVERSE_URL =
     "https://api.geoapify.com/v1/geocode/reverse";
 
-const mapFeatureToLocation = (
+export const mapFeatureToLocation = (
     feature: GeoapifyFeature
 ): LocationData | null => {
     const properties = feature.properties;
 
-    const city =
-        properties.city ??
-        properties.town ??
-        properties.village ??
-        properties.municipality;
+    // Keep Discovery's city value administrative: suburb/district/county can
+    // describe a different geography and must not be substituted for a city.
+    const city = [
+        properties.city,
+        properties.town,
+        properties.village,
+        properties.municipality,
+    ].find((value) => typeof value === "string" && value.trim())?.trim();
+    const country = properties.country?.trim();
+    const countryCode = properties.country_code?.trim().toUpperCase();
+    const formattedAddress = properties.formatted?.trim();
+    const latitude = properties.lat;
+    const longitude = properties.lon;
+    const placeId = properties.place_id?.trim();
 
-    if (!city) {
+    if (
+        !city ||
+        !country ||
+        !countryCode ||
+        !formattedAddress ||
+        !placeId ||
+        typeof latitude !== "number" ||
+        typeof longitude !== "number" ||
+        !Number.isFinite(latitude) ||
+        !Number.isFinite(longitude)
+    ) {
         return null;
     }
 
     return {
-        placeId: properties.place_id,
+        placeId,
         city,
-        country: properties.country,
-        countryCode: properties.country_code.toUpperCase(),
-        state: properties.state,
-        formattedAddress: properties.formatted,
-        latitude: properties.lat,
-        longitude: properties.lon,
+        country,
+        countryCode,
+        state: properties.state?.trim() || undefined,
+        formattedAddress,
+        latitude,
+        longitude,
     };
 };
 
@@ -107,17 +126,12 @@ export const geoapifyProvider: LocationProvider = {
         const features =
             await fetchAutocompleteFeatures(query, "country");
 
-        return features
-            .filter(
-                (feature) =>
-                    Boolean(feature.properties.country) &&
-                    Boolean(feature.properties.country_code)
-            )
-            .map((feature) => ({
-                placeId: feature.properties.place_id,
-                name: feature.properties.country,
-                code: feature.properties.country_code.toUpperCase(),
-            }));
+        return features.flatMap((feature) => {
+            const placeId = feature.properties.place_id?.trim();
+            const name = feature.properties.country?.trim();
+            const code = feature.properties.country_code?.trim().toUpperCase();
+            return placeId && name && code ? [{ placeId, name, code }] : [];
+        });
     },
 
     async reverseGeocode(

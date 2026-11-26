@@ -1,6 +1,6 @@
 export interface GeoapifyFeature {
     properties: {
-        place_id: string;
+        place_id?: string;
 
         city?: string;
 
@@ -10,17 +10,24 @@ export interface GeoapifyFeature {
 
         municipality?: string;
 
+        /** Neighborhood fields are deliberately not treated as a city. */
+        suburb?: string;
+
+        district?: string;
+
+        county?: string;
+
         state?: string;
 
-        country: string;
+        country?: string;
 
-        country_code: string;
+        country_code?: string;
 
-        formatted: string;
+        formatted?: string;
 
-        lat: number;
+        lat?: number;
 
-        lon: number;
+        lon?: number;
     };
 }
 

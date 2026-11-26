@@ -5,7 +5,7 @@ import type {
     BusinessSubCategory,
 } from "./business.types";
 import type { CreateBusinessRequest, OwnerBusiness, UpdateBusinessRequest } from "@ndrs92/contracts";
-import type { LocationData } from "@/features/location/location.types";
+import type { ResolvedLocationData, LocationSelectionData } from "@/features/location/location.types";
 
 type PricingInput = {
     type: BusinessPricingType;
@@ -51,7 +51,7 @@ export const buildBusinessPricing = ({
     };
 };
 
-type CreateBusinessFormValues = {
+export type BusinessFormValues = {
     name: string;
     description: string;
     category: BusinessCategory;
@@ -63,7 +63,6 @@ type CreateBusinessFormValues = {
     coverImage: string;
     galleryImages: string[];
     documents: NonNullable<CreateBusinessRequest["documents"]>;
-    location: LocationData;
     email: string;
     phone: string;
     website: string;
@@ -74,9 +73,11 @@ type CreateBusinessFormValues = {
     tags: string[];
 };
 
-export const buildCreateBusinessRequest = (
-    values: CreateBusinessFormValues,
-): CreateBusinessRequest => ({
+type BusinessRequestWithoutLocation = Omit<CreateBusinessRequest, "location">;
+
+const buildBusinessRequestFields = (
+    values: BusinessFormValues,
+): BusinessRequestWithoutLocation => ({
     name: values.name.trim(),
     description: values.description.trim() || undefined,
     providerType: "business",
@@ -96,13 +97,6 @@ export const buildCreateBusinessRequest = (
         gallery: values.galleryImages,
     },
     documents: values.documents.map(({ type, url, name }) => ({ type, url, name })),
-    location: {
-        address: values.location.formattedAddress,
-        cityId: values.location.city,
-        country: values.location.country,
-        latitude: values.location.latitude,
-        longitude: values.location.longitude,
-    },
     contact: {
         email: values.email.trim() || undefined,
         phone: values.phone.trim() || undefined,
@@ -117,20 +111,62 @@ export const buildCreateBusinessRequest = (
     tags: values.tags,
 });
 
+const serializeLocation = (location: ResolvedLocationData) => ({
+    address: location.formattedAddress,
+    cityId: location.city,
+    country: location.country,
+    latitude: location.latitude,
+    longitude: location.longitude,
+});
+
+export const getEditableBusinessLocation = (
+    business: OwnerBusiness,
+): LocationSelectionData => ({
+    city: business.location.cityId,
+    country: business.location.country ?? "",
+    formattedAddress: business.location.address ?? "",
+    ...(business.location.coordinates
+        ? {
+            latitude: business.location.coordinates.lat,
+            longitude: business.location.coordinates.lng,
+        }
+        : {}),
+});
+
+export const isCompleteBusinessLocation = (
+    location: LocationSelectionData | null,
+): location is ResolvedLocationData => Boolean(
+    location &&
+    location.city.trim() &&
+    location.country.trim() &&
+    location.formattedAddress.trim() &&
+    Number.isFinite(location.latitude) &&
+    Number.isFinite(location.longitude)
+);
+
+export const buildCreateBusinessRequest = (
+    values: BusinessFormValues & { location: ResolvedLocationData },
+): CreateBusinessRequest => ({
+    ...buildBusinessRequestFields(values),
+    location: serializeLocation(values.location),
+});
+
 /** Builds a full replacement payload while retaining owner profile fields this form does not edit. */
 export const buildUpdateBusinessRequest = (
-    request: CreateBusinessRequest,
+    values: BusinessFormValues,
     business: OwnerBusiness,
+    changedLocation?: ResolvedLocationData,
 ): UpdateBusinessRequest => ({
-    ...request,
+    ...buildBusinessRequestFields(values),
+    ...(changedLocation ? { location: serializeLocation(changedLocation) } : {}),
     providerType: business.providerType,
     profile: {
         ...business.profile,
-        languages: request.profile?.languages ?? business.profile.languages,
-        openingHours: request.profile?.openingHours,
-        pricing: request.profile?.pricing,
+        languages: values.languages ?? business.profile.languages,
+        openingHours: values.openingHours,
+        pricing: buildBusinessPricing(values.pricing),
     },
-    documents: request.documents?.map(({ type, url, name }) => ({
+    documents: values.documents?.map(({ type, url, name }) => ({
         type,
         url,
         ...(name ? { name } : {}),
