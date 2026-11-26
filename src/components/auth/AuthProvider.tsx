@@ -17,6 +17,7 @@ interface AuthContextValue {
     isAuthenticated: boolean;
     logout: () => void;
     refreshUser: () => Promise<void>;
+    setSessionToken: (token: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -54,6 +55,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(null);
     };
 
+    const setSessionToken = async (token: string) => {
+        sessionStorage.setItem("auth_token", token);
+        await refreshUser();
+    };
+
     useEffect(() => {
         const initializeAuth = async () => {
             await refreshUser();
@@ -71,6 +77,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 isAuthenticated: Boolean(user),
                 logout,
                 refreshUser,
+                setSessionToken,
             }}
         >
             {children}

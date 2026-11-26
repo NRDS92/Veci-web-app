@@ -6,10 +6,14 @@ import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 
 import { authService } from "@/features/auth/auth.service";
+import { PasswordSchema } from "@ndrs92/contracts";
+import PasswordRequirements from "@/components/auth/PasswordRequirements";
+import { useTranslations } from "next-intl";
 
 export default function ResetPasswordForm() {
     const params = useParams();
     const router = useRouter();
+    const t = useTranslations("PasswordSecurity");
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -31,22 +35,22 @@ export default function ResetPasswordForm() {
         setSuccess("");
 
         if (!token) {
-            setError("Invalid or missing reset token.");
+            setError(t("invalidToken"));
             return;
         }
 
-        if (!password.trim()) {
-            setError("Password is required.");
+        if (password.length === 0) {
+            setError(t("required"));
             return;
         }
 
-        if (password.length < 8) {
-            setError("Password must be at least 8 characters.");
+        if (!PasswordSchema.safeParse(password).success) {
+            setError(t("policyError"));
             return;
         }
 
         if (password !== confirmPassword) {
-            setError("Passwords do not match.");
+            setError(t("mismatch"));
             return;
         }
 
@@ -58,21 +62,20 @@ export default function ResetPasswordForm() {
                 password,
             });
 
-            setSuccess("Password updated successfully.");
+            setSuccess(t("resetSuccess"));
 
             setPassword("");
             setConfirmPassword("");
 
         } catch (error: unknown) {
-            console.error(error);
-
             if (axios.isAxiosError(error)) {
-                setError(
-                    error.response?.data?.message ??
-                    "Unable to reset password."
-                );
+                const code = error.response?.data?.code;
+                if (code === "INVALID_RESET_TOKEN") setError(t("invalidToken"));
+                else if (code === "VALIDATION_ERROR" || code === "PASSWORD_REUSE") setError(t("policyError"));
+                else if (code === "RATE_LIMITED") setError(t("rateLimited"));
+                else setError(t("resetError"));
             } else {
-                setError("Unexpected error.");
+                setError(t("genericError"));
             }
         } finally {
             setLoading(false);
@@ -84,11 +87,11 @@ export default function ResetPasswordForm() {
             <div className="mx-auto max-w-md rounded-2xl bg-white p-8 shadow-lg">
 
                 <h1 className="mb-2 text-3xl font-bold text-gray-900">
-                    Reset password
+                    {t("resetTitle")}
                 </h1>
 
                 <p className="mb-8 text-gray-500">
-                    Enter your new password below.
+                    {t("resetDescription")}
                 </p>
 
                 <form
@@ -101,7 +104,7 @@ export default function ResetPasswordForm() {
                             htmlFor="password"
                             className="mb-2 block text-sm font-medium text-gray-700"
                         >
-                            New password
+                            {t("newPassword")}
                         </label>
 
                         <input
@@ -111,10 +114,11 @@ export default function ResetPasswordForm() {
                             onChange={(e) =>
                                 setPassword(e.target.value)
                             }
-                            placeholder="Enter your new password"
+                            placeholder={t("newPasswordPlaceholder")}
                             autoComplete="new-password"
                             className="w-full rounded-lg border border-gray-300 p-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
+                        <PasswordRequirements password={password} />
                     </div>
 
                     <div>
@@ -122,7 +126,7 @@ export default function ResetPasswordForm() {
                             htmlFor="confirmPassword"
                             className="mb-2 block text-sm font-medium text-gray-700"
                         >
-                            Confirm password
+                            {t("confirmPassword")}
                         </label>
 
                         <input
@@ -132,7 +136,7 @@ export default function ResetPasswordForm() {
                             onChange={(e) =>
                                 setConfirmPassword(e.target.value)
                             }
-                            placeholder="Confirm your new password"
+                            placeholder={t("confirmPasswordPlaceholder")}
                             autoComplete="new-password"
                             className="w-full rounded-lg border border-gray-300 p-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
@@ -147,17 +151,17 @@ export default function ResetPasswordForm() {
                             }
                         />
 
-                        Show password
+                        {t("showPassword")}
                     </label>
 
                     {error && (
-                        <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                        <div role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
                             {error}
                         </div>
                     )}
 
                     {success && (
-                        <div className="rounded-lg bg-green-50 p-3 text-sm text-green-600">
+                        <div role="status" className="rounded-lg bg-green-50 p-3 text-sm text-green-600">
                             {success}
                         </div>
                     )}
@@ -168,8 +172,8 @@ export default function ResetPasswordForm() {
                         className="w-full rounded-lg bg-orange-500 py-3 font-medium text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {loading
-                            ? "Updating..."
-                            : "Reset password"}
+                            ? t("submitting")
+                            : t("resetTitle")}
                     </button>
 
                     {success && (
@@ -178,7 +182,7 @@ export default function ResetPasswordForm() {
                             onClick={() => router.push("/login")}
                             className="w-full text-sm font-medium text-blue-600 hover:underline"
                         >
-                            Go to login
+                            {t("goToLogin")}
                         </button>
                     )}
 

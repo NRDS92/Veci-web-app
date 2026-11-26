@@ -7,11 +7,15 @@ import {
 } from "lucide-react";
 
 import { SiluetaColombia } from "@mteherandev/colombia-icons-react";
+import { KeyRound } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 import { useAuth } from "@/components/auth/AuthProvider";
 
 export default function ProfileAccount() {
   const { user } = useAuth();
+  const t = useTranslations("PasswordSecurity");
 
   if (!user) {
     return null;
@@ -37,6 +41,14 @@ export default function ProfileAccount() {
         </h2>
 
         <div className="mt-5 space-y-5">
+
+          {user.provider === "email" ? (
+            <Link href="/profile/change-password" className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-3 font-medium text-gray-900 hover:bg-gray-50">
+              <KeyRound size={18} aria-hidden="true" />{t("changeTitle")}
+            </Link>
+          ) : (
+            <p className="rounded-xl bg-gray-50 px-4 py-3 text-sm text-gray-600">{t("googleOnly")}</p>
+          )}
 
           <div className="flex items-start gap-3">
 

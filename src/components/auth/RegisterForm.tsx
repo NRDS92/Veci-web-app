@@ -8,6 +8,8 @@ import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useNotification } from "@/components/notifications/NotificationProvider";
 import { authService } from "../../features/auth/auth.service";
+import { PasswordSchema } from "@ndrs92/contracts";
+import PasswordRequirements from "./PasswordRequirements";
 import ColombiaLoader from "../../components/ui/loader/ColombiaLoader";
 import CitySelector from "../../components/ui/citySelector/CitySelector";
 
@@ -56,11 +58,11 @@ export default function RegisterForm() {
         return;
     }
 
-    if (password.length < 8) {
+    if (!PasswordSchema.safeParse(password).success) {
         notify({
         type: "warning",
-        title: t("validation.passwordLength.title"),
-        message: t("validation.passwordLength.message"),
+        title: t("validation.passwordPolicy.title"),
+        message: t("validation.passwordPolicy.message"),
         });
         return;
     }
@@ -353,6 +355,7 @@ export default function RegisterForm() {
                                     disabled={loading}
                                     className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3.5 text-sm outline-none transition focus:border-gray-400 focus:bg-white focus:ring-2 focus:ring-gray-100 disabled:cursor-not-allowed disabled:opacity-60"
                                 />
+                                <PasswordRequirements password={password} />
                             </div>
 
                             {/* Confirm password */}
