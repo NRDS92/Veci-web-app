@@ -1,602 +1,64 @@
-# 🌎 Veci Web
+# Veci Landing
 
-> **Discover your community. Find your people. 🇪🇺**
+Veci Landing is the public Next.js web client for discovering Latin American businesses, events and communities in Europe. It is maintained separately from the [Backend and Mobile monorepo](https://github.com/NRDS92/VECI---Latin-Community-Hub-) and the [Admin application](https://github.com/NRDS92/Veci---Admin).
 
-Veci is a community platform built to connect Latin Americans living in Europe with **local businesses, events, and their community**.
+## Application structure
 
-The web application provides a discovery experience where users can explore businesses and events based on their location and interests.
+- Next.js App Router pages live under src/app/[locale].
+- Locale routing is configured by next-intl for Spanish (default), English and German.
+- Domain API clients and helpers live under src/features; reusable UI lives under src/components.
+- Public Business, Event and Community content is fetched through src/lib/api/public-content.ts and checked with schemas from @ndrs92/contracts.
+- Authenticated JSON requests use the Axios client at src/lib/api.ts, which reads auth_token from browser sessionStorage and adds a Bearer header.
+- Forms validate at their service boundaries where shared request schemas are integrated.
 
-🔗 **Live:** https://www.veci-latin.com/
+## Routes in source
 
----
+Localized routes include home, events list/detail, Business list/detail/edit, Community list/detail, create chooser and Event/Business/Community create pages, login/register, profile, favorites, My Events/My Businesses, verification, forgot/reset password and Change Password. Dynamic route files are under src/app/[locale]. These source routes do not by themselves confirm production deployment.
 
-## 📌 About Veci
+## Implemented capabilities
 
-Moving to another country can make it difficult to find your community, discover local businesses, and know what is happening around you.
+- Discovery and public content for Businesses, Events and Communities.
+- Business create/edit, owner list, public detail, follow controls and owner aggregate engagement stats.
+- Event browsing/detail/create and owner event page flows.
+- Community creation and public discovery/detail.
+- Registration/login, Google sign-in, email verification, forgot/reset/change password.
+- Spanish, English and German message catalogs under src/messages.
 
-**Veci** aims to solve this problem by creating a digital space where Latin Americans in Europe can:
+Business tracking calls include public detail views and menu-download attempts; this is attempt tracking, not confirmed file downloads. Google Analytics is conditional on NEXT_PUBLIC_GA_MEASUREMENT_ID. See [Feature status](docs/FEATURE-STATUS.md).
 
-- 🔎 Discover local businesses
-- 🎉 Find community events
-- 🌎 Connect with Latin American culture
-- 📍 Explore content based on their city
-- ❤️ Save interesting places and events
-- 🏪 Promote their own businesses
-- 📅 Publish and manage events
+## Technology
 
-The initial focus is **Germany**, starting with cities such as Cologne and Düsseldorf.
+Manifest declarations: Node.js 26.x (.nvmrc and engines), Next.js 16.4.6, React/React DOM 19.3.1, TypeScript ^5, next-intl ^4.15.3, @ndrs92/contracts 0.6.0, Vitest ^5.1.1, React Testing Library ^16.3.3, ESLint ^9.39.5. See package.json and package-lock.json for declared and resolved dependency details.
 
----
+## Local setup
 
-## ✨ Features
-
-### 🔎 Discovery
-
-The main discovery experience allows users to browse:
-
-- All content
-- Events
-- Businesses
-
-Content is presented using a responsive **Bento-style layout** designed to make discovery more visual and engaging.
-
-### 🎉 Events
-
-Users can discover community events including:
-
-- Food & gastronomy
-- Parties
-- Culture
-- Sports
-- Meetups
-- Concerts
-
-Events can include:
-
-- Title and description
-- Images
-- Date and time
-- Location
-- Business association
-- Website
-- Instagram
-- WhatsApp
-- "Good to know" information
-- Attendance statistics
-
-### 🏪 Businesses
-
-Businesses can create a presence on Veci and provide information such as:
-
-- Business name
-- Description
-- Category
-- Location
-- Country of origin
-- Contact information
-- Images
-- Events
-- Followers
-- Ratings
-
-### 🔐 Authentication
-
-Veci includes an authentication system supporting:
-
-- User registration
-- Login
-- Email verification
-- Password recovery
-- Password reset
-- Protected routes
-- JWT-based authentication
-
-### 📱 Responsive Experience
-
-The web application is designed with a mobile-first approach while providing a responsive desktop experience.
-
----
-
-# 🏗️ Architecture
-
-The project follows a feature-oriented architecture designed to keep the application maintainable as Veci grows.
-
-```text
-Veci
-│
-├── Frontend
-│   ├── Next.js
-│   ├── React
-│   ├── TypeScript
-│   ├── Tailwind CSS
-│   └── next-intl
-│
-├── Backend
-│   ├── Node.js
-│   ├── Express
-│   ├── TypeScript
-│   ├── MongoDB
-│   └── JWT
-│
-└── Infrastructure
-    ├── Vercel
-    ├── Render
-    ├── Cloudinary
-    └── Resend
-```
-
----
-
-# 🛠️ Tech Stack
-
-## Frontend
-
-| Technology | Purpose |
-|---|---|
-| Next.js | React framework |
-| React | UI development |
-| TypeScript | Static typing |
-| Tailwind CSS | Styling |
-| next-intl | Internationalization |
-| React Query | Server-state management |
-| Axios | API communication |
-| Framer Motion | Animations |
-| Lucide React | Icons |
-
-## Backend
-
-| Technology | Purpose |
-|---|---|
-| Node.js | Runtime |
-| Express | REST API |
-| TypeScript | Static typing |
-| MongoDB | Database |
-| Mongoose | ODM |
-| JWT | Authentication |
-| bcrypt | Password hashing |
-| Multer | File uploads |
-| Cloudinary | Image storage |
-| Resend | Transactional email |
-
----
-
-# 🌐 Internationalization
-
-Veci is designed to support multiple languages.
-
-Current application structure includes localized routes such as:
-
-```text
-/es
-/en
-```
-
-Example:
-
-```text
-https://www.veci-latin.com/es
-https://www.veci-latin.com/en
-```
-
-Internationalization is handled using `next-intl`.
-
-The architecture allows additional languages to be introduced without restructuring the application.
-
----
-
-# 📂 Project Structure
-
-A simplified version of the project structure:
-
-```text
-src/
-│
-├── app/
-│   ├── [locale]/
-│   │   ├── page.tsx
-│   │   ├── events/
-│   │   ├── businesses/
-│   │   ├── create/
-│   │   └── reset-password/
-│   │
-│   └── admin/
-│       └── ...
-│
-├── components/
-│   ├── Discovery/
-│   ├── EventCard/
-│   ├── BusinessCard/
-│   ├── EventBento/
-│   ├── BusinessBento/
-│   └── ...
-│
-├── features/
-│   ├── auth/
-│   ├── events/
-│   ├── business/
-│   └── ...
-│
-├── services/
-│
-├── hooks/
-│
-├── lib/
-│
-└── types/
-```
-
-The project separates reusable UI components from domain-specific functionality to make future development easier.
-
----
-
-# 🔌 API
-
-The frontend communicates with a separate REST API.
-
-Main API resources include:
-
-```text
-/api/v1/auth
-/api/v1/events
-/api/v1/discover
-/api/v1/users
-/api/v1/business
-/api/v1/upload
-```
-
-Example:
-
-```text
-GET /api/v1/events
-GET /api/v1/events/:id
-GET /api/v1/events/nearby
-POST /api/v1/events
-POST /api/v1/events/:id/view
-POST /api/v1/events/:id/attend
-```
-
-Authentication-protected operations use JWT-based authorization.
-
----
-
-# 📍 Location-Based Discovery
-
-Events contain geographic information using GeoJSON:
-
-```json
-{
-  "type": "Point",
-  "coordinates": [
-    6.9603,
-    50.9375
-  ]
-}
-```
-
-MongoDB uses a `2dsphere` index to support geographic queries:
-
-```javascript
-EventSchema.index({
-  location: "2dsphere"
-});
-```
-
-This allows Veci to retrieve events based on geographic proximity.
-
----
-
-# 🎨 Design System
-
-Veci uses a simple visual identity centered around three main colors:
-
-```text
-Ebony       #111827
-Cream       #F2C94C
-Cornflower  #4C76F2
-```
-
-The interface focuses on:
-
-- Strong visual hierarchy
-- Rounded components
-- Bento layouts
-- Mobile-first design
-- Community-oriented imagery
-- Clear calls to action
-
----
-
-# 🚀 Getting Started
-
-## Requirements
-
-Before running the project, make sure you have:
-
-- Node.js 20+
-- npm
-- Git
-
----
-
-## Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/NRDS92/Veci-web-app.git
-```
-
-Navigate into the project:
-
-```bash
-cd Veci-web-app
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Create an environment file:
-
-```bash
-cp .env.example .env.local
-```
-
-Configure the required environment variables.
-
----
-
-## Environment Variables
-
-Example:
-
-```env
-NEXT_PUBLIC_API_URL=
-NEXT_PUBLIC_APP_URL=
-```
-
-Additional variables may be required depending on the enabled features and deployment environment.
-
-**Never commit secrets or production credentials to the repository.**
-
----
-
-## Development
-
-Run the development server:
-
-```bash
+~~~sh
+npm ci
 npm run dev
-```
+~~~
 
-Open:
+Then open http://localhost:3000. The default public API fallback is the configured Backend host in source; set NEXT_PUBLIC_API_URL to an intentional non-production API for local work. See [Development](docs/DEVELOPMENT.md).
 
-```text
-http://localhost:3000
-```
+Checks used by package scripts/CI:
 
----
-
-## Production Build
-
-Create a production build:
-
-```bash
+~~~sh
+npx next typegen
+npx tsc --noEmit
+npm run lint
+npm test -- --run
 npm run build
-```
+~~~
 
-Run the production server:
+Vitest uses jsdom, React Testing Library and tests in src/test. The CI workflow runs install, Next type generation, TypeScript, Vitest, ESLint and production build.
 
-```bash
-npm start
-```
+## Delivery states: merged, staged, live
 
----
+A merged PR means code is in GitHub main. It does not prove the provider built or serves that commit. Verify the preview/staging deployment and API configuration first; production promotion is a separate approval-controlled action. Provider project settings are not fully represented in this repository. See [Release](docs/RELEASE.md).
 
-# 🧪 Testing
+## Documentation
 
-Testing is part of the project's engineering roadmap.
-
-The intended testing strategy includes:
-
-- Unit tests
-- Integration tests
-- API testing
-- Component testing
-- End-to-end testing
-
-Planned tooling includes:
-
-- Vitest / Jest
-- React Testing Library
-- Supertest
-- Playwright
-
-The goal is to progressively introduce automated testing around critical business flows such as:
-
-```text
-Authentication
-      ↓
-Registration
-      ↓
-Email verification
-      ↓
-Login
-      ↓
-Protected resources
-      ↓
-Business/Event creation
-```
-
----
-
-# 🔐 Security
-
-Security considerations include:
-
-- JWT authentication
-- Password hashing with bcrypt
-- Environment-based secrets
-- Protected API routes
-- Authentication middleware
-- Optional authentication for public resources
-- Input validation
-- CORS configuration
-- Rate limiting
-- Secure HTTP headers
-- Cloudinary-controlled media uploads
-
-Security hardening is an ongoing part of the project.
-
----
-
-# 🚢 Deployment
-
-The application is deployed using a modern cloud architecture.
-
-```text
-                    ┌──────────────┐
-                    │    User      │
-                    └──────┬───────┘
-                           │
-                           ▼
-                    ┌──────────────┐
-                    │   Vercel     │
-                    │ Next.js Web  │
-                    └──────┬───────┘
-                           │
-                           ▼
-                    ┌──────────────┐
-                    │   Render     │
-                    │ Node / API   │
-                    └──────┬───────┘
-                           │
-                ┌──────────┼──────────┐
-                ▼          ▼          ▼
-           MongoDB    Cloudinary   Resend
-```
-
----
-
-# 🧠 Engineering Challenges
-
-Veci is not only a portfolio application. It is a real product being developed and evolved through actual technical problems.
-
-Some of the engineering challenges include:
-
-### Rendering & Navigation
-
-Managing localized routes, dynamic pages, authentication states, and server/client rendering in Next.js.
-
-### Data Normalization
-
-Handling different API response structures between frontend components and backend resources.
-
-### Location Queries
-
-Designing geographic queries using MongoDB GeoJSON and `2dsphere` indexes.
-
-### Authentication
-
-Building a complete authentication lifecycle including registration, verification, password recovery, and protected resources.
-
-### Responsive Discovery
-
-Designing a visual discovery system that works across mobile and desktop while handling heterogeneous content such as businesses and events.
-
-### Product Evolution
-
-Balancing technical architecture with real product requirements and feedback from actual users and businesses.
-
----
-
-# 🗺️ Roadmap
-
-## Phase 1 — Core Platform
-
-- [x] Authentication
-- [x] User registration
-- [x] Email verification
-- [x] Password recovery
-- [x] Events
-- [x] Businesses
-- [x] Discovery
-- [x] Multilingual routing
-- [x] Responsive UI
-
-## Phase 2 — User Accounts
-
-- [ ] Profile management
-- [ ] Account settings
-- [ ] Favorites
-- [ ] User preferences
-- [ ] Account deletion
-
-## Phase 3 — Community
-
-- [ ] Social interactions
-- [ ] Following businesses
-- [ ] Improved event participation
-- [ ] Community recommendations
-- [ ] Notifications
-
-## Phase 4 — Growth
-
-- [ ] More European cities
-- [ ] More languages
-- [ ] Business analytics
-- [ ] Business promotion tools
-- [ ] Marketplace capabilities
-
----
-
-# 📊 Product Vision
-
-Veci is being developed with a broader vision than simply being an events directory.
-
-The long-term goal is to create a **digital infrastructure for Latin American communities in Europe**, connecting:
-
-```text
-People
-  ↕
-Events
-  ↕
-Businesses
-  ↕
-Community
-```
-
-This creates opportunities for:
-
-- Local discovery
-- Community building
-- Business visibility
-- Event promotion
-- Digital services
-- Future marketplace functionality
-
----
-
-# 👨‍💻 Author
-
-**Andres Perdomo**
-
-MSc Web Science · Full-Stack Developer
-
-Building Veci as an independent product focused on connecting Latin American communities in Europe.
-
-🌐 Portfolio: https://ndrsdeveloper.com/
-
-💻 GitHub: https://github.com/NRDS92/NRDS92
-
-🌎 Veci: https://www.veci-latin.com/
-
----
-
-# 📄 License
-
-This project is currently developed as a private product.
-
-All rights reserved.
+- [Architecture](docs/ARCHITECTURE.md)
+- [API integration](docs/API.md)
+- [Development](docs/DEVELOPMENT.md)
+- [Feature status](docs/FEATURE-STATUS.md)
+- [Release](docs/RELEASE.md)
