@@ -4,7 +4,7 @@ import axios from "axios";
 import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import {
   GoogleLogin,
   type CredentialResponse,
@@ -421,12 +421,12 @@ const handleGoogleSuccess = async (
                                         >
                                             {t("password")}
                                         </label>
-                                        <button
-                                            type="button"
+                                        <Link
+                                            href="/forgot-password"
                                             className="text-xs font-medium text-[#4C76F2] hover:underline"
                                         >
                                             {t("forgotPassword")}
-                                        </button>
+                                        </Link>
 
                                     </div>
 

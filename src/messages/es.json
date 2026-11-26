@@ -402,6 +402,10 @@
       "cityRequired": {
         "title": "Ciudad requerida",
         "message": "Selecciona una ciudad para continuar."
+      },
+      "passwordPolicy": {
+        "title": "Requisitos de contraseña",
+        "message": "Elige una contraseña que cumpla todos los requisitos."
       }
     },
     "success": {
@@ -510,6 +514,61 @@
       "imageSuccessMessage": "Tu nueva foto de perfil está lista.",
       "imageErrorTitle": "Error al subir la imagen",
       "imageErrorMessage": "No pudimos subir tu foto de perfil. Inténtalo de nuevo."
+    }
+  },
+  "PasswordSecurity": {
+    "title": "Requisitos de contraseña",
+    "minLength": "Al menos 8 caracteres",
+    "uppercase": "Una letra mayúscula",
+    "lowercase": "Una letra minúscula",
+    "number": "Un número",
+    "special": "Un carácter especial",
+    "maxBytes": "Máximo 72 bytes UTF-8",
+    "changeTitle": "Cambiar contraseña",
+    "changeDescription": "Confirma tu contraseña actual y elige una nueva contraseña segura.",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar nueva contraseña",
+    "showPassword": "Mostrar contraseñas",
+    "submitChange": "Cambiar contraseña",
+    "submitting": "Actualizando contraseña…",
+    "successTitle": "Contraseña cambiada",
+    "successMessage": "Tu contraseña se cambió. Se cerraron las demás sesiones.",
+    "invalidCurrentPassword": "La contraseña actual no es correcta.",
+    "googleOnly": "Esta cuenta usa Google y no tiene una contraseña para cambiar.",
+    "required": "La contraseña es obligatoria.",
+    "currentRequired": "Introduce tu contraseña actual.",
+    "mismatch": "La nueva contraseña y su confirmación no coinciden.",
+    "policyError": "La nueva contraseña no cumple todos los requisitos o coincide con la actual.",
+    "genericError": "No se pudo cambiar la contraseña. Inténtalo de nuevo.",
+    "invalidToken": "El enlace para restablecer la contraseña no es válido o ha caducado.",
+    "resetTitle": "Restablecer contraseña",
+    "resetDescription": "Introduce una nueva contraseña.",
+    "newPasswordPlaceholder": "Introduce tu nueva contraseña",
+    "confirmPasswordPlaceholder": "Confirma tu nueva contraseña",
+    "resetSuccess": "La contraseña se actualizó correctamente.",
+    "resetError": "No se pudo restablecer la contraseña.",
+    "rateLimited": "Demasiados intentos. Espera antes de volver a intentarlo.",
+    "goToLogin": "Ir al inicio de sesión",
+    "forgotTitle": "¿Olvidaste tu contraseña?",
+    "forgotDescription": "Introduce el correo asociado a tu cuenta. Si existe una cuenta, te enviaremos un enlace para restablecerla.",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "tu@ejemplo.com",
+    "invalidEmail": "Introduce una dirección de correo válida.",
+    "submitForgot": "Enviar enlace",
+    "sendingForgot": "Enviando…",
+    "forgotSuccess": "Si existe una cuenta con este correo, recibirás un enlace para restablecer la contraseña.",
+    "forgotError": "No se pudo procesar la solicitud. Inténtalo de nuevo.",
+    "backToLogin": "Volver al inicio de sesión",
+    "backToProfile": "Volver al perfil",
+    "requirements": {
+      "title": "Requisitos de contraseña",
+      "minLength": "Al menos 8 caracteres",
+      "uppercase": "Una letra mayúscula",
+      "lowercase": "Una letra minúscula",
+      "number": "Un número",
+      "special": "Un carácter especial",
+      "maxBytes": "Máximo 72 bytes UTF-8"
     }
   }
 

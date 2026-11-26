@@ -401,6 +401,10 @@
       "cityRequired": {
         "title": "Stadt erforderlich",
         "message": "Wähle eine Stadt aus, um fortzufahren."
+      },
+      "passwordPolicy": {
+        "title": "Passwortanforderungen",
+        "message": "Wähle ein Passwort, das alle Anforderungen erfüllt."
       }
     },
     "success": {
@@ -509,6 +513,61 @@
       "imageSuccessMessage": "Dein neues Profilbild ist jetzt verfügbar.",
       "imageErrorTitle": "Upload fehlgeschlagen",
       "imageErrorMessage": "Dein Profilbild konnte nicht hochgeladen werden. Bitte versuche es erneut."
+    }
+  },
+  "PasswordSecurity": {
+    "title": "Passwortanforderungen",
+    "minLength": "Mindestens 8 Zeichen",
+    "uppercase": "Ein Großbuchstabe",
+    "lowercase": "Ein Kleinbuchstabe",
+    "number": "Eine Zahl",
+    "special": "Ein Sonderzeichen",
+    "maxBytes": "Höchstens 72 UTF-8-Bytes",
+    "changeTitle": "Passwort ändern",
+    "changeDescription": "Bestätige dein aktuelles Passwort und wähle ein neues sicheres Passwort.",
+    "currentPassword": "Aktuelles Passwort",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Neues Passwort bestätigen",
+    "showPassword": "Passwörter anzeigen",
+    "submitChange": "Passwort ändern",
+    "submitting": "Passwort wird aktualisiert…",
+    "successTitle": "Passwort geändert",
+    "successMessage": "Dein Passwort wurde geändert. Andere Sitzungen wurden abgemeldet.",
+    "invalidCurrentPassword": "Dein aktuelles Passwort ist falsch.",
+    "googleOnly": "Dieses Konto verwendet Google und hat kein Passwort zum Ändern.",
+    "required": "Ein Passwort ist erforderlich.",
+    "currentRequired": "Gib dein aktuelles Passwort ein.",
+    "mismatch": "Das neue Passwort und die Bestätigung stimmen nicht überein.",
+    "policyError": "Das neue Passwort erfüllt nicht alle Anforderungen oder entspricht deinem aktuellen Passwort.",
+    "genericError": "Das Passwort konnte nicht geändert werden. Bitte versuche es erneut.",
+    "invalidToken": "Der Link zum Zurücksetzen ist ungültig oder abgelaufen.",
+    "resetTitle": "Passwort zurücksetzen",
+    "resetDescription": "Gib unten ein neues Passwort ein.",
+    "newPasswordPlaceholder": "Gib dein neues Passwort ein",
+    "confirmPasswordPlaceholder": "Bestätige dein neues Passwort",
+    "resetSuccess": "Das Passwort wurde erfolgreich aktualisiert.",
+    "resetError": "Das Passwort konnte nicht zurückgesetzt werden.",
+    "rateLimited": "Zu viele Versuche. Bitte warte, bevor du es erneut versuchst.",
+    "goToLogin": "Zum Anmelden",
+    "forgotTitle": "Passwort vergessen?",
+    "forgotDescription": "Gib die E-Mail-Adresse deines Kontos ein. Falls ein Konto existiert, senden wir dir einen Link zum Zurücksetzen.",
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "du@beispiel.de",
+    "invalidEmail": "Gib eine gültige E-Mail-Adresse ein.",
+    "submitForgot": "Link senden",
+    "sendingForgot": "Wird gesendet…",
+    "forgotSuccess": "Wenn ein Konto mit dieser E-Mail-Adresse existiert, erhältst du einen Link zum Zurücksetzen des Passworts.",
+    "forgotError": "Die Anfrage konnte nicht verarbeitet werden. Bitte versuche es erneut.",
+    "backToLogin": "Zurück zur Anmeldung",
+    "backToProfile": "Zurück zum Profil",
+    "requirements": {
+      "title": "Passwortanforderungen",
+      "minLength": "Mindestens 8 Zeichen",
+      "uppercase": "Ein Großbuchstabe",
+      "lowercase": "Ein Kleinbuchstabe",
+      "number": "Eine Zahl",
+      "special": "Ein Sonderzeichen",
+      "maxBytes": "Höchstens 72 UTF-8-Bytes"
     }
   }
 

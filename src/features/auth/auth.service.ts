@@ -1,4 +1,5 @@
 import api from "@/lib/api";
+import type { ChangePasswordRequest } from "@ndrs92/contracts";
 
 import {
   LoginRequest,
@@ -48,6 +49,13 @@ export const authService = {
   ) {
     return api.post(
       "/auth/reset-password",
+      data
+    );
+  },
+
+  changePassword(data: ChangePasswordRequest) {
+    return api.patch<ApiResponse<{ token: string }>>(
+      "/auth/change-password",
       data
     );
   },

@@ -401,6 +401,10 @@
       "cityRequired": {
         "title": "City required",
         "message": "Select a city to continue."
+      },
+      "passwordPolicy": {
+        "title": "Password requirements",
+        "message": "Choose a password that meets every requirement."
       }
     },
     "success": {
@@ -509,6 +513,61 @@
       "imageSuccessMessage": "Your new profile photo is ready.",
       "imageErrorTitle": "Upload failed",
       "imageErrorMessage": "Unable to upload your profile photo. Please try again."
+    }
+  },
+  "PasswordSecurity": {
+    "title": "Password requirements",
+    "minLength": "At least 8 characters",
+    "uppercase": "One uppercase letter",
+    "lowercase": "One lowercase letter",
+    "number": "One number",
+    "special": "One special character",
+    "maxBytes": "No more than 72 UTF-8 bytes",
+    "changeTitle": "Change password",
+    "changeDescription": "Confirm your current password and choose a new secure password.",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "showPassword": "Show passwords",
+    "submitChange": "Change password",
+    "submitting": "Updating password…",
+    "successTitle": "Password changed",
+    "successMessage": "Your password has been changed. Other sessions have been signed out.",
+    "invalidCurrentPassword": "Your current password is incorrect.",
+    "googleOnly": "This account uses Google sign-in and does not have a password to change.",
+    "required": "Password is required.",
+    "currentRequired": "Enter your current password.",
+    "mismatch": "The new password and confirmation do not match.",
+    "policyError": "Your new password does not meet all requirements or matches your current password.",
+    "genericError": "Unable to change the password. Please try again.",
+    "invalidToken": "The reset link is invalid or has expired.",
+    "resetTitle": "Reset password",
+    "resetDescription": "Enter a new password below.",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPasswordPlaceholder": "Confirm your new password",
+    "resetSuccess": "Password updated successfully.",
+    "resetError": "Unable to reset your password.",
+    "rateLimited": "Too many attempts. Please wait before trying again.",
+    "goToLogin": "Go to login",
+    "forgotTitle": "Forgot your password?",
+    "forgotDescription": "Enter the email address for your account. If an account exists, we will send a reset link.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "invalidEmail": "Enter a valid email address.",
+    "submitForgot": "Send reset link",
+    "sendingForgot": "Sending…",
+    "forgotSuccess": "If an account with this email exists, you will receive a password reset link.",
+    "forgotError": "We could not process your request. Please try again.",
+    "backToLogin": "Back to login",
+    "backToProfile": "Back to profile",
+    "requirements": {
+      "title": "Password requirements",
+      "minLength": "At least 8 characters",
+      "uppercase": "One uppercase letter",
+      "lowercase": "One lowercase letter",
+      "number": "One number",
+      "special": "One special character",
+      "maxBytes": "No more than 72 UTF-8 bytes"
     }
   }
   

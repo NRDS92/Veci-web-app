@@ -77,6 +77,15 @@ const navigationMocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/i18n/navigation", () => ({
+  Link: ({ href, children, className }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
+  ),
   useRouter: () => ({
     push: navigationMocks.push,
   }),
@@ -151,6 +160,13 @@ describe("LoginForm", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("links the forgot password action to the locale-aware recovery route", () => {
+    renderLogin();
+
+    expect(
+      screen.getByRole("link", { name: "Passwort vergessen?" })
+    ).toHaveAttribute("href", "/forgot-password");
+  });
   it("shows an error notification when credentials are incorrect", async () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
 
